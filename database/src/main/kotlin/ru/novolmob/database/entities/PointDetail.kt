@@ -1,13 +1,13 @@
 package ru.novolmob.database.entities
 
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.Entity
+import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import ru.novolmob.database.models.ids.PointDetailId
 import ru.novolmob.database.tables.PointDetails
-import java.util.*
 
-class PointDetail(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object: UUIDEntityClass<PointDetail>(PointDetails)
+class PointDetail(id: EntityID<PointDetailId>) : Entity<PointDetailId>(id) {
+    companion object: EntityClass<PointDetailId, PointDetail>(PointDetails)
 
     var point by Point referencedOn PointDetails.point
     var address by PointDetails.address
