@@ -1,13 +1,13 @@
 package ru.novolmob.database.entities
 
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.Entity
+import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import ru.novolmob.database.models.ids.BasketId
 import ru.novolmob.database.tables.Baskets
-import java.util.*
 
-class Basket(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object: UUIDEntityClass<Basket>(Baskets)
+class Basket(id: EntityID<BasketId>) : Entity<BasketId>(id) {
+    companion object: EntityClass<BasketId, Basket>(Baskets)
 
     var user by User referencedOn Baskets.user
     var device by Device referencedOn Baskets.device

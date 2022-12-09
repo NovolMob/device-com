@@ -1,13 +1,13 @@
 package ru.novolmob.database.entities
 
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.Entity
+import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import ru.novolmob.database.models.ids.DeviceTypeDetailId
 import ru.novolmob.database.tables.DeviceTypeDetails
-import java.util.*
 
-class DeviceTypeDetail(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object: UUIDEntityClass<DeviceTypeDetail>(DeviceTypeDetails)
+class DeviceTypeDetail(id: EntityID<DeviceTypeDetailId>) : Entity<DeviceTypeDetailId>(id) {
+    companion object: EntityClass<DeviceTypeDetailId, DeviceTypeDetail>(DeviceTypeDetails)
 
     var deviceType by DeviceType referencedOn DeviceTypeDetails.deviceType
     var title by DeviceTypeDetails.title

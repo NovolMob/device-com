@@ -1,13 +1,13 @@
 package ru.novolmob.database.entities
 
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.Entity
+import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import ru.novolmob.database.models.ids.OrderToDeviceEntityId
 import ru.novolmob.database.tables.OrderToDeviceTable
-import java.util.*
 
-class OrderToDeviceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object: UUIDEntityClass<OrderToDeviceEntity>(OrderToDeviceTable)
+class OrderToDeviceEntity(id: EntityID<OrderToDeviceEntityId>) : Entity<OrderToDeviceEntityId>(id) {
+    companion object: EntityClass<OrderToDeviceEntityId, OrderToDeviceEntity>(OrderToDeviceTable)
 
     var order by Order referencedOn OrderToDeviceTable.order
     var device by Device referencedOn OrderToDeviceTable.device

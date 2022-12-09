@@ -1,7 +1,13 @@
 import org.junit.Test
+import ru.novolmob.database.models.Address
 import ru.novolmob.database.utils.PhoneNumberUtil
 
 class PhoneNumberUtilTest {
+    @Test
+    fun testModel() {
+        println(Address("dasdas").toString())
+    }
+
     @Test
     fun testStringNumber() {
         val number = 1234567uL

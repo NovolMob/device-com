@@ -1,13 +1,13 @@
 package ru.novolmob.database.entities
 
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.Entity
+import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import ru.novolmob.database.models.ids.UserId
 import ru.novolmob.database.tables.Users
-import java.util.*
 
-class User(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object: UUIDEntityClass<User>(Users)
+class User(id: EntityID<UserId>) : Entity<UserId>(id) {
+    companion object: EntityClass<UserId, User>(Users)
 
     var firstname by Users.firstname
     var lastname by Users.lastname
