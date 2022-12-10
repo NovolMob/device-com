@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":database"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("io.arrow-kt:arrow-core:1.0.1")
 
     testImplementation(kotlin("test"))
 }

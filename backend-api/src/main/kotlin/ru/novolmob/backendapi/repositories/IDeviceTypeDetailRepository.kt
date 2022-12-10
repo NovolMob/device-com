@@ -1,0 +1,8 @@
+package ru.novolmob.backendapi.repositories
+
+import ru.novolmob.backendapi.models.DeviceTypeDetailCreateModel
+import ru.novolmob.backendapi.models.DeviceTypeDetailModel
+import ru.novolmob.backendapi.models.DeviceTypeDetailUpdateModel
+import ru.novolmob.database.models.ids.DeviceTypeDetailId
+
+interface IDeviceTypeDetailRepository: ICrudRepository<DeviceTypeDetailId, DeviceTypeDetailModel, DeviceTypeDetailCreateModel, DeviceTypeDetailUpdateModel>

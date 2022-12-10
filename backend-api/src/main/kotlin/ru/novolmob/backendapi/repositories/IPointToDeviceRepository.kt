@@ -1,0 +1,8 @@
+package ru.novolmob.backendapi.repositories
+
+import ru.novolmob.backendapi.models.PointToDeviceEntityCreateModel
+import ru.novolmob.backendapi.models.PointToDeviceEntityModel
+import ru.novolmob.backendapi.models.PointToDeviceEntityUpdateModel
+import ru.novolmob.database.models.ids.PointToDeviceEntityId
+
+interface IPointToDeviceRepository: ICrudRepository<PointToDeviceEntityId, PointToDeviceEntityModel, PointToDeviceEntityCreateModel, PointToDeviceEntityUpdateModel>
