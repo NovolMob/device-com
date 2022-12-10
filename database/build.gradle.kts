@@ -1,6 +1,5 @@
-val ktor_version: String by project
-val koin_version: String by project
 val exposed_version: String by project
+val serialization_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 
@@ -32,7 +31,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-crypt:$exposed_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 
     testImplementation(kotlin("test"))
 }
