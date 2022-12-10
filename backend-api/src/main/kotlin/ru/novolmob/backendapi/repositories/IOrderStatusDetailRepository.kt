@@ -1,0 +1,8 @@
+package ru.novolmob.backendapi.repositories
+
+import ru.novolmob.backendapi.models.OrderStatusDetailCreateModel
+import ru.novolmob.backendapi.models.OrderStatusDetailModel
+import ru.novolmob.backendapi.models.OrderStatusDetailUpdateModel
+import ru.novolmob.database.models.ids.OrderStatusDetailId
+
+interface IOrderStatusDetailRepository: ICrudRepository<OrderStatusDetailId, OrderStatusDetailModel, OrderStatusDetailCreateModel, OrderStatusDetailUpdateModel>
