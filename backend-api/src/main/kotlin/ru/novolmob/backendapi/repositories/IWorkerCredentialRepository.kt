@@ -1,0 +1,8 @@
+package ru.novolmob.backendapi.repositories
+
+import ru.novolmob.backendapi.models.WorkerCredentialCreateModel
+import ru.novolmob.backendapi.models.WorkerCredentialModel
+import ru.novolmob.backendapi.models.WorkerCredentialUpdateModel
+import ru.novolmob.database.models.ids.CredentialId
+
+interface IWorkerCredentialRepository: ICrudRepository<CredentialId, WorkerCredentialModel, WorkerCredentialCreateModel, WorkerCredentialUpdateModel>
