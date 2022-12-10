@@ -1,0 +1,37 @@
+package ru.novolmob.backendapi.models
+
+import kotlinx.serialization.Serializable
+import ru.novolmob.database.models.Amount
+import ru.novolmob.database.models.CreationDate
+import ru.novolmob.database.models.UpdateDate
+import ru.novolmob.database.models.ids.BasketId
+import ru.novolmob.database.models.ids.DeviceId
+import ru.novolmob.database.models.ids.UserId
+
+@Serializable
+data class BasketModel(
+    val id: BasketId,
+    val userId: UserId,
+    val deviceId: DeviceId,
+    val amount: Amount,
+    val updateDate: UpdateDate,
+    val creationDate: CreationDate
+)
+
+@Serializable
+data class BasketCreateModel(
+    val userId: UserId,
+    val deviceId: DeviceId,
+    val amount: Amount,
+    val updateDate: UpdateDate,
+    val creationDate: CreationDate
+)
+
+@Serializable
+data class BasketUpdateModel(
+    val userId: UserId?,
+    val deviceId: DeviceId?,
+    val amount: Amount?,
+    val updateDate: UpdateDate?,
+    val creationDate: CreationDate?
+)
