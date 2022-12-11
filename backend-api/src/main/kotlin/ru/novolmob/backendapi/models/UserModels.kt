@@ -12,9 +12,7 @@ data class UserModel(
     val patronymic: Patronymic?,
     val birthday: Birthday?,
     val city: City?,
-    val language: Language,
-    val updateDate: UpdateDate,
-    val creationDate: CreationDate
+    val language: Language
 )
 
 @Serializable
@@ -24,9 +22,7 @@ data class UserCreateModel(
     val patronymic: Patronymic?,
     val birthday: Birthday?,
     val city: City?,
-    val language: Language,
-    val updateDate: UpdateDate,
-    val creationDate: CreationDate
+    val language: Language
 )
 
 @Serializable
@@ -36,7 +32,5 @@ data class UserUpdateModel(
     val patronymic: Patronymic?,
     val birthday: Birthday?,
     val city: City?,
-    val language: Language?,
-    val updateDate: UpdateDate?,
-    val creationDate: CreationDate?
+    val language: Language?
 )

@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 import ru.novolmob.database.models.Email
 import ru.novolmob.database.models.Password
 import ru.novolmob.database.models.PhoneNumber
-import ru.novolmob.database.models.UpdateDate
 import ru.novolmob.database.models.ids.CredentialId
 import ru.novolmob.database.models.ids.UserId
 
@@ -14,8 +13,7 @@ data class UserCredentialModel(
     val userId: UserId,
     val phoneNumber: PhoneNumber,
     val email: Email?,
-    val password: Password,
-    val updateDate: UpdateDate
+    val password: Password
 )
 
 @Serializable
@@ -23,8 +21,7 @@ data class UserCredentialCreateModel(
     val userId: UserId,
     val phoneNumber: PhoneNumber,
     val email: Email?,
-    val password: Password,
-    val updateDate: UpdateDate
+    val password: Password
 )
 
 @Serializable
@@ -32,6 +29,5 @@ data class UserCredentialUpdateModel(
     val userId: UserId?,
     val phoneNumber: PhoneNumber?,
     val email: Email?,
-    val password: Password?,
-    val updateDate: UpdateDate?
+    val password: Password?
 )

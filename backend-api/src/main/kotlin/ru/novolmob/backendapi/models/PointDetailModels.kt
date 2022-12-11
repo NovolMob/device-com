@@ -1,7 +1,10 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.*
+import ru.novolmob.database.models.Address
+import ru.novolmob.database.models.Description
+import ru.novolmob.database.models.Language
+import ru.novolmob.database.models.Schedule
 import ru.novolmob.database.models.ids.PointDetailId
 import ru.novolmob.database.models.ids.PointId
 
@@ -12,9 +15,7 @@ data class PointDetailModel(
     val address: Address,
     val schedule: Schedule,
     val description: Description,
-    val language: Language,
-    val updateDate: UpdateDate,
-    val creationDate: CreationDate
+    val language: Language
 )
 
 @Serializable
@@ -23,9 +24,7 @@ data class PointDetailCreateModel(
     val address: Address,
     val schedule: Schedule,
     val description: Description,
-    val language: Language,
-    val updateDate: UpdateDate,
-    val creationDate: CreationDate
+    val language: Language
 )
 
 @Serializable
@@ -34,7 +33,5 @@ data class PointDetailUpdateModel(
     val address: Address?,
     val schedule: Schedule?,
     val description: Description?,
-    val language: Language?,
-    val updateDate: UpdateDate?,
-    val creationDate: CreationDate?
+    val language: Language?
 )
