@@ -27,3 +27,9 @@ data class BasketUpdateModel(
     val deviceId: DeviceId?,
     val amount: Amount?
 )
+
+@Serializable
+data class BasketItemModel(
+    val deviceId: DeviceId,
+    val amount: Amount
+)

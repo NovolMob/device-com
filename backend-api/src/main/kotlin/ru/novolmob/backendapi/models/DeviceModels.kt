@@ -27,3 +27,13 @@ data class DeviceUpdateModel(
     val typeId: DeviceTypeId?,
     val price: Price?
 )
+
+@Serializable
+data class DeviceFullModel(
+    val id: DeviceId,
+    val article: Code,
+    val type: DeviceTypeFullModel,
+    val detailModel: DeviceDetailModel,
+    val points: List<PointFullModel>,
+    val price: Price
+)

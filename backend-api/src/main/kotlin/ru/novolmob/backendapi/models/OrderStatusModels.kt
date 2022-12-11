@@ -23,3 +23,11 @@ data class OrderStatusUpdateModel(
     val orderId: OrderId?,
     val workerId: WorkerId?
 )
+
+@Serializable
+data class OrderStatusFullModel(
+    val id: OrderStatusId,
+    val orderId: OrderId,
+    val workerId: WorkerId,
+    val detail: OrderStatusDetailModel
+)

@@ -22,7 +22,10 @@ data class UserCreateModel(
     val patronymic: Patronymic?,
     val birthday: Birthday?,
     val city: City?,
-    val language: Language
+    val language: Language,
+    val password: Password,
+    val phoneNumber: PhoneNumber,
+    val email: Email?
 )
 
 @Serializable
@@ -32,5 +35,8 @@ data class UserUpdateModel(
     val patronymic: Patronymic?,
     val birthday: Birthday?,
     val city: City?,
-    val language: Language?
+    val language: Language?,
+    val password: Password?,
+    val phoneNumber: PhoneNumber?,
+    val email: Email?
 )

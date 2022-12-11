@@ -13,3 +13,9 @@ class DeviceTypeCreateModel()
 
 @Serializable
 class DeviceTypeUpdateModel()
+
+@Serializable
+data class DeviceTypeFullModel(
+    val id: DeviceTypeId,
+    val detail: DeviceTypeDetailModel
+)
