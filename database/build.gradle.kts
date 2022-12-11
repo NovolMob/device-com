@@ -1,4 +1,5 @@
 val exposed_version: String by project
+val postgresql_version: String by project
 val serialization_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -32,6 +33,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-crypt:$exposed_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
+    implementation("org.postgresql:postgresql:$postgresql_version")
 
     testImplementation(kotlin("test"))
 }
