@@ -6,6 +6,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.novolmob.backend.services.DatabaseService
@@ -34,6 +35,7 @@ fun Application.backend() {
             )
         }
     }
+    install(Resources)
     routing {
         get {
             call.respond("Hello world")

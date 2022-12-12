@@ -1,5 +1,6 @@
 package ru.novolmob.backend.util
 
+import arrow.core.Either
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -16,4 +17,9 @@ object NetworkUtil {
         respond(status = exception.code.toHttpStatusCode(), message = ResponseModel<Unit>(exception = exception))
     suspend fun ApplicationCall.respondException(code: BackendExceptionCode, message: String) =
         respondException(BackendException(code = code, message = message))
+    suspend fun <T> ApplicationCall.respond(either: Either<BackendException, T>, successCode: HttpStatusCode = HttpStatusCode.OK) =
+        either.fold(
+            ifLeft = { respondException(it) },
+            ifRight = { respondData(it) }
+        )
 }
