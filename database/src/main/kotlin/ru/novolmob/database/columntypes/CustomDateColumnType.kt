@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class CustomDateColumnType<T: Dated>(
-    private val constructor: (LocalDateTime) -> T,
+    val constructor: (LocalDateTime) -> T,
 ): ColumnType(), IDateColumnType {
     override val hasTimePart: Boolean = true
     override fun sqlType(): String = currentDialect.dataTypeProvider.dateTimeType()

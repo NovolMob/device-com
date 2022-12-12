@@ -7,9 +7,9 @@ import java.sql.Clob
 import kotlin.reflect.KClass
 
 class CustomTextColumnType<T: Any>(
-    private val klass: KClass<T>,
-    private val serializer: KSerializer<T>,
-    private val json: Json = Json,
+    val klass: KClass<T>,
+    val serializer: KSerializer<T>,
+    val json: Json = Json,
     collate: String? = null,
     eagerLoading: Boolean = false
 ) : TextColumnType(collate, eagerLoading) {

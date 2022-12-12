@@ -6,7 +6,7 @@ import ru.novolmob.database.models.Numerical
 import java.sql.ResultSet
 
 class CustomIntegerColumnType<T: Numerical>(
-    private val constructor: (Int) -> T
+    val constructor: (Int) -> T
 ): ColumnType() {
     override fun sqlType(): String = currentDialect.dataTypeProvider.integerType()
     override fun valueFromDB(value: Any): T = when (value) {

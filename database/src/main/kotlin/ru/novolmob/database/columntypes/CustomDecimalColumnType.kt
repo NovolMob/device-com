@@ -7,7 +7,7 @@ import java.math.RoundingMode
 import java.sql.ResultSet
 
 class CustomDecimalColumnType<T: Numerical>(
-    private val constructor: (BigDecimal) -> T,
+    val constructor: (BigDecimal) -> T,
     val precision: Int,
     val scale: Int
 ): ColumnType() {

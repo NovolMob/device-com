@@ -9,7 +9,7 @@ import java.sql.ResultSet
 import java.util.*
 
 class CustomUUIDColumnType<T: UUIDable>(
-    private val constructor: (UUID) -> T
+    val constructor: (UUID) -> T
 ): ColumnType() {
     override fun sqlType(): String = currentDialect.dataTypeProvider.uuidType()
 
