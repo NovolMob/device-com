@@ -1,17 +1,19 @@
 package ru.novolmob.database.utils
 
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.ThreadLocalTransactionManager
 import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.database.tables.*
 import ru.novolmob.database.tables.credentials.UserCredentials
 import ru.novolmob.database.tables.credentials.WorkerCredentials
 import java.sql.Connection
 
 object DatabaseUtil {
-    fun connectAndCreateAllTables(
+    suspend fun connectAndCreateAllTables(
         url: String,
         driver: String = org.postgresql.Driver::class.qualifiedName ?: "org.postgres.Driver",
         user: String = "",
@@ -31,16 +33,18 @@ object DatabaseUtil {
         )
     }.apply {
         onSuccess {
-            SchemaUtils.createMissingTablesAndColumns(
-                UserCredentials, WorkerCredentials,
-                Baskets, DeviceDetails, Devices,
-                DeviceTypeDetails, DeviceTypes,
-                GrantedRights, Orders,
-                OrderStatusDetails, OrderStatuses,
-                OrderToDeviceTable, PointDetails,
-                Points, PointToDeviceTable, Users,
-                Workers
-            )
+            newSuspendedTransaction(Dispatchers.IO) {
+                SchemaUtils.createMissingTablesAndColumns(
+                    UserCredentials, WorkerCredentials,
+                    Baskets, DeviceDetails, Devices,
+                    DeviceTypeDetails, DeviceTypes,
+                    GrantedRights, Orders,
+                    OrderStatusDetails, OrderStatuses,
+                    OrderToDeviceTable, PointDetails,
+                    Points, PointToDeviceTable, Users,
+                    Workers
+                )
+            }
         }
     }
 }
