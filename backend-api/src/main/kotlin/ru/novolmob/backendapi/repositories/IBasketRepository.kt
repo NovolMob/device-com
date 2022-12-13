@@ -15,6 +15,5 @@ interface IBasketRepository: ICrudRepository<BasketId, BasketModel, BasketCreate
     suspend fun getBasket(userId: UserId): Either<BackendException, List<BasketItemModel>>
     suspend fun setInBasket(userId: UserId, deviceId: DeviceId, amount: Amount): Either<BackendException, Boolean>
     suspend fun removeFromBasket(userId: UserId, deviceId: DeviceId): Either<BackendException, Boolean>
-    suspend fun removeFromBasket(userId: UserId, deviceId: DeviceId, amount: Amount): Either<BackendException, Boolean>
     suspend fun getAmount(userId: UserId, deviceId: DeviceId): Either<BackendException, Amount>
 }
