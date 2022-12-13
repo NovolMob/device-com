@@ -34,6 +34,6 @@ data class DeviceFullModel(
     val article: Code,
     val type: DeviceTypeFullModel,
     val detailModel: DeviceDetailModel,
-    val points: List<PointFullModel>,
+    val points: List<NumberOfDeviceInPointModel>,
     val price: Price
 )

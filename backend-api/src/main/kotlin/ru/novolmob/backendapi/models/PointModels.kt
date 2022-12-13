@@ -17,6 +17,13 @@ class PointCreateModel()
 class PointUpdateModel()
 
 @Serializable
+data class NumberOfDeviceInPointModel(
+    val pointId: PointId,
+    val pointDetail: PointDetailModel,
+    val amount: Amount
+)
+
+@Serializable
 data class PointFullModel(
     val id: PointId,
     val detail: PointDetailModel
