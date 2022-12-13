@@ -37,7 +37,7 @@ data class OrderFullModel(
     val point: PointFullModel,
     val list: List<OrderItemModel>,
     val totalCost: Price,
-    val status: OrderStatusFullModel
+    val statuses: List<OrderStatusFullModel>
 )
 
 @Serializable

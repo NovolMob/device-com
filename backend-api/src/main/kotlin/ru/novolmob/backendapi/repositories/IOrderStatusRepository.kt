@@ -12,5 +12,5 @@ import ru.novolmob.database.models.ids.OrderStatusId
 
 interface IOrderStatusRepository: ICrudRepository<OrderStatusId, OrderStatusModel, OrderStatusCreateModel, OrderStatusUpdateModel> {
     suspend fun getFull(orderStatusId: OrderStatusId, language: Language): Either<BackendException, OrderStatusFullModel>
-    suspend fun getOrderStatus(orderId: OrderId): Either<BackendException, OrderStatusFullModel>
+    suspend fun getOrderStatus(orderId: OrderId, language: Language): Either<BackendException, List<OrderStatusFullModel>>
 }
