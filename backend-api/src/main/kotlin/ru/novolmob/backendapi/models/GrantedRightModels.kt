@@ -10,19 +10,19 @@ data class GrantedRightModel(
     val id: GrantedRightId,
     val workerId: WorkerId,
     val code: Code,
-    val admin: WorkerId
+    val adminId: WorkerId
 )
 
 @Serializable
 data class GrantedRightCreateModel(
     val workerId: WorkerId,
     val code: Code,
-    val admin: WorkerId
+    val adminId: WorkerId
 )
 
 @Serializable
 data class GrantedRightUpdateModel(
     val workerId: WorkerId?,
     val code: Code?,
-    val admin: WorkerId?
+    val adminId: WorkerId?
 )
