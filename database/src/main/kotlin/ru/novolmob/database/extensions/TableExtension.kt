@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.Table
 import ru.novolmob.database.columntypes.*
 import ru.novolmob.database.models.*
 import ru.novolmob.database.models.ids.UUIDable
+import ru.novolmob.database.tables.Baskets.clientDefault
 import java.util.*
 
 object TableExtension {
@@ -82,10 +83,10 @@ object TableExtension {
         )
 
     fun Table.creationDate(name: String = "creation_date"): Column<CreationDate> =
-        registerColumn(
+        registerColumn<CreationDate>(
             name,
             CustomDateColumnType(::CreationDate)
-        )
+        ).creationDateGeneration()
 
     fun Table.description(name: String = "description", json: Json = Json, collate: String? = null, eagerLoading: Boolean = false): Column<Description> =
         registerColumn(
@@ -174,11 +175,13 @@ object TableExtension {
         )
 
     fun Table.updateDate(name: String = "update_date"): Column<UpdateDate> =
-        registerColumn(
+        registerColumn<UpdateDate>(
             name,
             CustomDateColumnType(::UpdateDate)
-        )
+        ).updateDateGeneration()
 
     fun <T: UUIDable> Table.idColumn(name: String = "id", constructor: (UUID) -> T): Column<T> =
         registerColumn<T>(name, CustomUUIDColumnType(constructor)).clientDefault { constructor(UUID.randomUUID()) }
+    fun Column<UpdateDate>.updateDateGeneration() = clientDefault { UpdateDate.now() }
+    fun Column<CreationDate>.creationDateGeneration() = clientDefault { CreationDate.now() }
 }
