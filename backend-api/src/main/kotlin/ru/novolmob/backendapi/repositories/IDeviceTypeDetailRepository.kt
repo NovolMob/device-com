@@ -10,6 +10,6 @@ import ru.novolmob.database.models.ids.DeviceTypeDetailId
 import ru.novolmob.database.models.ids.DeviceTypeId
 
 interface IDeviceTypeDetailRepository: ICrudRepository<DeviceTypeDetailId, DeviceTypeDetailModel, DeviceTypeDetailCreateModel, DeviceTypeDetailUpdateModel> {
-    suspend fun getTypeDetailFor(deviceTypeId: DeviceTypeId, language: Language): Either<BackendException, DeviceTypeId>
-    suspend fun removeTypeDetailFor(deviceTypeId: DeviceTypeId): Either<BackendException, Boolean>
+    suspend fun getDetailFor(deviceTypeId: DeviceTypeId, language: Language): Either<BackendException, DeviceTypeDetailModel>
+    suspend fun removeDetailFor(deviceTypeId: DeviceTypeId): Either<BackendException, Boolean>
 }
