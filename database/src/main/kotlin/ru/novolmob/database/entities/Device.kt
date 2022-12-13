@@ -9,7 +9,7 @@ import ru.novolmob.database.tables.Devices
 class Device(id: EntityID<DeviceId>) : Entity<DeviceId>(id) {
     companion object: EntityClass<DeviceId, Device>(Devices)
 
-    var code by Devices.code
+    var article by Devices.code
     var type by DeviceType referencedOn Devices.type
     var price by Devices.price
     var updateDate by Devices.updateDate
