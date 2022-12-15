@@ -8,9 +8,11 @@ import ru.novolmob.backendapi.models.WorkerUpdateModel
 import ru.novolmob.database.models.Email
 import ru.novolmob.database.models.Password
 import ru.novolmob.database.models.PhoneNumber
+import ru.novolmob.database.models.ids.PointId
 import ru.novolmob.database.models.ids.WorkerId
 
 interface IWorkerRepository: ICrudRepository<WorkerId, WorkerModel, WorkerCreateModel, WorkerUpdateModel> {
+    suspend fun getAllByPointId(pointId: PointId): Either<BackendException, List<WorkerModel>>
     suspend fun login(phoneNumber: PhoneNumber, password: Password): Either<BackendException, WorkerModel>
     suspend fun login(email: Email, password: Password): Either<BackendException, WorkerModel>
 }

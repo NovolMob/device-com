@@ -11,5 +11,5 @@ import ru.novolmob.database.models.ids.PointId
 
 interface IPointDetailRepository: ICrudRepository<PointDetailId, PointDetailModel, PointDetailCreateModel, PointDetailUpdateModel> {
     suspend fun getDetailFor(pointId: PointId, language: Language): Either<BackendException, PointDetailModel>
-    suspend fun removeFor(pointId: PointId): Either<BackendException, BackendException>
+    suspend fun removeFor(pointId: PointId): Either<BackendException, Boolean>
 }

@@ -11,7 +11,7 @@ import ru.novolmob.database.models.ids.WorkerId
 @Serializable
 data class WorkerModel(
     val id: WorkerId,
-    val pointId: PointId,
+    val pointId: PointId?,
     val firstname: Firstname,
     val lastname: Lastname,
     val patronymic: Patronymic,
@@ -20,7 +20,7 @@ data class WorkerModel(
 
 @Serializable
 data class WorkerCreateModel(
-    val pointId: PointId,
+    val pointId: PointId?,
     val firstname: Firstname,
     val lastname: Lastname,
     val patronymic: Patronymic,
