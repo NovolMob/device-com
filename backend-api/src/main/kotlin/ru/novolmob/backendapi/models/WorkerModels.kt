@@ -1,10 +1,7 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.Firstname
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.Lastname
-import ru.novolmob.database.models.Patronymic
+import ru.novolmob.database.models.*
 import ru.novolmob.database.models.ids.PointId
 import ru.novolmob.database.models.ids.WorkerId
 
@@ -24,7 +21,10 @@ data class WorkerCreateModel(
     val firstname: Firstname,
     val lastname: Lastname,
     val patronymic: Patronymic,
-    val language: Language
+    val language: Language,
+    val password: Password,
+    val phoneNumber: PhoneNumber,
+    val email: Email?
 )
 
 @Serializable
@@ -33,5 +33,8 @@ data class WorkerUpdateModel(
     val firstname: Firstname?,
     val lastname: Lastname?,
     val patronymic: Patronymic?,
-    val language: Language?
+    val language: Language?,
+    val password: Password?,
+    val phoneNumber: PhoneNumber?,
+    val email: Email?
 )
