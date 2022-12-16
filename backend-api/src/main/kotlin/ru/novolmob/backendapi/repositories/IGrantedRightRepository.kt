@@ -13,5 +13,4 @@ interface IGrantedRightRepository: ICrudRepository<GrantedRightId, GrantedRightM
     suspend fun getAllRightsFor(workerId: WorkerId): Either<BackendException, List<GrantedRightModel>>
     suspend fun contains(workerId: WorkerId, code: Code): Either<BackendException, Boolean>
     suspend fun removeFor(workerId: WorkerId, code: Code): Either<BackendException, Boolean>
-    suspend fun addFor(adminId: WorkerId, workerId: WorkerId, code: Code): Either<BackendException, Boolean>
 }

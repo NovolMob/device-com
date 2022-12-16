@@ -14,8 +14,8 @@ open class Credentials: IdTable<CredentialId>() {
     override val id: Column<EntityID<CredentialId>> = idColumn(constructor = ::CredentialId).entityId()
     override val primaryKey = PrimaryKey(id)
 
-    val phoneNumber = phoneNumber()
-    val email = email().nullable()
+    val phoneNumber = phoneNumber().uniqueIndex()
+    val email = email().uniqueIndex().nullable()
     val password = password()
     val updateDate = updateDate()
 }
