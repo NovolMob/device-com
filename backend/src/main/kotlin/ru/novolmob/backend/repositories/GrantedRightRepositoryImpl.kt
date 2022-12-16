@@ -50,20 +50,6 @@ class GrantedRightRepositoryImpl(
             } ?: false.right()
         }
 
-    override suspend fun addFor(adminId: WorkerId, workerId: WorkerId, code: Code): Either<BackendException, Boolean> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            if (find(workerId, code) == null) {
-                val worker = Worker.findById(workerId) ?: return@newSuspendedTransaction workerByIdNotFound(workerId).left()
-                val admin = Worker.findById(adminId) ?: return@newSuspendedTransaction workerByIdNotFound(workerId).left()
-                GrantedRight.new {
-                    this.worker = worker
-                    this.admin = admin
-                    this.code = code
-                }
-                false.right()
-            } else true.right()
-        }
-
     override suspend fun get(id: GrantedRightId): Either<BackendException, GrantedRightModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             GrantedRight.findById(id)?.let(mapper::invoke) ?: grantedRightByIdNotFound(id).left()
