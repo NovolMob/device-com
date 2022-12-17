@@ -1,4 +1,4 @@
-package ru.novolmob.backend.ktorrouting
+package ru.novolmob.backend.ktorrouting.worker
 
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable

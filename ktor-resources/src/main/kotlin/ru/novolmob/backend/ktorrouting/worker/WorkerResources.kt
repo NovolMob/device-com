@@ -1,4 +1,4 @@
-package ru.novolmob.backend.ktorrouting
+package ru.novolmob.backend.ktorrouting.worker
 
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable
@@ -6,11 +6,11 @@ import ru.novolmob.backendapi.models.Pagination
 import ru.novolmob.database.models.Email
 import ru.novolmob.database.models.Password
 import ru.novolmob.database.models.PhoneNumber
-import ru.novolmob.database.models.ids.UserId
+import ru.novolmob.database.models.ids.WorkerId
 
 @Serializable
-@Resource("users")
-class Users(
+@Resource("worker")
+class Workers(
     override val page: Long? = null,
     override val pageSize: Long? = null,
     override val sortByColumn: String? = null,
@@ -18,11 +18,11 @@ class Users(
 ): Pagination {
     @Serializable
     @Resource("{id}")
-    class Id(val users: Users, val id: UserId)
+    class Id(val workers: Workers, val id: WorkerId)
     @Serializable
     @Resource("login")
     class Login(
-        val users: Users,
+        val workers: Workers,
         val email: Email? = null,
         val phoneNumber: PhoneNumber? = null,
         val password: Password
