@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Column
 import ru.novolmob.database.extensions.TableExtension.amount
 import ru.novolmob.database.extensions.TableExtension.idColumn
 import ru.novolmob.database.extensions.TableExtension.price
-import ru.novolmob.database.models.ids.OrderToDeviceEntityId
+import ru.novolmob.core.models.ids.OrderToDeviceEntityId
 
 object OrderToDeviceTable: IdTable<OrderToDeviceEntityId>() {
     override val id: Column<EntityID<OrderToDeviceEntityId>> = idColumn(constructor = ::OrderToDeviceEntityId).entityId()

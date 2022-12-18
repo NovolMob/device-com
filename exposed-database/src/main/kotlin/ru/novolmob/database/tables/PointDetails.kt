@@ -10,7 +10,7 @@ import ru.novolmob.database.extensions.TableExtension.idColumn
 import ru.novolmob.database.extensions.TableExtension.language
 import ru.novolmob.database.extensions.TableExtension.schedule
 import ru.novolmob.database.extensions.TableExtension.updateDate
-import ru.novolmob.database.models.ids.PointDetailId
+import ru.novolmob.core.models.ids.PointDetailId
 
 object PointDetails: IdTable<PointDetailId>() {
     override val id: Column<EntityID<PointDetailId>> = idColumn(constructor = ::PointDetailId).entityId()

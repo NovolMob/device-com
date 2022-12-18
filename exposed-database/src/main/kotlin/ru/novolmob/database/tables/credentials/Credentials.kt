@@ -8,7 +8,7 @@ import ru.novolmob.database.extensions.TableExtension.idColumn
 import ru.novolmob.database.extensions.TableExtension.password
 import ru.novolmob.database.extensions.TableExtension.phoneNumber
 import ru.novolmob.database.extensions.TableExtension.updateDate
-import ru.novolmob.database.models.ids.CredentialId
+import ru.novolmob.core.models.ids.CredentialId
 
 open class Credentials: IdTable<CredentialId>() {
     override val id: Column<EntityID<CredentialId>> = idColumn(constructor = ::CredentialId).entityId()

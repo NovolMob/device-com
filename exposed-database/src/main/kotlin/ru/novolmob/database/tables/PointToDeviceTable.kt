@@ -7,7 +7,7 @@ import ru.novolmob.database.extensions.TableExtension.amount
 import ru.novolmob.database.extensions.TableExtension.creationDate
 import ru.novolmob.database.extensions.TableExtension.idColumn
 import ru.novolmob.database.extensions.TableExtension.updateDate
-import ru.novolmob.database.models.ids.PointToDeviceEntityId
+import ru.novolmob.core.models.ids.PointToDeviceEntityId
 
 object PointToDeviceTable: IdTable<PointToDeviceEntityId>() {
     override val id: Column<EntityID<PointToDeviceEntityId>> = idColumn(constructor = ::PointToDeviceEntityId).entityId()

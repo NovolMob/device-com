@@ -7,7 +7,7 @@ import ru.novolmob.database.extensions.TableExtension.amount
 import ru.novolmob.database.extensions.TableExtension.creationDate
 import ru.novolmob.database.extensions.TableExtension.idColumn
 import ru.novolmob.database.extensions.TableExtension.updateDate
-import ru.novolmob.database.models.ids.BasketId
+import ru.novolmob.core.models.ids.BasketId
 
 object Baskets: IdTable<BasketId>() {
     override val id: Column<EntityID<BasketId>> = idColumn(constructor = ::BasketId).entityId()

@@ -5,7 +5,7 @@ import kotlinx.datetime.TimeZone
 import org.jetbrains.exposed.sql.ColumnType
 import org.jetbrains.exposed.sql.IDateColumnType
 import org.jetbrains.exposed.sql.vendors.*
-import ru.novolmob.database.models.Dated
+import ru.novolmob.core.models.Dated
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

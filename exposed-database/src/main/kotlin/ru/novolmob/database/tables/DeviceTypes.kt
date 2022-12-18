@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Column
 import ru.novolmob.database.extensions.TableExtension.creationDate
 import ru.novolmob.database.extensions.TableExtension.idColumn
 import ru.novolmob.database.extensions.TableExtension.updateDate
-import ru.novolmob.database.models.ids.DeviceTypeId
+import ru.novolmob.core.models.ids.DeviceTypeId
 
 object DeviceTypes: IdTable<DeviceTypeId>() {
     override val id: Column<EntityID<DeviceTypeId>> = idColumn(constructor = ::DeviceTypeId).entityId()

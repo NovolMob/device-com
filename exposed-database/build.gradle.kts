@@ -27,6 +27,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":core"))
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")

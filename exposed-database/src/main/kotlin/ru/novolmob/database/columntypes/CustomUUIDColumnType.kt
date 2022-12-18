@@ -3,7 +3,7 @@ package ru.novolmob.database.columntypes
 import org.jetbrains.exposed.sql.ColumnType
 import org.jetbrains.exposed.sql.vendors.MariaDBDialect
 import org.jetbrains.exposed.sql.vendors.currentDialect
-import ru.novolmob.database.models.ids.UUIDable
+import ru.novolmob.core.models.ids.UUIDable
 import java.nio.ByteBuffer
 import java.sql.ResultSet
 import java.util.*

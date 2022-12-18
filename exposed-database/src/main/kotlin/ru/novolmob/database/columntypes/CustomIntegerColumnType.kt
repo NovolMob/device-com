@@ -2,7 +2,7 @@ package ru.novolmob.database.columntypes
 
 import org.jetbrains.exposed.sql.ColumnType
 import org.jetbrains.exposed.sql.vendors.currentDialect
-import ru.novolmob.database.models.Numerical
+import ru.novolmob.core.models.Numerical
 import java.sql.ResultSet
 
 class CustomIntegerColumnType<T: Numerical>(

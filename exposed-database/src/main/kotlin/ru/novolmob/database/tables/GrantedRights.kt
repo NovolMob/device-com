@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Column
 import ru.novolmob.database.extensions.TableExtension.code
 import ru.novolmob.database.extensions.TableExtension.creationDate
 import ru.novolmob.database.extensions.TableExtension.idColumn
-import ru.novolmob.database.models.ids.GrantedRightId
+import ru.novolmob.core.models.ids.GrantedRightId
 
 object GrantedRights: IdTable<GrantedRightId>() {
     override val id: Column<EntityID<GrantedRightId>> = idColumn(constructor = ::GrantedRightId).entityId()

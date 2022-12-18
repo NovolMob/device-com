@@ -8,7 +8,7 @@ import ru.novolmob.database.extensions.TableExtension.creationDate
 import ru.novolmob.database.extensions.TableExtension.idColumn
 import ru.novolmob.database.extensions.TableExtension.price
 import ru.novolmob.database.extensions.TableExtension.updateDate
-import ru.novolmob.database.models.ids.DeviceId
+import ru.novolmob.core.models.ids.DeviceId
 
 object Devices: IdTable<DeviceId>() {
     override val id: Column<EntityID<DeviceId>> = idColumn(constructor = ::DeviceId).entityId()

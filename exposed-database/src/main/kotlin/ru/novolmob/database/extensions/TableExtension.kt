@@ -4,8 +4,8 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 import ru.novolmob.database.columntypes.*
-import ru.novolmob.database.models.*
-import ru.novolmob.database.models.ids.UUIDable
+import ru.novolmob.core.models.*
+import ru.novolmob.core.models.ids.UUIDable
 import ru.novolmob.database.tables.Baskets.clientDefault
 import java.util.*
 

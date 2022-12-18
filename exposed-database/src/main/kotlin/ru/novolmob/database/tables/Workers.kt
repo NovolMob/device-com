@@ -10,7 +10,7 @@ import ru.novolmob.database.extensions.TableExtension.language
 import ru.novolmob.database.extensions.TableExtension.lastname
 import ru.novolmob.database.extensions.TableExtension.patronymic
 import ru.novolmob.database.extensions.TableExtension.updateDate
-import ru.novolmob.database.models.ids.WorkerId
+import ru.novolmob.core.models.ids.WorkerId
 
 object Workers: IdTable<WorkerId>() {
     override val id: Column<EntityID<WorkerId>> = idColumn(constructor = ::WorkerId).entityId()

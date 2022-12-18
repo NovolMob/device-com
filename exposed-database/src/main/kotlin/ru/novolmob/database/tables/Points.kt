@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Column
 import ru.novolmob.database.extensions.TableExtension.creationDate
 import ru.novolmob.database.extensions.TableExtension.idColumn
 import ru.novolmob.database.extensions.TableExtension.updateDate
-import ru.novolmob.database.models.ids.PointId
+import ru.novolmob.core.models.ids.PointId
 
 object Points: IdTable<PointId>() {
     override val id: Column<EntityID<PointId>> = idColumn(constructor = ::PointId).entityId()

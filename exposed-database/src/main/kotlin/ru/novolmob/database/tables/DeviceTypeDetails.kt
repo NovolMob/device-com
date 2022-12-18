@@ -9,7 +9,7 @@ import ru.novolmob.database.extensions.TableExtension.idColumn
 import ru.novolmob.database.extensions.TableExtension.language
 import ru.novolmob.database.extensions.TableExtension.title
 import ru.novolmob.database.extensions.TableExtension.updateDate
-import ru.novolmob.database.models.ids.DeviceTypeDetailId
+import ru.novolmob.core.models.ids.DeviceTypeDetailId
 
 object DeviceTypeDetails: IdTable<DeviceTypeDetailId>() {
     override val id: Column<EntityID<DeviceTypeDetailId>> = idColumn(constructor = ::DeviceTypeDetailId).entityId()
