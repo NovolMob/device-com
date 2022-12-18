@@ -12,9 +12,9 @@ import io.ktor.server.routing.*
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import ru.novolmob.backend.mappers.GrantedRightMapper
-import ru.novolmob.backend.mappers.ResultRowGrantedRightMapper
-import ru.novolmob.backend.repositories.GrantedRightRepositoryImpl
+import ru.novolmob.exposedbackendapi.mappers.GrantedRightMapper
+import ru.novolmob.exposedbackendapi.mappers.ResultRowGrantedRightMapper
+import ru.novolmob.exposedbackendapi.repositories.GrantedRightRepositoryImpl
 import ru.novolmob.backend.services.DatabaseService
 import ru.novolmob.backend.util.AuthUtil.workerPermission
 import ru.novolmob.backend.util.NetworkUtil.respondException

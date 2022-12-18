@@ -29,9 +29,10 @@ repositories {
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":exposed-database"))
     implementation(project(":backend-api"))
     implementation(project(":ktor-resources"))
+    implementation(project(":exposed-backend-api"))
+    implementation(project(":exposed-database"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
