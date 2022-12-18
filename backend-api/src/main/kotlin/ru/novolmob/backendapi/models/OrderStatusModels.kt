@@ -21,6 +21,7 @@ data class OrderStatusUpdateModel(
 
 @Serializable
 data class OrderStatusFullModel(
+    val id: OrderStatusId,
     val active: Boolean,
     val detail: OrderStatusDetailModel
 )

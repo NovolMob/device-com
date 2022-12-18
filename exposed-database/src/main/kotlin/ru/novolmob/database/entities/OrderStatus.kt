@@ -10,4 +10,5 @@ class OrderStatus(id: EntityID<OrderStatusId>) : Entity<OrderStatusId>(id) {
     companion object: EntityClass<OrderStatusId, OrderStatus>(OrderStatuses)
 
     var active by OrderStatuses.active
+    var creationDate by OrderStatuses.creationDate
 }
