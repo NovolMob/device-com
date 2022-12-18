@@ -6,7 +6,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import ru.novolmob.database.models.PhoneNumber
+import ru.novolmob.core.models.PhoneNumber
+import ru.novolmob.core.utils.PhoneNumberUtil
 
 object PhoneNumberSerializer: KSerializer<PhoneNumber> {
     override val descriptor: SerialDescriptor

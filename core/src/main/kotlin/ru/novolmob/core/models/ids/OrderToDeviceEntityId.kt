@@ -1,7 +1,7 @@
 package ru.novolmob.core.models.ids
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.serializers.UUIDSerializer
+import ru.novolmob.core.serializers.UUIDSerializer
 import java.util.UUID
 
 @JvmInline

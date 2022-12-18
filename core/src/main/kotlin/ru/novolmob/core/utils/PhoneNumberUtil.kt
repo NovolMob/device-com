@@ -1,6 +1,6 @@
 package ru.novolmob.core.utils
 
-import ru.novolmob.database.models.PhoneNumber
+import ru.novolmob.core.models.PhoneNumber
 
 object PhoneNumberUtil {
     val nonNumberRegex = Regex("[^0-9]")

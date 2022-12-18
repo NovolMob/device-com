@@ -2,6 +2,7 @@ package ru.novolmob.core.models
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+import ru.novolmob.core.extensions.LocalDateTimeExtension.now
 
 @JvmInline
 @Serializable

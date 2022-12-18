@@ -1,7 +1,7 @@
 package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.serializers.BigDecimalSerializer
+import ru.novolmob.core.serializers.BigDecimalSerializer
 import java.math.BigDecimal
 
 @JvmInline

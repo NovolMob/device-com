@@ -1,6 +1,6 @@
 import org.junit.Test
-import ru.novolmob.database.models.Address
-import ru.novolmob.database.utils.PhoneNumberUtil
+import ru.novolmob.core.models.Address
+import ru.novolmob.core.utils.PhoneNumberUtil
 
 class PhoneNumberUtilTest {
     @Test
