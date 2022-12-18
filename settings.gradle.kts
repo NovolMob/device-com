@@ -1,3 +1,3 @@
 rootProject.name = "bd-practice"
-include("database")
+include("exposed-database")
 include("backend-api")

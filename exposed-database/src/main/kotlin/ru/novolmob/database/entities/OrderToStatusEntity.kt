@@ -9,8 +9,8 @@ import ru.novolmob.database.tables.OrderToStatusTable
 class OrderToStatusEntity(id: EntityID<OrderToStatusEntityId>) : Entity<OrderToStatusEntityId>(id) {
     companion object: EntityClass<OrderToStatusEntityId, OrderToStatusEntity>(OrderToStatusTable)
 
-    val order by Order referencedOn OrderToStatusTable.order
-    val status by OrderStatus referencedOn OrderToStatusTable.orderStatus
-    val worker by Worker referencedOn OrderToStatusTable.worker
-    val creationDate by OrderToStatusTable.creationDate
+    var order by Order referencedOn OrderToStatusTable.order
+    var status by OrderStatus referencedOn OrderToStatusTable.orderStatus
+    var worker by Worker referencedOn OrderToStatusTable.worker
+    var creationDate by OrderToStatusTable.creationDate
 }
