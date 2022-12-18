@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":database"))
+    implementation(project(":exposed-database"))
     implementation(project(":backend-api"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 
