@@ -1,7 +1,8 @@
 package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.serializers.PhoneNumberSerializer
+import ru.novolmob.core.serializers.PhoneNumberSerializer
+import ru.novolmob.core.utils.PhoneNumberUtil
 
 @Serializable(with = PhoneNumberSerializer::class)
 data class PhoneNumber(
