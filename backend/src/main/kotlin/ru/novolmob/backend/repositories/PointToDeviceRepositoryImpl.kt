@@ -18,16 +18,16 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IPointDetailRepository
 import ru.novolmob.backendapi.repositories.IPointToDeviceRepository
-import ru.novolmob.database.entities.Device
-import ru.novolmob.database.entities.Point
-import ru.novolmob.database.entities.PointToDeviceEntity
-import ru.novolmob.database.models.Amount
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.UpdateDate
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.models.ids.PointId
-import ru.novolmob.database.models.ids.PointToDeviceEntityId
-import ru.novolmob.database.tables.PointToDeviceTable
+import ru.novolmob.exposeddatabase.entities.Device
+import ru.novolmob.exposeddatabase.entities.Point
+import ru.novolmob.exposeddatabase.entities.PointToDeviceEntity
+import ru.novolmob.core.models.Amount
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.core.models.ids.PointId
+import ru.novolmob.core.models.ids.PointToDeviceEntityId
+import ru.novolmob.exposeddatabase.tables.PointToDeviceTable
 
 class PointToDeviceRepositoryImpl(
     val mapper: Mapper<PointToDeviceEntity, PointToDeviceEntityModel>,

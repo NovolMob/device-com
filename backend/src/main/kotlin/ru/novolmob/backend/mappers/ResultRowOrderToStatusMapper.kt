@@ -5,7 +5,7 @@ import arrow.core.right
 import org.jetbrains.exposed.sql.ResultRow
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.OrderToStatusEntityModel
-import ru.novolmob.database.tables.OrderToStatusTable
+import ru.novolmob.exposeddatabase.tables.OrderToStatusTable
 
 class ResultRowOrderToStatusMapper: Mapper<ResultRow, OrderToStatusEntityModel> {
     override fun invoke(input: ResultRow): Either<BackendException, OrderToStatusEntityModel> =

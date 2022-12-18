@@ -5,7 +5,7 @@ import arrow.core.right
 import org.jetbrains.exposed.sql.ResultRow
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.PointToDeviceEntityModel
-import ru.novolmob.database.tables.PointToDeviceTable
+import ru.novolmob.exposeddatabase.tables.PointToDeviceTable
 
 class ResultRowPointToDeviceMapper: Mapper<ResultRow, PointToDeviceEntityModel> {
     override fun invoke(input: ResultRow): Either<BackendException, PointToDeviceEntityModel> =

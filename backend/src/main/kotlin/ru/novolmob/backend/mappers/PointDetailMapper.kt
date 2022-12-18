@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.PointDetailModel
-import ru.novolmob.database.entities.PointDetail
+import ru.novolmob.exposeddatabase.entities.PointDetail
 
 class PointDetailMapper: Mapper<PointDetail, PointDetailModel> {
     override fun invoke(input: PointDetail): Either<BackendException, PointDetailModel> =

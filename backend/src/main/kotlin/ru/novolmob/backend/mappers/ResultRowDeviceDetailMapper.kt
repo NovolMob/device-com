@@ -5,7 +5,7 @@ import arrow.core.right
 import org.jetbrains.exposed.sql.ResultRow
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.DeviceDetailModel
-import ru.novolmob.database.tables.DeviceDetails
+import ru.novolmob.exposeddatabase.tables.DeviceDetails
 
 class ResultRowDeviceDetailMapper: Mapper<ResultRow, DeviceDetailModel> {
     override fun invoke(input: ResultRow): Either<BackendException, DeviceDetailModel> =

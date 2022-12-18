@@ -15,12 +15,12 @@ import ru.novolmob.backend.util.RepositoryUtil
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IGrantedRightRepository
-import ru.novolmob.database.entities.GrantedRight
-import ru.novolmob.database.entities.Worker
-import ru.novolmob.database.models.Code
-import ru.novolmob.database.models.ids.GrantedRightId
-import ru.novolmob.database.models.ids.WorkerId
-import ru.novolmob.database.tables.GrantedRights
+import ru.novolmob.exposeddatabase.entities.GrantedRight
+import ru.novolmob.exposeddatabase.entities.Worker
+import ru.novolmob.core.models.Code
+import ru.novolmob.core.models.ids.GrantedRightId
+import ru.novolmob.core.models.ids.WorkerId
+import ru.novolmob.exposeddatabase.tables.GrantedRights
 
 class GrantedRightRepositoryImpl(
     val mapper: Mapper<GrantedRight, GrantedRightModel>,

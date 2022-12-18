@@ -16,15 +16,15 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IUserCredentialRepository
 import ru.novolmob.backendapi.repositories.IUserRepository
-import ru.novolmob.database.entities.User
-import ru.novolmob.database.entities.UserCredential
-import ru.novolmob.database.models.Email
-import ru.novolmob.database.models.Password
-import ru.novolmob.database.models.PhoneNumber
-import ru.novolmob.database.models.UpdateDate
-import ru.novolmob.database.models.ids.UserId
-import ru.novolmob.database.tables.Users
-import ru.novolmob.database.tables.credentials.UserCredentials
+import ru.novolmob.exposeddatabase.entities.User
+import ru.novolmob.exposeddatabase.entities.UserCredential
+import ru.novolmob.core.models.Email
+import ru.novolmob.core.models.Password
+import ru.novolmob.core.models.PhoneNumber
+import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.ids.UserId
+import ru.novolmob.exposeddatabase.tables.Users
+import ru.novolmob.exposeddatabase.tables.credentials.UserCredentials
 
 class UserRepositoryImpl(
     val mapper: Mapper<User, UserModel>,

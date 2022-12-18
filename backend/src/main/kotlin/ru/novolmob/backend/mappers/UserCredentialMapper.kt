@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.UserCredentialModel
-import ru.novolmob.database.entities.UserCredential
+import ru.novolmob.exposeddatabase.entities.UserCredential
 
 class UserCredentialMapper: Mapper<UserCredential, UserCredentialModel> {
     override fun invoke(input: UserCredential): Either<BackendException, UserCredentialModel> =

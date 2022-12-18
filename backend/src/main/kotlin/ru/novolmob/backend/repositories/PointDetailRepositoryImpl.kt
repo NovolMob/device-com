@@ -16,13 +16,13 @@ import ru.novolmob.backend.util.RepositoryUtil
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IPointDetailRepository
-import ru.novolmob.database.entities.Point
-import ru.novolmob.database.entities.PointDetail
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.UpdateDate
-import ru.novolmob.database.models.ids.PointDetailId
-import ru.novolmob.database.models.ids.PointId
-import ru.novolmob.database.tables.PointDetails
+import ru.novolmob.exposeddatabase.entities.Point
+import ru.novolmob.exposeddatabase.entities.PointDetail
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.ids.PointDetailId
+import ru.novolmob.core.models.ids.PointId
+import ru.novolmob.exposeddatabase.tables.PointDetails
 
 class PointDetailRepositoryImpl(
     val mapper: Mapper<PointDetail, PointDetailModel>,

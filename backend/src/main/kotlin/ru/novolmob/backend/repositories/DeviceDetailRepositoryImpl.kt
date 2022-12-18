@@ -16,13 +16,13 @@ import ru.novolmob.backend.util.RepositoryUtil
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IDeviceDetailRepository
-import ru.novolmob.database.entities.Device
-import ru.novolmob.database.entities.DeviceDetail
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.UpdateDate
-import ru.novolmob.database.models.ids.DeviceDetailId
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.tables.DeviceDetails
+import ru.novolmob.exposeddatabase.entities.Device
+import ru.novolmob.exposeddatabase.entities.DeviceDetail
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.ids.DeviceDetailId
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.exposeddatabase.tables.DeviceDetails
 
 class DeviceDetailRepositoryImpl(
     val mapper: Mapper<DeviceDetail, DeviceDetailModel>,

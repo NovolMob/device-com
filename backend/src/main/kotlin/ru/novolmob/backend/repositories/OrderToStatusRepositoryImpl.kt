@@ -17,14 +17,14 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IOrderStatusRepository
 import ru.novolmob.backendapi.repositories.IOrderToStatusRepository
-import ru.novolmob.database.entities.Order
-import ru.novolmob.database.entities.OrderStatus
-import ru.novolmob.database.entities.OrderToStatusEntity
-import ru.novolmob.database.entities.Worker
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.ids.OrderId
-import ru.novolmob.database.models.ids.OrderToStatusEntityId
-import ru.novolmob.database.tables.OrderToStatusTable
+import ru.novolmob.exposeddatabase.entities.Order
+import ru.novolmob.exposeddatabase.entities.OrderStatus
+import ru.novolmob.exposeddatabase.entities.OrderToStatusEntity
+import ru.novolmob.exposeddatabase.entities.Worker
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.ids.OrderId
+import ru.novolmob.core.models.ids.OrderToStatusEntityId
+import ru.novolmob.exposeddatabase.tables.OrderToStatusTable
 
 class OrderToStatusRepositoryImpl(
     val mapper: Mapper<OrderToStatusEntity, OrderToStatusEntityModel>,

@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.GrantedRightModel
-import ru.novolmob.database.entities.GrantedRight
+import ru.novolmob.exposeddatabase.entities.GrantedRight
 
 class GrantedRightMapper: Mapper<GrantedRight, GrantedRightModel> {
     override fun invoke(input: GrantedRight): Either<BackendException, GrantedRightModel> =

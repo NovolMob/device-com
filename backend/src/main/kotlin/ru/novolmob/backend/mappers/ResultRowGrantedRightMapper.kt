@@ -5,7 +5,7 @@ import arrow.core.right
 import org.jetbrains.exposed.sql.ResultRow
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.GrantedRightModel
-import ru.novolmob.database.tables.GrantedRights
+import ru.novolmob.exposeddatabase.tables.GrantedRights
 
 class ResultRowGrantedRightMapper: Mapper<ResultRow, GrantedRightModel> {
     override fun invoke(input: ResultRow): Either<BackendException, GrantedRightModel> =

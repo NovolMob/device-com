@@ -15,12 +15,12 @@ import ru.novolmob.backend.util.RepositoryUtil
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IOrderToDeviceRepository
-import ru.novolmob.database.entities.Device
-import ru.novolmob.database.entities.Order
-import ru.novolmob.database.entities.OrderToDeviceEntity
-import ru.novolmob.database.models.ids.OrderId
-import ru.novolmob.database.models.ids.OrderToDeviceEntityId
-import ru.novolmob.database.tables.OrderToDeviceTable
+import ru.novolmob.exposeddatabase.entities.Device
+import ru.novolmob.exposeddatabase.entities.Order
+import ru.novolmob.exposeddatabase.entities.OrderToDeviceEntity
+import ru.novolmob.core.models.ids.OrderId
+import ru.novolmob.core.models.ids.OrderToDeviceEntityId
+import ru.novolmob.exposeddatabase.tables.OrderToDeviceTable
 
 class OrderToDeviceRepositoryImpl(
     val mapper: Mapper<OrderToDeviceEntity, OrderToDeviceEntityModel>,

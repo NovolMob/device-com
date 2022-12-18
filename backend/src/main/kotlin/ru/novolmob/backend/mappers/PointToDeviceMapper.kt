@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.PointToDeviceEntityModel
-import ru.novolmob.database.entities.PointToDeviceEntity
+import ru.novolmob.exposeddatabase.entities.PointToDeviceEntity
 
 class PointToDeviceMapper: Mapper<PointToDeviceEntity, PointToDeviceEntityModel> {
     override fun invoke(input: PointToDeviceEntity): Either<BackendException, PointToDeviceEntityModel> =

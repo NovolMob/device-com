@@ -18,17 +18,17 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IWorkerCredentialRepository
 import ru.novolmob.backendapi.repositories.IWorkerRepository
-import ru.novolmob.database.entities.Point
-import ru.novolmob.database.entities.Worker
-import ru.novolmob.database.entities.WorkerCredential
-import ru.novolmob.database.models.Email
-import ru.novolmob.database.models.Password
-import ru.novolmob.database.models.PhoneNumber
-import ru.novolmob.database.models.UpdateDate
-import ru.novolmob.database.models.ids.PointId
-import ru.novolmob.database.models.ids.WorkerId
-import ru.novolmob.database.tables.Workers
-import ru.novolmob.database.tables.credentials.WorkerCredentials
+import ru.novolmob.exposeddatabase.entities.Point
+import ru.novolmob.exposeddatabase.entities.Worker
+import ru.novolmob.exposeddatabase.entities.WorkerCredential
+import ru.novolmob.core.models.Email
+import ru.novolmob.core.models.Password
+import ru.novolmob.core.models.PhoneNumber
+import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.ids.PointId
+import ru.novolmob.core.models.ids.WorkerId
+import ru.novolmob.exposeddatabase.tables.Workers
+import ru.novolmob.exposeddatabase.tables.credentials.WorkerCredentials
 
 class WorkerRepositoryImpl(
     val mapper: Mapper<Worker, WorkerModel>,

@@ -28,6 +28,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":core"))
     implementation(project(":exposed-database"))
     implementation(project(":backend-api"))
     implementation(project(":ktor-resources"))

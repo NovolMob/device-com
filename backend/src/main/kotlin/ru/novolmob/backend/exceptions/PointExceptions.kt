@@ -2,10 +2,10 @@ package ru.novolmob.backend.exceptions
 
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.ids.PointDetailId
-import ru.novolmob.database.models.ids.PointId
-import ru.novolmob.database.models.ids.PointToDeviceEntityId
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.ids.PointDetailId
+import ru.novolmob.core.models.ids.PointId
+import ru.novolmob.core.models.ids.PointToDeviceEntityId
 
 fun pointByIdNotFound(pointId: PointId) =
     BackendException(

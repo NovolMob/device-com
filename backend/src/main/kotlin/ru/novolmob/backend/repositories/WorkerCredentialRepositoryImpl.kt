@@ -14,12 +14,12 @@ import ru.novolmob.backend.util.RepositoryUtil
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IWorkerCredentialRepository
-import ru.novolmob.database.entities.Worker
-import ru.novolmob.database.entities.WorkerCredential
-import ru.novolmob.database.models.UpdateDate
-import ru.novolmob.database.models.ids.CredentialId
-import ru.novolmob.database.models.ids.WorkerId
-import ru.novolmob.database.tables.credentials.WorkerCredentials
+import ru.novolmob.exposeddatabase.entities.Worker
+import ru.novolmob.exposeddatabase.entities.WorkerCredential
+import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.ids.CredentialId
+import ru.novolmob.core.models.ids.WorkerId
+import ru.novolmob.exposeddatabase.tables.credentials.WorkerCredentials
 
 class WorkerCredentialRepositoryImpl(
     val mapper: Mapper<WorkerCredential, WorkerCredentialModel>,

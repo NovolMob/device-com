@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.OrderStatusDetailModel
-import ru.novolmob.database.entities.OrderStatusDetail
+import ru.novolmob.exposeddatabase.entities.OrderStatusDetail
 
 class OrderStatusDetailMapper: Mapper<OrderStatusDetail, OrderStatusDetailModel> {
     override fun invoke(input: OrderStatusDetail): Either<BackendException, OrderStatusDetailModel> =

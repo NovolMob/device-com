@@ -14,10 +14,10 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IOrderStatusDetailRepository
 import ru.novolmob.backendapi.repositories.IOrderStatusRepository
-import ru.novolmob.database.entities.OrderStatus
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.ids.OrderStatusId
-import ru.novolmob.database.tables.OrderStatuses
+import ru.novolmob.exposeddatabase.entities.OrderStatus
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.ids.OrderStatusId
+import ru.novolmob.exposeddatabase.tables.OrderStatuses
 
 class OrderStatusRepositoryImpl(
     val mapper: Mapper<OrderStatus, OrderStatusModel>,

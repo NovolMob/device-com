@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.DeviceDetailModel
-import ru.novolmob.database.entities.DeviceDetail
+import ru.novolmob.exposeddatabase.entities.DeviceDetail
 
 class DeviceDetailMapper: Mapper<DeviceDetail, DeviceDetailModel> {
     override fun invoke(input: DeviceDetail): Either<BackendException, DeviceDetailModel> =

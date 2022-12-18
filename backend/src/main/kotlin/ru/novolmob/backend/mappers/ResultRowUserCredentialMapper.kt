@@ -5,7 +5,7 @@ import arrow.core.right
 import org.jetbrains.exposed.sql.ResultRow
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.UserCredentialModel
-import ru.novolmob.database.tables.credentials.UserCredentials
+import ru.novolmob.exposeddatabase.tables.credentials.UserCredentials
 
 class ResultRowUserCredentialMapper: Mapper<ResultRow, UserCredentialModel> {
     override fun invoke(input: ResultRow): Either<BackendException, UserCredentialModel> =

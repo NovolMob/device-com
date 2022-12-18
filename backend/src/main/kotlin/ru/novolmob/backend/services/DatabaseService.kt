@@ -1,7 +1,7 @@
 package ru.novolmob.backend.services
 
 import org.jetbrains.exposed.sql.Database
-import ru.novolmob.database.utils.DatabaseUtil
+import ru.novolmob.exposeddatabase.utils.DatabaseUtil
 
 object DatabaseService {
     private const val URL = "jdbc:postgresql://db.nmmdvscyjuohfkwkmefh.supabase.co:5432/postgres"

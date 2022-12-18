@@ -17,15 +17,15 @@ import ru.novolmob.backend.util.RepositoryUtil
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IBasketRepository
-import ru.novolmob.database.entities.Basket
-import ru.novolmob.database.entities.Device
-import ru.novolmob.database.entities.User
-import ru.novolmob.database.models.Amount
-import ru.novolmob.database.models.UpdateDate
-import ru.novolmob.database.models.ids.BasketId
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.models.ids.UserId
-import ru.novolmob.database.tables.Baskets
+import ru.novolmob.exposeddatabase.entities.Basket
+import ru.novolmob.exposeddatabase.entities.Device
+import ru.novolmob.exposeddatabase.entities.User
+import ru.novolmob.core.models.Amount
+import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.ids.BasketId
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.core.models.ids.UserId
+import ru.novolmob.exposeddatabase.tables.Baskets
 
 class BasketRepositoryImpl(
     val mapper: Mapper<Basket, BasketModel>,

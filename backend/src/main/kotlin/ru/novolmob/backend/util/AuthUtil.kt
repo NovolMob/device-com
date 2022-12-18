@@ -11,7 +11,7 @@ import org.koin.core.component.inject
 import ru.novolmob.backendapi.models.UserModel
 import ru.novolmob.backendapi.models.WorkerModel
 import ru.novolmob.backendapi.repositories.IGrantedRightRepository
-import ru.novolmob.database.models.Code
+import ru.novolmob.core.models.Code
 
 object AuthUtil: KoinComponent {
     private val grantedRightRepository: IGrantedRightRepository by inject()

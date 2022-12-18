@@ -14,11 +14,11 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IDeviceTypeDetailRepository
 import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
-import ru.novolmob.database.entities.DeviceType
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.UpdateDate
-import ru.novolmob.database.models.ids.DeviceTypeId
-import ru.novolmob.database.tables.DeviceTypes
+import ru.novolmob.exposeddatabase.entities.DeviceType
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.ids.DeviceTypeId
+import ru.novolmob.exposeddatabase.tables.DeviceTypes
 
 class DeviceTypeRepositoryImpl(
     val mapper: Mapper<DeviceType, DeviceTypeModel>,

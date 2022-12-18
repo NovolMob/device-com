@@ -19,13 +19,13 @@ import ru.novolmob.backendapi.repositories.IOrderRepository
 import ru.novolmob.backendapi.repositories.IOrderToDeviceRepository
 import ru.novolmob.backendapi.repositories.IOrderToStatusRepository
 import ru.novolmob.backendapi.repositories.IPointRepository
-import ru.novolmob.database.entities.Order
-import ru.novolmob.database.entities.Point
-import ru.novolmob.database.entities.User
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.ids.OrderId
-import ru.novolmob.database.models.ids.UserId
-import ru.novolmob.database.tables.Orders
+import ru.novolmob.exposeddatabase.entities.Order
+import ru.novolmob.exposeddatabase.entities.Point
+import ru.novolmob.exposeddatabase.entities.User
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.ids.OrderId
+import ru.novolmob.core.models.ids.UserId
+import ru.novolmob.exposeddatabase.tables.Orders
 
 class OrderRepositoryImpl(
     val mapper: Mapper<Order, OrderModel>,

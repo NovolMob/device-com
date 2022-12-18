@@ -17,12 +17,12 @@ import ru.novolmob.backendapi.repositories.IDeviceDetailRepository
 import ru.novolmob.backendapi.repositories.IDeviceRepository
 import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
 import ru.novolmob.backendapi.repositories.IPointToDeviceRepository
-import ru.novolmob.database.entities.Device
-import ru.novolmob.database.entities.DeviceType
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.UpdateDate
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.tables.Devices
+import ru.novolmob.exposeddatabase.entities.Device
+import ru.novolmob.exposeddatabase.entities.DeviceType
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.exposeddatabase.tables.Devices
 
 class DeviceRepositoryImpl(
     val mapper: Mapper<Device, DeviceModel>,

@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.OrderToDeviceEntityModel
-import ru.novolmob.database.entities.OrderToDeviceEntity
+import ru.novolmob.exposeddatabase.entities.OrderToDeviceEntity
 
 class OrderToDeviceMapper: Mapper<OrderToDeviceEntity, OrderToDeviceEntityModel> {
     override fun invoke(input: OrderToDeviceEntity): Either<BackendException, OrderToDeviceEntityModel> =
