@@ -9,9 +9,17 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
+import ru.novolmob.backend.mappers.GrantedRightMapper
+import ru.novolmob.backend.mappers.ResultRowGrantedRightMapper
+import ru.novolmob.backend.repositories.GrantedRightRepositoryImpl
 import ru.novolmob.backend.services.DatabaseService
+import ru.novolmob.backend.util.AuthUtil.workerPermission
 import ru.novolmob.backend.util.NetworkUtil.respondException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
+import ru.novolmob.backendapi.repositories.IGrantedRightRepository
 
 suspend fun main() {
     DatabaseService.connect()
@@ -24,6 +32,17 @@ suspend fun main() {
 }
 
 fun Application.backend() {
+    startKoin {
+        modules(
+            module {
+                singleOf(::GrantedRightMapper)
+                singleOf(::ResultRowGrantedRightMapper)
+                single<IGrantedRightRepository> {
+                    GrantedRightRepositoryImpl(get<GrantedRightMapper>(), get<ResultRowGrantedRightMapper>())
+                }
+            }
+        )
+    }
     install(ContentNegotiation) {
         json()
     }
@@ -35,10 +54,28 @@ fun Application.backend() {
             )
         }
     }
+//    authentication {
+//        jwt {
+//            val jwtAudience = this@configureSecurity.environment.config.property("jwt.audience").getString()
+//            realm = this@configureSecurity.environment.config.property("jwt.realm").getString()
+//            verifier(
+//                JWT
+//                    .require(Algorithm.HMAC256("secret"))
+//                    .withAudience(jwtAudience)
+//                    .withIssuer(this@configureSecurity.environment.config.property("jwt.domain").getString())
+//                    .build()
+//            )
+//            validate { credential ->
+//                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
+//            }
+//        }
+//    }
     install(Resources)
     routing {
-        get {
-            call.respond("Hello world")
+        workerPermission {
+            get {
+                call.respond("Hello world")
+            }
         }
     }
 }

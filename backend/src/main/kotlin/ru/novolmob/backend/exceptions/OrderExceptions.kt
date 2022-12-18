@@ -29,6 +29,12 @@ fun orderStatusDetailByDeviceIdAndLanguageNotFound(orderStatusId: OrderStatusId,
         message = "OrderStatusDetail with language $language for order status $orderStatusId not found!"
     )
 
+fun orderToStatusEntityByIdNotFound(orderToStatusEntityId: OrderToStatusEntityId) =
+    BackendException(
+        code = BackendExceptionCode.NOT_FOUND,
+        message = "OrderToDeviceEntity for order $orderToStatusEntityId not found!"
+    )
+
 fun orderStatusByOrderIdNotFound(orderId: OrderId) =
     BackendException(
         code = BackendExceptionCode.NOT_FOUND,

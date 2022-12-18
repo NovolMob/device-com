@@ -10,7 +10,6 @@ class OrderStatusMapper: Mapper<OrderStatus, OrderStatusModel> {
     override fun invoke(input: OrderStatus): Either<BackendException, OrderStatusModel> =
         OrderStatusModel(
             id = input.id.value,
-            orderId = input.order.id.value,
-            workerId = input.worker.id.value
+            active = input.active
         ).right()
 }

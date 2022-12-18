@@ -15,7 +15,10 @@ import ru.novolmob.backend.mappers.Mapper
 import ru.novolmob.backend.util.RepositoryUtil
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
-import ru.novolmob.backendapi.repositories.*
+import ru.novolmob.backendapi.repositories.IOrderRepository
+import ru.novolmob.backendapi.repositories.IOrderToDeviceRepository
+import ru.novolmob.backendapi.repositories.IOrderToStatusRepository
+import ru.novolmob.backendapi.repositories.IPointRepository
 import ru.novolmob.database.entities.Order
 import ru.novolmob.database.entities.Point
 import ru.novolmob.database.entities.User
@@ -29,14 +32,14 @@ class OrderRepositoryImpl(
     val resultRowMapper: Mapper<ResultRow, OrderModel>,
     val pointRepository: IPointRepository,
     val orderToDeviceRepository: IOrderToDeviceRepository,
-    val statusRepository: IOrderStatusRepository
+    val orderToStatusRepository: IOrderToStatusRepository
 ): IOrderRepository {
     override suspend fun getFull(orderId: OrderId, language: Language): Either<BackendException, OrderFullModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             Order.findById(orderId)?.let { order ->
                 pointRepository.getFull(order.point.id.value, language).flatMap { point ->
                     orderToDeviceRepository.getDevices(orderId).flatMap { devices ->
-                        statusRepository.getOrderStatus(orderId, language).flatMap { statuses ->
+                        orderToStatusRepository.getStatuses(orderId, language).flatMap { statuses ->
                             OrderFullModel(
                                 id = orderId,
                                 userId = order.user.id.value,

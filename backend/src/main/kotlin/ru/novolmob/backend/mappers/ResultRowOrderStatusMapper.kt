@@ -11,7 +11,6 @@ class ResultRowOrderStatusMapper: Mapper<ResultRow, OrderStatusModel> {
     override fun invoke(input: ResultRow): Either<BackendException, OrderStatusModel> =
         OrderStatusModel(
             id = input[OrderStatuses.id].value,
-            orderId = input[OrderStatuses.order].value,
-            workerId = input[OrderStatuses.worker].value
+            active = input[OrderStatuses.active]
         ).right()
 }

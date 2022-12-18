@@ -37,7 +37,7 @@ class BasketRepositoryImpl(
         Basket.find { (Baskets.user eq userId) and (Baskets.device eq deviceId) }.limit(1).firstOrNull()
     override suspend fun getBasket(userId: UserId): Either<BackendException, List<BasketItemModel>> =
         newSuspendedTransaction(Dispatchers.IO) {
-            Basket.find { Baskets.user eq userId }.parTraverseEither { itemMapper(it) }
+            Basket.find { Baskets.user eq userId }.sortedByDescending { it.creationDate }.parTraverseEither { itemMapper(it) }
         }
 
     override suspend fun setInBasket(
