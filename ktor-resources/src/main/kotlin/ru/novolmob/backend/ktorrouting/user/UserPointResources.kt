@@ -3,7 +3,7 @@ package ru.novolmob.backend.ktorrouting.user
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable
 import ru.novolmob.backendapi.models.Pagination
-import ru.novolmob.database.models.ids.PointId
+import ru.novolmob.core.models.ids.PointId
 
 @Serializable
 @Resource("points")

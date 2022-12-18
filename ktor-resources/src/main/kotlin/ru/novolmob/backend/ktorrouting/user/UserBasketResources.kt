@@ -2,7 +2,7 @@ package ru.novolmob.backend.ktorrouting.user
 
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.ids.DeviceId
+import ru.novolmob.core.models.ids.DeviceId
 
 @Serializable
 @Resource("basket")

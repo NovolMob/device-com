@@ -3,9 +3,9 @@ package ru.novolmob.backend.ktorrouting.worker
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable
 import ru.novolmob.backendapi.models.Pagination
-import ru.novolmob.database.models.Code
-import ru.novolmob.database.models.ids.GrantedRightId
-import ru.novolmob.database.models.ids.WorkerId
+import ru.novolmob.core.models.Code
+import ru.novolmob.core.models.ids.GrantedRightId
+import ru.novolmob.core.models.ids.WorkerId
 
 @Serializable
 @Resource("granted_rights")

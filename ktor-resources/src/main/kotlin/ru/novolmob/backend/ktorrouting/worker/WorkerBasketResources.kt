@@ -3,9 +3,9 @@ package ru.novolmob.backend.ktorrouting.worker
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable
 import ru.novolmob.backendapi.models.Pagination
-import ru.novolmob.database.models.ids.BasketId
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.models.ids.UserId
+import ru.novolmob.core.models.ids.BasketId
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.core.models.ids.UserId
 
 @Serializable
 @Resource("/baskets")

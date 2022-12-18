@@ -3,9 +3,9 @@ package ru.novolmob.backend.ktorrouting.worker
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable
 import ru.novolmob.backendapi.models.Pagination
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.models.ids.DeviceTypeId
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.core.models.ids.DeviceTypeId
 
 @Serializable
 @Resource("/devices")

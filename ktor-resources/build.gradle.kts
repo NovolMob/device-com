@@ -26,13 +26,11 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":exposed-database"))
+    implementation(project(":core"))
     implementation(project(":backend-api"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-resources:$ktor_version")
 
     testImplementation(kotlin("test"))
