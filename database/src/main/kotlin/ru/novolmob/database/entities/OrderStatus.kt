@@ -5,12 +5,9 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import ru.novolmob.database.models.ids.OrderStatusId
 import ru.novolmob.database.tables.OrderStatuses
-import ru.novolmob.database.tables.Orders
 
 class OrderStatus(id: EntityID<OrderStatusId>) : Entity<OrderStatusId>(id) {
     companion object: EntityClass<OrderStatusId, OrderStatus>(OrderStatuses)
 
-    var order by Order referencedOn OrderStatuses.order
-    var worker by Worker referencedOn OrderStatuses.worker
-    var creationDate by Orders.creationDate
+    var active by OrderStatuses.active
 }
