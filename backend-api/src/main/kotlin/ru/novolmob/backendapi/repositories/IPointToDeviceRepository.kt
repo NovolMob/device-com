@@ -3,11 +3,11 @@ package ru.novolmob.backendapi.repositories
 import arrow.core.Either
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
-import ru.novolmob.database.models.Amount
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.models.ids.PointId
-import ru.novolmob.database.models.ids.PointToDeviceEntityId
+import ru.novolmob.core.models.Amount
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.core.models.ids.PointId
+import ru.novolmob.core.models.ids.PointToDeviceEntityId
 
 interface IPointToDeviceRepository: ICrudRepository<PointToDeviceEntityId, PointToDeviceEntityModel, PointToDeviceEntityCreateModel, PointToDeviceEntityUpdateModel> {
     suspend fun getDevices(pointId: PointId): Either<BackendException, List<PointItemModel>>

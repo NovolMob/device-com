@@ -1,12 +1,12 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.Description
-import ru.novolmob.database.models.Features
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.Title
-import ru.novolmob.database.models.ids.DeviceDetailId
-import ru.novolmob.database.models.ids.DeviceId
+import ru.novolmob.core.models.Description
+import ru.novolmob.core.models.Features
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.Title
+import ru.novolmob.core.models.ids.DeviceDetailId
+import ru.novolmob.core.models.ids.DeviceId
 
 @Serializable
 data class DeviceDetailModel(

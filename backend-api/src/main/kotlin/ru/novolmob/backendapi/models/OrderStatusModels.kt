@@ -1,7 +1,7 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.ids.OrderStatusId
+import ru.novolmob.core.models.ids.OrderStatusId
 
 @Serializable
 data class OrderStatusModel(

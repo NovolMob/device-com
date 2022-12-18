@@ -5,9 +5,9 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.GrantedRightCreateModel
 import ru.novolmob.backendapi.models.GrantedRightModel
 import ru.novolmob.backendapi.models.GrantedRightUpdateModel
-import ru.novolmob.database.models.Code
-import ru.novolmob.database.models.ids.GrantedRightId
-import ru.novolmob.database.models.ids.WorkerId
+import ru.novolmob.core.models.Code
+import ru.novolmob.core.models.ids.GrantedRightId
+import ru.novolmob.core.models.ids.WorkerId
 
 interface IGrantedRightRepository: ICrudRepository<GrantedRightId, GrantedRightModel, GrantedRightCreateModel, GrantedRightUpdateModel> {
     suspend fun getAllRightsFor(workerId: WorkerId): Either<BackendException, List<GrantedRightModel>>

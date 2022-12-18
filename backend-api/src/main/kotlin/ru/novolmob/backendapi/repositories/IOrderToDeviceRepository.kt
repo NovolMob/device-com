@@ -6,8 +6,8 @@ import ru.novolmob.backendapi.models.OrderItemModel
 import ru.novolmob.backendapi.models.OrderToDeviceEntityCreateModel
 import ru.novolmob.backendapi.models.OrderToDeviceEntityModel
 import ru.novolmob.backendapi.models.OrderToDeviceEntityUpdateModel
-import ru.novolmob.database.models.ids.OrderId
-import ru.novolmob.database.models.ids.OrderToDeviceEntityId
+import ru.novolmob.core.models.ids.OrderId
+import ru.novolmob.core.models.ids.OrderToDeviceEntityId
 
 interface IOrderToDeviceRepository: ICrudRepository<OrderToDeviceEntityId, OrderToDeviceEntityModel, OrderToDeviceEntityCreateModel, OrderToDeviceEntityUpdateModel> {
     suspend fun getDevices(orderId: OrderId): Either<BackendException, List<OrderItemModel>>

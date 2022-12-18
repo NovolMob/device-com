@@ -1,9 +1,9 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.Code
-import ru.novolmob.database.models.ids.GrantedRightId
-import ru.novolmob.database.models.ids.WorkerId
+import ru.novolmob.core.models.Code
+import ru.novolmob.core.models.ids.GrantedRightId
+import ru.novolmob.core.models.ids.WorkerId
 
 @Serializable
 data class GrantedRightModel(

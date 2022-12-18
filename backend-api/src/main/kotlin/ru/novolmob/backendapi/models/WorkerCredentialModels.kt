@@ -1,11 +1,11 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.Email
-import ru.novolmob.database.models.Password
-import ru.novolmob.database.models.PhoneNumber
-import ru.novolmob.database.models.ids.CredentialId
-import ru.novolmob.database.models.ids.WorkerId
+import ru.novolmob.core.models.Email
+import ru.novolmob.core.models.Password
+import ru.novolmob.core.models.PhoneNumber
+import ru.novolmob.core.models.ids.CredentialId
+import ru.novolmob.core.models.ids.WorkerId
 
 @Serializable
 data class WorkerCredentialModel(

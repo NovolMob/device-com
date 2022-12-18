@@ -1,10 +1,10 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.ids.OrderId
-import ru.novolmob.database.models.ids.OrderStatusId
-import ru.novolmob.database.models.ids.OrderToStatusEntityId
-import ru.novolmob.database.models.ids.WorkerId
+import ru.novolmob.core.models.ids.OrderId
+import ru.novolmob.core.models.ids.OrderStatusId
+import ru.novolmob.core.models.ids.OrderToStatusEntityId
+import ru.novolmob.core.models.ids.WorkerId
 
 @Serializable
 data class OrderToStatusEntityModel(

@@ -1,9 +1,9 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.Amount
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.models.ids.PointId
+import ru.novolmob.core.models.Amount
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.core.models.ids.PointId
 
 @Serializable
 data class PointModel(

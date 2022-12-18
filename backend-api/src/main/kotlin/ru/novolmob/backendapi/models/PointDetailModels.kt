@@ -1,12 +1,12 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.Address
-import ru.novolmob.database.models.Description
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.Schedule
-import ru.novolmob.database.models.ids.PointDetailId
-import ru.novolmob.database.models.ids.PointId
+import ru.novolmob.core.models.Address
+import ru.novolmob.core.models.Description
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.Schedule
+import ru.novolmob.core.models.ids.PointDetailId
+import ru.novolmob.core.models.ids.PointId
 
 @Serializable
 data class PointDetailModel(

@@ -6,8 +6,8 @@ import ru.novolmob.backendapi.models.DeviceTypeCreateModel
 import ru.novolmob.backendapi.models.DeviceTypeFullModel
 import ru.novolmob.backendapi.models.DeviceTypeModel
 import ru.novolmob.backendapi.models.DeviceTypeUpdateModel
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.ids.DeviceTypeId
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.ids.DeviceTypeId
 
 interface IDeviceTypeRepository: ICrudRepository<DeviceTypeId, DeviceTypeModel, DeviceTypeCreateModel, DeviceTypeUpdateModel> {
     suspend fun getFull(deviceTypeId: DeviceTypeId, language: Language): Either<BackendException, DeviceTypeFullModel>

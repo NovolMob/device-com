@@ -1,10 +1,10 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.Code
-import ru.novolmob.database.models.Price
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.models.ids.DeviceTypeId
+import ru.novolmob.core.models.Code
+import ru.novolmob.core.models.Price
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.core.models.ids.DeviceTypeId
 
 @Serializable
 data class DeviceModel(

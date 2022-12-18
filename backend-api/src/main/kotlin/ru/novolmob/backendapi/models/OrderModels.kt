@@ -1,12 +1,12 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.Amount
-import ru.novolmob.database.models.Price
-import ru.novolmob.database.models.ids.DeviceId
-import ru.novolmob.database.models.ids.OrderId
-import ru.novolmob.database.models.ids.PointId
-import ru.novolmob.database.models.ids.UserId
+import ru.novolmob.core.models.Amount
+import ru.novolmob.core.models.Price
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.core.models.ids.OrderId
+import ru.novolmob.core.models.ids.PointId
+import ru.novolmob.core.models.ids.UserId
 
 @Serializable
 data class OrderModel(

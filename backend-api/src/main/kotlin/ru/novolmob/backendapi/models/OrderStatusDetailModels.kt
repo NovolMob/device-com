@@ -1,11 +1,11 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.database.models.Description
-import ru.novolmob.database.models.Language
-import ru.novolmob.database.models.Title
-import ru.novolmob.database.models.ids.OrderStatusDetailId
-import ru.novolmob.database.models.ids.OrderStatusId
+import ru.novolmob.core.models.Description
+import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.Title
+import ru.novolmob.core.models.ids.OrderStatusDetailId
+import ru.novolmob.core.models.ids.OrderStatusId
 
 @Serializable
 data class OrderStatusDetailModel(
