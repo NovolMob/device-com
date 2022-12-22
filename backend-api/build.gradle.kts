@@ -7,11 +7,12 @@ plugins {
     java
     `java-library`
     kotlin("jvm") version "1.7.22"
+    id("maven-publish")
     id("io.ktor.plugin") version "2.1.3"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
 }
 
-group = "ru.novolmob"
+group = "ru.novolmob.bd-practice"
 version = "0.0.1"
 application {
     mainClass.set("MainKt")
@@ -25,10 +26,24 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":core"))
+    api(project(":core"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("io.arrow-kt:arrow-core:1.0.1")
 
     testImplementation(kotlin("test"))
 }
+
+publishing {
+    publications {
+        registerPublication(group.toString(), name, version.toString())
+    }
+}
+
+fun PublicationContainer.registerPublication(groupId: String, artifactId: String, version: String) =
+    register<MavenPublication>(artifactId) {
+        this.groupId = groupId
+        this.artifactId = artifactId
+        this.version = version
+        artifact(tasks["jar"])
+    }

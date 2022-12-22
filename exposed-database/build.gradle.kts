@@ -13,7 +13,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
 }
 
-group = "ru.novolmob"
+group = "ru.novolmob.bd-practice"
 version = "0.0.1"
 application {
     mainClass.set("MainKt")
