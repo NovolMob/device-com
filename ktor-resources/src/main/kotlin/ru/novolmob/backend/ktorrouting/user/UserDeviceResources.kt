@@ -8,19 +8,10 @@ import ru.novolmob.core.models.ids.DeviceTypeId
 
 @Serializable
 @Resource("/devices")
-class Devices(
-    override val page: Long? = null,
-    override val pageSize: Long? = null,
-    override val sortByColumn: String? = null,
-    override val sortOrder: String? = null
-): Pagination {
+class Devices() {
     @Serializable
     @Resource("{id}")
-    class Id(val devices: Devices, val id: DeviceId) {
-        @Serializable
-        @Resource("points")
-        class Points(val id: Id)
-    }
+    class Id(val devices: Devices, val id: DeviceId)
     @Serializable
     @Resource("types")
     class Types(

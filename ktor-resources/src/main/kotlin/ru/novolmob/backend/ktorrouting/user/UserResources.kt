@@ -17,3 +17,7 @@ class Login(
     val phoneNumber: PhoneNumber? = null,
     val password: Password
 )
+
+@Serializable
+@Resource("logout")
+class Logout()
