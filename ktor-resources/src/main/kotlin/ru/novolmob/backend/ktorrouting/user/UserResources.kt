@@ -21,3 +21,7 @@ class Login(
 @Serializable
 @Resource("logout")
 class Logout()
+
+@Serializable
+@Resource("registration")
+class Registration()

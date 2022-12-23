@@ -3,7 +3,7 @@ package ru.novolmob.exposeddatabase.entities
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import ru.novolmob.exposeddatabase.models.ids.DeviceTypeDetailId
+import ru.novolmob.core.models.ids.DeviceTypeDetailId
 import ru.novolmob.exposeddatabase.tables.DeviceTypeDetails
 
 class DeviceTypeDetail(id: EntityID<DeviceTypeDetailId>) : Entity<DeviceTypeDetailId>(id) {

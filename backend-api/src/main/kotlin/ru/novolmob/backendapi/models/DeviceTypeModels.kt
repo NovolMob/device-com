@@ -1,6 +1,7 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
+import ru.novolmob.core.models.Title
 import ru.novolmob.core.models.ids.DeviceTypeId
 
 @Serializable
@@ -18,4 +19,10 @@ class DeviceTypeUpdateModel()
 data class DeviceTypeFullModel(
     val id: DeviceTypeId,
     val detail: DeviceTypeDetailModel
+)
+
+@Serializable
+data class DeviceTypeShortModel(
+    val id: DeviceTypeId,
+    val title: Title
 )

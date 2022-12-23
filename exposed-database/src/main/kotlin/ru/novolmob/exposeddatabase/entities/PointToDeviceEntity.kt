@@ -3,7 +3,7 @@ package ru.novolmob.exposeddatabase.entities
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import ru.novolmob.exposeddatabase.models.ids.PointToDeviceEntityId
+import ru.novolmob.core.models.ids.PointToDeviceEntityId
 import ru.novolmob.exposeddatabase.tables.PointToDeviceTable
 
 class PointToDeviceEntity(id: EntityID<PointToDeviceEntityId>) : Entity<PointToDeviceEntityId>(id) {

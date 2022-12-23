@@ -2,6 +2,7 @@ package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
 import ru.novolmob.core.models.Amount
+import ru.novolmob.core.models.Price
 import ru.novolmob.core.models.ids.BasketId
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.UserId
@@ -29,7 +30,13 @@ data class BasketUpdateModel(
 )
 
 @Serializable
+data class BasketFullModel(
+    val list: List<BasketItemModel>,
+    val totalPrice: Price
+)
+
+@Serializable
 data class BasketItemModel(
-    val deviceId: DeviceId,
+    val device: DeviceShortModel,
     val amount: Amount
 )

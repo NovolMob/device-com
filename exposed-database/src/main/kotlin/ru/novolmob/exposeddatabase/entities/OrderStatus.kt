@@ -3,7 +3,8 @@ package ru.novolmob.exposeddatabase.entities
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import ru.novolmob.exposeddatabase.models.ids.OrderStatusId
+import ru.novolmob.core.models.ids.OrderStatusId
+import ru.novolmob.exposeddatabase.tables.OrderStatusDetails
 import ru.novolmob.exposeddatabase.tables.OrderStatuses
 
 class OrderStatus(id: EntityID<OrderStatusId>) : Entity<OrderStatusId>(id) {
@@ -11,4 +12,6 @@ class OrderStatus(id: EntityID<OrderStatusId>) : Entity<OrderStatusId>(id) {
 
     var active by OrderStatuses.active
     var creationDate by OrderStatuses.creationDate
+
+    val details by OrderStatusDetail referrersOn OrderStatusDetails.orderStatus
 }

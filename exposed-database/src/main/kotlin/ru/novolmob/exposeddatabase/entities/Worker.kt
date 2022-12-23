@@ -3,8 +3,9 @@ package ru.novolmob.exposeddatabase.entities
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import ru.novolmob.exposeddatabase.models.ids.WorkerId
+import ru.novolmob.core.models.ids.WorkerId
 import ru.novolmob.exposeddatabase.tables.Workers
+import ru.novolmob.exposeddatabase.tables.credentials.WorkerCredentials
 
 class Worker(id: EntityID<WorkerId>) : Entity<WorkerId>(id) {
     companion object: EntityClass<WorkerId, Worker>(Workers)
@@ -16,4 +17,6 @@ class Worker(id: EntityID<WorkerId>) : Entity<WorkerId>(id) {
     var language by Workers.language
     var updateDate by Workers.updateDate
     var creationDate by Workers.creationDate
+
+    val credentials by WorkerCredential referrersOn WorkerCredentials.worker
 }

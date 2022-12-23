@@ -2,7 +2,9 @@ package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
 import ru.novolmob.core.models.Code
+import ru.novolmob.core.models.Description
 import ru.novolmob.core.models.Price
+import ru.novolmob.core.models.Title
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.DeviceTypeId
 
@@ -35,5 +37,13 @@ data class DeviceFullModel(
     val type: DeviceTypeFullModel,
     val detailModel: DeviceDetailModel,
     val points: List<NumberOfDeviceInPointModel>,
+    val price: Price
+)
+
+@Serializable
+data class DeviceShortModel(
+    val id: DeviceId,
+    val title: Title,
+    val description: Description,
     val price: Price
 )

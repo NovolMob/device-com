@@ -1,20 +1,28 @@
 package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
+import ru.novolmob.core.models.Address
 import ru.novolmob.core.models.Amount
+import ru.novolmob.core.models.City
+import ru.novolmob.core.models.Schedule
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.PointId
 
 @Serializable
 data class PointModel(
-    val id: PointId
+    val id: PointId,
+    val city: City
 )
 
 @Serializable
-class PointCreateModel()
+class PointCreateModel(
+    val city: City
+)
 
 @Serializable
-class PointUpdateModel()
+class PointUpdateModel(
+    val city: City?
+)
 
 @Serializable
 data class NumberOfDeviceInPointModel(
@@ -33,4 +41,11 @@ data class PointFullModel(
 data class PointItemModel(
     val deviceId: DeviceId,
     val amount: Amount
+)
+
+@Serializable
+data class PointShortModel(
+    val id: PointId,
+    val address: Address,
+    val schedule: Schedule
 )

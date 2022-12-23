@@ -12,7 +12,9 @@ data class UserModel(
     val patronymic: Patronymic?,
     val birthday: Birthday?,
     val city: City?,
-    val language: Language
+    val language: Language,
+    val phoneNumber: PhoneNumber,
+    val email: Email?
 )
 
 @Serializable

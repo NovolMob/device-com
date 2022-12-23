@@ -3,7 +3,8 @@ package ru.novolmob.exposeddatabase.entities
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import ru.novolmob.exposeddatabase.models.ids.DeviceId
+import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.exposeddatabase.tables.DeviceDetails
 import ru.novolmob.exposeddatabase.tables.Devices
 
 class Device(id: EntityID<DeviceId>) : Entity<DeviceId>(id) {
@@ -14,4 +15,6 @@ class Device(id: EntityID<DeviceId>) : Entity<DeviceId>(id) {
     var price by Devices.price
     var updateDate by Devices.updateDate
     var creationDate by Devices.creationDate
+
+    val details by DeviceDetail referrersOn DeviceDetails.device
 }
