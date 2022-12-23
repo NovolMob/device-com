@@ -18,6 +18,8 @@ import ru.novolmob.backendapi.repositories.IPointToDeviceRepository
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.UpdateDate
 import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound
+import ru.novolmob.exposedbackendapi.exceptions.deviceTypeByIdNotFound
 import ru.novolmob.exposeddatabase.entities.Device
 import ru.novolmob.exposeddatabase.entities.DeviceType
 import ru.novolmob.exposeddatabase.tables.Devices
@@ -46,12 +48,12 @@ class DeviceRepositoryImpl(
                         }
                     }
                 }
-            } ?: ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(deviceId).left()
+            } ?: deviceByIdNotFound(deviceId).left()
         }
 
     override suspend fun get(id: DeviceId): Either<BackendException, DeviceModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            Device.findById(id)?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(id).left()
+            Device.findById(id)?.let(mapper::invoke) ?: deviceByIdNotFound(id).left()
         }
 
     override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<DeviceModel>> =
@@ -59,7 +61,7 @@ class DeviceRepositoryImpl(
 
     override suspend fun post(createModel: DeviceCreateModel): Either<BackendException, DeviceModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val type = DeviceType.findById(createModel.typeId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceTypeByIdNotFound(
+            val type = DeviceType.findById(createModel.typeId) ?: return@newSuspendedTransaction deviceTypeByIdNotFound(
                 createModel.typeId
             ).left()
             Device.new {
@@ -71,7 +73,7 @@ class DeviceRepositoryImpl(
 
     override suspend fun post(id: DeviceId, createModel: DeviceCreateModel): Either<BackendException, DeviceModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val type = DeviceType.findById(createModel.typeId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceTypeByIdNotFound(
+            val type = DeviceType.findById(createModel.typeId) ?: return@newSuspendedTransaction deviceTypeByIdNotFound(
                 createModel.typeId
             ).left()
             Device.findById(id)?.apply {
@@ -79,13 +81,13 @@ class DeviceRepositoryImpl(
                 this.type = type
                 this.price = createModel.price
                 this.updateDate = UpdateDate.now()
-            }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(id).left()
+            }?.let(mapper::invoke) ?: deviceByIdNotFound(id).left()
         }
 
     override suspend fun put(id: DeviceId, updateModel: DeviceUpdateModel): Either<BackendException, DeviceModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val type = updateModel.typeId?.let {
-                DeviceType.findById(it) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceTypeByIdNotFound(
+                DeviceType.findById(it) ?: return@newSuspendedTransaction deviceTypeByIdNotFound(
                     it
                 ).left()
             }
@@ -94,7 +96,7 @@ class DeviceRepositoryImpl(
                 type?.let { this.type = it }
                 updateModel.price?.let { this.price = it }
                 this.updateDate = UpdateDate.now()
-            }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(id).left()
+            }?.let(mapper::invoke) ?: deviceByIdNotFound(id).left()
         }
 
     override suspend fun delete(id: DeviceId): Either<BackendException, Boolean> =

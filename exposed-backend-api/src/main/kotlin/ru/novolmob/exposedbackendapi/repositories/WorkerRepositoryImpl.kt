@@ -9,20 +9,17 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import ru.novolmob.exposedbackendapi.exceptions.pointByIdNotFound
-import ru.novolmob.exposedbackendapi.exceptions.workerByIdNotFound
-import ru.novolmob.exposedbackendapi.mappers.Mapper
-import ru.novolmob.exposedbackendapi.util.RepositoryUtil
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IWorkerCredentialRepository
 import ru.novolmob.backendapi.repositories.IWorkerRepository
-import ru.novolmob.core.models.Email
-import ru.novolmob.core.models.Password
-import ru.novolmob.core.models.PhoneNumber
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.*
 import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.WorkerId
+import ru.novolmob.exposedbackendapi.exceptions.pointByIdNotFound
+import ru.novolmob.exposedbackendapi.exceptions.workerByIdNotFound
+import ru.novolmob.exposedbackendapi.mappers.Mapper
+import ru.novolmob.exposedbackendapi.util.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.Point
 import ru.novolmob.exposeddatabase.entities.Worker
 import ru.novolmob.exposeddatabase.entities.WorkerCredential
@@ -34,6 +31,11 @@ class WorkerRepositoryImpl(
     val resultRowMapper: Mapper<ResultRow, WorkerModel>,
     val workerCredentialRepository: IWorkerCredentialRepository
 ): IWorkerRepository {
+    override suspend fun getLanguage(workerId: WorkerId): Either<BackendException, Language> =
+        newSuspendedTransaction(Dispatchers.IO) {
+            Worker.findById(workerId)?.language?.right() ?: workerByIdNotFound(workerId).left()
+        }
+
     override suspend fun getAllByPointId(pointId: PointId): Either<BackendException, List<WorkerModel>> =
         newSuspendedTransaction(Dispatchers.IO) {
             Worker.find { Workers.point eq pointId }.parTraverseEither { mapper(it) }

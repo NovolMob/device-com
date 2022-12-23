@@ -15,10 +15,7 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IUserCredentialRepository
 import ru.novolmob.backendapi.repositories.IUserRepository
-import ru.novolmob.core.models.Email
-import ru.novolmob.core.models.Password
-import ru.novolmob.core.models.PhoneNumber
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.*
 import ru.novolmob.core.models.ids.UserId
 import ru.novolmob.exposeddatabase.entities.User
 import ru.novolmob.exposeddatabase.entities.UserCredential
@@ -30,6 +27,11 @@ class UserRepositoryImpl(
     val resultRowMapper: Mapper<ResultRow, UserModel>,
     val userCredentialRepository: IUserCredentialRepository
 ): IUserRepository {
+    override suspend fun getLanguage(userId: UserId): Either<BackendException, Language> =
+        newSuspendedTransaction(Dispatchers.IO) {
+            User.findById(userId)?.language?.right() ?: userByIdNotFound(userId).left()
+        }
+
     override suspend fun login(phoneNumber: PhoneNumber, password: Password): Either<BackendException, UserModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             UserCredential.find { (UserCredentials.phoneNumber eq phoneNumber) and (UserCredentials.password eq password) }

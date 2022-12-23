@@ -17,6 +17,9 @@ import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.UpdateDate
 import ru.novolmob.core.models.ids.DeviceDetailId
 import ru.novolmob.core.models.ids.DeviceId
+import ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound
+import ru.novolmob.exposedbackendapi.exceptions.deviceDetailByDeviceIdAndLanguageNotFound
+import ru.novolmob.exposedbackendapi.exceptions.deviceDetailByIdNotFound
 import ru.novolmob.exposeddatabase.entities.Device
 import ru.novolmob.exposeddatabase.entities.DeviceDetail
 import ru.novolmob.exposeddatabase.tables.DeviceDetails
@@ -32,10 +35,7 @@ class DeviceDetailRepositoryImpl(
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceDetail.find { (DeviceDetails.device eq deviceId) and (DeviceDetails.language eq language) }
                 .limit(1).firstOrNull()
-                ?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.deviceDetailByDeviceIdAndLanguageNotFound(
-                deviceId,
-                language
-            ).left()
+                ?.let(mapper::invoke) ?: deviceDetailByDeviceIdAndLanguageNotFound(deviceId, language).left()
         }
 
     override suspend fun removeDetailFor(deviceId: DeviceId): Either<BackendException, Boolean> =
@@ -50,7 +50,7 @@ class DeviceDetailRepositoryImpl(
 
     override suspend fun get(id: DeviceDetailId): Either<BackendException, DeviceDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            DeviceDetail.findById(id)?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.deviceDetailByIdNotFound(
+            DeviceDetail.findById(id)?.let(mapper::invoke) ?: deviceDetailByIdNotFound(
                 id
             ).left()
         }
@@ -60,7 +60,7 @@ class DeviceDetailRepositoryImpl(
 
     override suspend fun post(createModel: DeviceDetailCreateModel): Either<BackendException, DeviceDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val device = Device.findById(createModel.deviceId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(
+            val device = Device.findById(createModel.deviceId) ?: return@newSuspendedTransaction deviceByIdNotFound(
                 createModel.deviceId
             ).left()
             DeviceDetail.new {
@@ -77,7 +77,7 @@ class DeviceDetailRepositoryImpl(
         createModel: DeviceDetailCreateModel
     ): Either<BackendException, DeviceDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val device = Device.findById(createModel.deviceId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(
+            val device = Device.findById(createModel.deviceId) ?: return@newSuspendedTransaction deviceByIdNotFound(
                 createModel.deviceId
             ).left()
             DeviceDetail.findById(id)?.apply {
@@ -87,7 +87,7 @@ class DeviceDetailRepositoryImpl(
                 this.features = createModel.features
                 this.language = createModel.language
                 updateDate = UpdateDate.now()
-            }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.deviceDetailByIdNotFound(id).left()
+            }?.let(mapper::invoke) ?: deviceDetailByIdNotFound(id).left()
         }
 
     override suspend fun put(
@@ -96,7 +96,7 @@ class DeviceDetailRepositoryImpl(
     ): Either<BackendException, DeviceDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val device = updateModel.deviceId?.let {
-                Device.findById(it) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(
+                Device.findById(it) ?: return@newSuspendedTransaction deviceByIdNotFound(
                     it
                 ).left()
             }
@@ -107,7 +107,7 @@ class DeviceDetailRepositoryImpl(
                 updateModel.features?.let { this.features = it }
                 updateModel.language?.let { this.language = it }
                 this.updateDate = UpdateDate.now()
-            }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.deviceDetailByIdNotFound(id).left()
+            }?.let(mapper::invoke) ?: deviceDetailByIdNotFound(id).left()
         }
 
     override suspend fun delete(id: DeviceDetailId): Either<BackendException, Boolean> =

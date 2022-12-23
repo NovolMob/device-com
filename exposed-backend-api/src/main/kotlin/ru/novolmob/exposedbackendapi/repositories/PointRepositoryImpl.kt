@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
+import arrow.fx.coroutines.parTraverseEither
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -14,6 +15,7 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IPointDetailRepository
 import ru.novolmob.backendapi.repositories.IPointRepository
+import ru.novolmob.core.models.City
 import ru.novolmob.exposeddatabase.entities.Point
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.PointId
@@ -34,6 +36,20 @@ class PointRepositoryImpl(
                     ).right()
                 }
             } ?: pointByIdNotFound(pointId).left()
+        }
+
+    override suspend fun getByCity(city: City, language: Language): Either<BackendException, List<PointShortModel>> =
+        newSuspendedTransaction(Dispatchers.IO) {
+            Point.find { Points.city eq city }
+                .parTraverseEither {
+                    pointDetailRepository.getDetailFor(it.id.value, language).flatMap { detail ->
+                        PointShortModel(
+                            id = detail.pointId,
+                            address = detail.address,
+                            schedule = detail.schedule
+                        ).right()
+                    }
+                }
         }
 
     override suspend fun get(id: PointId): Either<BackendException, PointModel> =

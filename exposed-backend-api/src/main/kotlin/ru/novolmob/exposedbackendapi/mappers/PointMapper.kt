@@ -9,6 +9,7 @@ import ru.novolmob.exposeddatabase.entities.Point
 class PointMapper: Mapper<Point, PointModel> {
     override fun invoke(input: Point): Either<BackendException, PointModel> =
         PointModel(
-            id = input.id.value
+            id = input.id.value,
+            city = input.city
         ).right()
 }

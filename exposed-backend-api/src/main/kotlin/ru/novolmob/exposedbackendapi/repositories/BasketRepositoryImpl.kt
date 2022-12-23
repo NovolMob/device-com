@@ -11,8 +11,9 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
-import ru.novolmob.backendapi.repositories.IBasketRepository
+import ru.novolmob.backendapi.repositories.*
 import ru.novolmob.core.models.Amount
+import ru.novolmob.core.models.Price
 import ru.novolmob.core.models.UpdateDate
 import ru.novolmob.core.models.ids.BasketId
 import ru.novolmob.core.models.ids.DeviceId
@@ -28,14 +29,39 @@ import ru.novolmob.exposeddatabase.tables.Baskets
 class BasketRepositoryImpl(
     val mapper: Mapper<Basket, BasketModel>,
     val resultRowMapper: Mapper<ResultRow, BasketModel>,
-    val itemMapper: Mapper<Basket, BasketItemModel>
+    val userRepository: IUserRepository,
+    val deviceDetailRepository: IDeviceDetailRepository,
 ): IBasketRepository {
 
     private fun find(userId: UserId, deviceId: DeviceId): Basket? =
         Basket.find { (Baskets.user eq userId) and (Baskets.device eq deviceId) }.limit(1).firstOrNull()
-    override suspend fun getBasket(userId: UserId): Either<BackendException, List<BasketItemModel>> =
+    override suspend fun getBasket(userId: UserId): Either<BackendException, BasketFullModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            Basket.find { Baskets.user eq userId }.sortedByDescending { it.creationDate }.parTraverseEither { itemMapper(it) }
+            Basket.find { Baskets.user eq userId }
+                .sortedByDescending { it.creationDate }
+                .let {
+                    it.parTraverseEither { basket ->
+                        userRepository.getLanguage(userId).flatMap { language ->
+                            val deviceId = basket.device.id.value
+                            deviceDetailRepository.getDetailFor(deviceId, language).flatMap {
+                                BasketItemModel(
+                                    device = DeviceShortModel(
+                                        id = deviceId,
+                                        title = it.title,
+                                        description = it.description,
+                                        price = basket.device.price
+                                    ),
+                                    amount = basket.amount
+                                ).right()
+                            }
+                        }
+                    }.flatMap { list ->
+                        BasketFullModel(
+                            list = list,
+                            totalPrice = Price(list.sumOf { product -> product.amount.int.toBigDecimal() * product.device.price.bigDecimal })
+                        ).right()
+                    }
+                }
         }
 
     override suspend fun setInBasket(

@@ -10,6 +10,7 @@ import ru.novolmob.exposeddatabase.tables.Points
 class ResultRowPointMapper: Mapper<ResultRow, PointModel> {
     override fun invoke(input: ResultRow): Either<BackendException, PointModel> =
         PointModel(
-            id = input[Points.id].value
+            id = input[Points.id].value,
+            city = input[Points.city]
         ).right()
 }
