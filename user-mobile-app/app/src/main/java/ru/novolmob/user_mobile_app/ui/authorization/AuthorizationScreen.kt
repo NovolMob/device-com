@@ -1,0 +1,481 @@
+@file:OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
+
+package ru.novolmob.user_mobile_app.ui.authorization
+
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
+import ru.novolmob.user_mobile_app.R
+import ru.novolmob.user_mobile_app.navigation.NavigationRoute.Registration.navigateToRegistration
+import ru.novolmob.user_mobile_app.services.ProfileServiceImpl
+
+@Preview(showBackground = true)
+@Composable
+fun AuthorizationScreenPreview(
+
+) {
+    AuthorizationScreen(
+        viewModel = AuthorizationViewModel(
+            ProfileServiceImpl()
+        )
+    )
+}
+
+@Composable
+fun AuthorizationScreen(
+    modifier: Modifier = Modifier,
+    viewModel: AuthorizationViewModel = getViewModel(),
+    navHostController: NavHostController = rememberAnimatedNavController()
+) {
+    val state by viewModel.state.collectAsState()
+    val pagerState = rememberPagerState()
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(key1 = true) {
+        launch {
+            snapshotFlow { pagerState.currentPage }.collectLatest {
+                viewModel.reset()
+            }
+        }
+    }
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .width(350.dp)
+                .imePadding()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(interactionSource = MutableInteractionSource(), indication = null) {
+                        navHostController.navigateToRegistration()
+                    },
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = stringResource(id = R.string.registration),
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color.LightGray
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(20.dp),
+                    imageVector = Icons.Default.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = Color.LightGray
+                )
+            }
+            Header(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 5.dp)
+            )
+            Column(
+                modifier = Modifier
+                    .height(350.dp),
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AuthTypesRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 5.dp),
+                    pagerState = pagerState
+                )
+                Form(
+                    modifier = Modifier
+                        .padding(vertical = 10.dp),
+                    pagerState = pagerState,
+                    setEmail = viewModel::email,
+                    emailValidator = viewModel::validEmail,
+                    setPhoneNumber = viewModel::phoneNumber,
+                    phoneNumberValidator = viewModel::validPhoneNumber,
+                    setPassword = viewModel::password,
+                    loginByEmail = viewModel::loginByEmail,
+                    loginByPhoneNumber = viewModel::loginByPhoneNumber
+                )
+                LoginButton(
+                    modifier = Modifier
+                        .padding(vertical = 5.dp),
+                    enable = state.canEnter,
+                    loading = state.loading,
+                    onClick = {
+                        focusManager.clearFocus()
+                        viewModel.login()
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun Header(
+    modifier: Modifier = Modifier
+) {
+    Text(
+        modifier = modifier,
+        text = stringResource(id = R.string.authorization),
+        fontSize = 24.sp,
+        textAlign = TextAlign.Center,
+        fontWeight = FontWeight.Bold,
+        color = Color.Black
+    )
+}
+
+@Composable
+private fun AuthTypesRow(
+    modifier: Modifier = Modifier,
+    pagerState: PagerState,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        SelectingTabForPagerState(
+            modifier = Modifier.weight(1f),
+            text = stringResource(id = R.string.by_email),
+            number = 0,
+            pagerState = pagerState
+        )
+        SelectingTabForPagerState(
+            modifier = Modifier.weight(1f),
+            text = stringResource(id = R.string.by_phone_number),
+            number = 1,
+            pagerState = pagerState
+        )
+    }
+}
+
+@Composable
+private fun Form(
+    modifier: Modifier = Modifier,
+    pagerState: PagerState,
+    setEmail: (String) -> Unit,
+    emailValidator: (String) -> Boolean,
+    setPhoneNumber: (String) -> Unit,
+    phoneNumberValidator: (String) -> Boolean,
+    setPassword: (String) -> Unit,
+    loginByEmail: () -> Unit,
+    loginByPhoneNumber: () -> Unit
+) {
+    HorizontalPager(
+        modifier = modifier,
+        count = 2,
+        state = pagerState,
+        itemSpacing = 30.dp
+    ) { page ->
+        if (page == 0) {
+            AuthForm(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 25.dp),
+                setLogin = setEmail,
+                loginValidator = emailValidator,
+                loginPlaceholder = stringResource(id = R.string.email),
+                setPassword = setPassword,
+                onDone = loginByEmail
+            )
+        } else {
+            AuthForm(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 25.dp),
+                setLogin = setPhoneNumber,
+                loginValidator = phoneNumberValidator,
+                loginPlaceholder = stringResource(id = R.string.phone_number),
+                setPassword = setPassword,
+                onDone = loginByPhoneNumber
+            )
+        }
+    }
+}
+
+@Composable
+private fun SelectingTabForPagerState(
+    modifier: Modifier = Modifier,
+    text: String,
+    number: Int,
+    pagerState: PagerState
+) {
+    val scope = rememberCoroutineScope()
+    val isSelected by remember(number, pagerState.currentPage) {
+        derivedStateOf { pagerState.currentPage == number }
+    }
+    val color by remember(isSelected) {
+        derivedStateOf { if (isSelected) Color.Gray else Color.LightGray }
+    }
+    val dividerWidth by remember(isSelected) {
+        derivedStateOf { if (isSelected) 0.9f else 0f }
+    }
+    val colorAnimation by animateColorAsState(targetValue = color)
+    val dividerWidthAnimation by animateFloatAsState(targetValue = dividerWidth)
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            modifier = Modifier
+                .clickable(interactionSource = MutableInteractionSource(), indication = null) {
+                    scope.launch { pagerState.animateScrollToPage(number) }
+                },
+            text = text,
+            fontSize = 16.sp,
+            color = colorAnimation,
+            textAlign = TextAlign.Center
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(dividerWidthAnimation)
+                .height(1.dp)
+                .background(color = Color.Black)
+                .clip(RoundedCornerShape(10.dp))
+        )
+    }
+}
+
+@Composable
+private fun AuthForm(
+    modifier: Modifier = Modifier,
+    setLogin: (String) -> Unit,
+    loginValidator: (String) -> Boolean,
+    loginPlaceholder: String,
+    setPassword: (String) -> Unit,
+    onDone: () -> Unit
+) {
+    val focusManager = LocalFocusManager.current
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        InputField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            updateValue = setLogin,
+            validator = loginValidator,
+            placeholder = loginPlaceholder,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
+            )
+        )
+
+        PasswordField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            setPassword = setPassword
+        ) {
+            focusManager.clearFocus()
+            onDone()
+        }
+    }
+}
+
+@Composable
+private fun PasswordField(
+    modifier: Modifier = Modifier,
+    setPassword: (String) -> Unit,
+    onDone: () -> Unit
+) {
+    var passwordVisible by remember { mutableStateOf(false) }
+    val lockColor by remember(passwordVisible) {
+        derivedStateOf { if (passwordVisible) Color.Gray else Color.Blue.copy(alpha = 0.4f) }
+    }
+
+    Box(modifier = modifier) {
+        InputField(
+            modifier = Modifier.fillMaxWidth(),
+            updateValue = setPassword,
+            placeholder = stringResource(id = R.string.password),
+            keyboardActions = KeyboardActions(
+                onDone = { onDone() }
+            ),
+            visualTransformation = {
+                if (!passwordVisible)
+                    TransformedText(
+                        AnnotatedString("•".repeat(it.text.length)),
+                        OffsetMapping.Identity
+                    )
+                else TransformedText(it, OffsetMapping.Identity)
+            }
+        )
+        Icon(
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .size(17.dp)
+                .align(Alignment.CenterEnd)
+                .clickable(interactionSource = MutableInteractionSource(), indication = null) {
+                    passwordVisible = !passwordVisible
+                },
+            imageVector = Icons.Default.Lock,
+            contentDescription = null,
+            tint = lockColor
+        )
+    }
+}
+
+@Composable
+private fun LoginButton(
+    modifier: Modifier = Modifier,
+    enable: Boolean,
+    loading: Boolean,
+    onClick: () -> Unit
+) {
+    val textWidth by remember(enable) {
+        derivedStateOf { if (enable) 0.8f else 0.4f }
+    }
+    val textHeight by remember(enable) {
+        derivedStateOf { if (enable) 40.dp else 30.dp }
+    }
+    val textBackgroundColor by remember(enable) {
+        derivedStateOf { if (enable) Color.Green else Color.LightGray }
+    }
+    val textWidthAnimation by animateFloatAsState(targetValue = textWidth)
+    val textHeightAnimation by animateDpAsState(targetValue = textHeight)
+    val textBackgroundColorAnimation by animateColorAsState(targetValue = textBackgroundColor)
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth(textWidthAnimation)
+            .height(textHeightAnimation)
+            .background(color = textBackgroundColorAnimation, shape = CircleShape)
+            .clickable(interactionSource = MutableInteractionSource(), indication = null) {
+                if (enable) onClick()
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(25.dp),
+                color = Color.White
+            )
+        } else {
+            Text(
+                modifier = Modifier,
+                text = if (enable) stringResource(id = R.string.login) else "",
+                fontSize = 18.sp,
+                color = Color.Black,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+private fun InputField(
+    modifier: Modifier = Modifier,
+    updateValue: (String) -> Unit,
+    validator: ((String) -> Boolean)? = null,
+    placeholder: String,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+) {
+    var value by remember {
+        mutableStateOf("")
+    }
+
+    val isValid by remember(value, validator) {
+        derivedStateOf { validator?.let { it(value) } }
+    }
+
+    val color by remember(isValid, value) {
+        derivedStateOf {
+            if (value.isNotEmpty() && isValid != null)
+                if (isValid!!) Color.Green else Color.Red
+            else Color.LightGray
+        }
+    }
+
+    val colorAnimation by animateColorAsState(targetValue = color)
+
+    BasicTextField(
+        modifier = modifier
+            .border(width = 1.dp, color = colorAnimation, shape = CircleShape)
+            .background(color = colorAnimation.copy(alpha = 0.04f), shape = CircleShape),
+        value = value,
+        onValueChange = {
+            value = it
+            updateValue(it)
+        },
+        singleLine = true,
+        textStyle = TextStyle(
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center,
+            color = Color.Black
+        ),
+        visualTransformation = visualTransformation,
+        keyboardActions = keyboardActions,
+        keyboardOptions = keyboardOptions,
+        decorationBox = {
+            Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp), contentAlignment = Alignment.Center) {
+                if (value.isEmpty())
+                    Text(
+                        text = placeholder,
+                        color = Color.LightGray,
+                        fontSize = 18.sp
+                    )
+                it()
+            }
+        }
+    )
+}

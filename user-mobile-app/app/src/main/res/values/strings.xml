@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">DeviceCom</string>
+    <string name="registration">Регистрация</string>
+    <string name="authorization">Авторизация</string>
+    <string name="by_email">по Email</string>
+    <string name="by_phone_number">по Номеру телефона</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="password">Пароль</string>
+    <string name="login">ВОЙТИ</string>
+    <string name="firstname">Имя</string>
+    <string name="lastname">Фамилия</string>
+    <string name="patronymic">Отчество</string>
+    <string name="signin">ЗАРЕГИСТРИРОВАТЬСЯ</string>
+    <string name="city">Город</string>
+    <string name="language">Язык</string>
+    <string name="birthday">Дата рождения</string>
+    <string name="repeat_password">Повторите пароль</string>
+    <string name="catalog">Каталог</string>
+    <string name="basket">Корзина</string>
+    <string name="profile">Профиль</string>
+    <string name="search">Поиск</string>
+    <string name="add_to_basket">Добавить</string>
+    <string name="save_profile">Сохранить профиль</string>
+    <string name="confirm_order">Оформить заказ</string>
+    <string name="basket_is_empty">Корзина пуста</string>
+</resources>
