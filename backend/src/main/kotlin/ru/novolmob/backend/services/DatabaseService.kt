@@ -2,6 +2,8 @@ package ru.novolmob.backend.services
 
 import org.jetbrains.exposed.sql.Database
 import ru.novolmob.exposeddatabase.utils.DatabaseUtil
+import java.sql.Connection
+import java.sql.DriverManager
 
 object DatabaseService {
     private const val URL = "jdbc:postgresql://db.nmmdvscyjuohfkwkmefh.supabase.co:5432/postgres"
@@ -19,15 +21,23 @@ object DatabaseService {
                 readln()
             }.takeIf { it.isNotEmpty() }
 
-    suspend fun connect(): Result<Database> = runCatching {
+    suspend fun connectWithExposed(): Result<Database> = runCatching {
         val user = readUser() ?: throw NullPointerException("Database user is null!")
         val password = readPassword(user) ?: throw NullPointerException("Database password is null!")
-        connect(user, password).getOrThrow()
+        connectWithExposed(user, password).getOrThrow()
     }
-    suspend fun connect(user: String, password: String): Result<Database> =
+    suspend fun connectWithExposed(user: String, password: String): Result<Database> =
         DatabaseUtil.connectAndCreateAllTables(
             url = URL, user = user,
             password = password
         )
+
+    fun connectWithJdbc(): Result<Connection> = runCatching {
+        val user = readUser() ?: throw NullPointerException("Database user is null!")
+        val password = readPassword(user) ?: throw NullPointerException("Database password is null!")
+        connectWithJdbc(user, password).getOrThrow()
+    }
+    fun connectWithJdbc(user: String, password: String): Result<Connection> =
+        runCatching { DriverManager.getConnection(URL, user, password) }
 
 }

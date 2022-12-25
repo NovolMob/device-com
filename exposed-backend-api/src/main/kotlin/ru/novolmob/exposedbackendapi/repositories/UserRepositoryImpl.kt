@@ -96,7 +96,7 @@ class UserRepositoryImpl(
                         this.birthday = createModel.birthday
                         this.city = createModel.city
                         this.language = createModel.language
-                        this.updateDate = UpdateDate.now()
+                        this.updateDate = UpdateTime.now()
                     }?.let(mapper::invoke) ?: userByIdNotFound(id).left()
                 }
             }
@@ -121,7 +121,7 @@ class UserRepositoryImpl(
                         updateModel.birthday?.let { this.birthday = it }
                         updateModel.city?.let { this.city = it }
                         updateModel.language?.let { this.language = it }
-                        this.updateDate = UpdateDate.now()
+                        this.updateDate = UpdateTime.now()
                     }?.let(mapper::invoke) ?: userByIdNotFound(id).left()
                 }
             }

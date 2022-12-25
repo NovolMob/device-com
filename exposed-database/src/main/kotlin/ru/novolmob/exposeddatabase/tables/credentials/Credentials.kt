@@ -7,7 +7,7 @@ import ru.novolmob.exposeddatabase.extensions.TableExtension.email
 import ru.novolmob.exposeddatabase.extensions.TableExtension.idColumn
 import ru.novolmob.exposeddatabase.extensions.TableExtension.password
 import ru.novolmob.exposeddatabase.extensions.TableExtension.phoneNumber
-import ru.novolmob.exposeddatabase.extensions.TableExtension.updateDate
+import ru.novolmob.exposeddatabase.extensions.TableExtension.updateTime
 import ru.novolmob.core.models.ids.CredentialId
 
 open class Credentials: IdTable<CredentialId>() {
@@ -17,5 +17,5 @@ open class Credentials: IdTable<CredentialId>() {
     val phoneNumber = phoneNumber().uniqueIndex()
     val email = email().uniqueIndex().nullable()
     val password = password()
-    val updateDate = updateDate()
+    val updateDate = updateTime()
 }

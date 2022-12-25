@@ -19,7 +19,7 @@ import ru.novolmob.backendapi.repositories.IPointDetailRepository
 import ru.novolmob.backendapi.repositories.IPointToDeviceRepository
 import ru.novolmob.core.models.Amount
 import ru.novolmob.core.models.Language
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.PointToDeviceEntityId
@@ -68,7 +68,7 @@ class PointToDeviceRepositoryImpl(
             if (amount.int > 0) {
                 pointToDevice?.run {
                     this.amount = amount
-                    this.updateDate = UpdateDate.now()
+                    this.updateDate = UpdateTime.now()
                     true.right()
                 } ?: let {
                     post(PointToDeviceEntityCreateModel(pointId, deviceId, amount)).flatMap {
@@ -130,7 +130,7 @@ class PointToDeviceRepositoryImpl(
                 this.point = point
                 this.device = device
                 this.amount = createModel.amount
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: pointToDeviceEntityByIdNotFound(id).left()
         }
 
@@ -151,7 +151,7 @@ class PointToDeviceRepositoryImpl(
                 point?.let { this.point = it }
                 device?.let { this.device = it }
                 updateModel.amount?.let { this.amount = it }
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: pointToDeviceEntityByIdNotFound(id).left()
         }
 

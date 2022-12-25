@@ -82,10 +82,10 @@ object TableExtension {
             )
         )
 
-    fun Table.creationDate(name: String = "creation_date"): Column<CreationDate> =
-        registerColumn<CreationDate>(
+    fun Table.creationTime(name: String = "creation_date"): Column<CreationTime> =
+        registerColumn<CreationTime>(
             name,
-            CustomDateColumnType(::CreationDate)
+            CustomDateTimeColumnType(::CreationTime)
         ).creationDateGeneration()
 
     fun Table.description(name: String = "description", json: Json = Json, collate: String? = null, eagerLoading: Boolean = false): Column<Description> =
@@ -174,14 +174,14 @@ object TableExtension {
             )
         )
 
-    fun Table.updateDate(name: String = "update_date"): Column<UpdateDate> =
-        registerColumn<UpdateDate>(
+    fun Table.updateTime(name: String = "update_time"): Column<UpdateTime> =
+        registerColumn<UpdateTime>(
             name,
-            CustomDateColumnType(::UpdateDate)
+            CustomDateTimeColumnType(::UpdateTime)
         ).updateDateGeneration()
 
     fun <T: UUIDable> Table.idColumn(name: String = "id", constructor: (UUID) -> T): Column<T> =
         registerColumn<T>(name, CustomUUIDColumnType(constructor)).clientDefault { constructor(UUID.randomUUID()) }
-    fun Column<UpdateDate>.updateDateGeneration() = clientDefault { UpdateDate.now() }
-    fun Column<CreationDate>.creationDateGeneration() = clientDefault { CreationDate.now() }
+    fun Column<UpdateTime>.updateDateGeneration() = clientDefault { UpdateTime.now() }
+    fun Column<CreationTime>.creationDateGeneration() = clientDefault { CreationTime.now() }
 }

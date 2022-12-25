@@ -14,7 +14,7 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IOrderStatusDetailRepository
 import ru.novolmob.core.models.Language
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.OrderStatusDetailId
 import ru.novolmob.core.models.ids.OrderStatusId
 import ru.novolmob.exposeddatabase.entities.OrderStatus
@@ -83,7 +83,7 @@ class OrderStatusDetailRepositoryImpl(
                 this.title = createModel.title
                 this.description = createModel.description
                 this.language = language
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.orderStatusDetailByIdNotFound(id).left()
         }
 
@@ -102,7 +102,7 @@ class OrderStatusDetailRepositoryImpl(
                 updateModel.title?.let { this.title = it }
                 updateModel.description?.let { this.description = it }
                 updateModel.language?.let { this.language = it }
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.orderStatusDetailByIdNotFound(id).left()
         }
 

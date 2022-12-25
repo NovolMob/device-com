@@ -4,9 +4,9 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
 import ru.novolmob.exposeddatabase.extensions.TableExtension.amount
-import ru.novolmob.exposeddatabase.extensions.TableExtension.creationDate
+import ru.novolmob.exposeddatabase.extensions.TableExtension.creationTime
 import ru.novolmob.exposeddatabase.extensions.TableExtension.idColumn
-import ru.novolmob.exposeddatabase.extensions.TableExtension.updateDate
+import ru.novolmob.exposeddatabase.extensions.TableExtension.updateTime
 import ru.novolmob.core.models.ids.BasketId
 
 object Baskets: IdTable<BasketId>() {
@@ -16,6 +16,6 @@ object Baskets: IdTable<BasketId>() {
     val user = reference("user_id", Users)
     val device = reference("device_id", Devices)
     val amount = amount()
-    val updateDate = updateDate()
-    val creationDate = creationDate()
+    val updateTime = updateTime()
+    val creationTime = creationTime()
 }

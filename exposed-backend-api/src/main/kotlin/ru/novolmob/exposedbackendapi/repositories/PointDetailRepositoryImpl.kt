@@ -19,7 +19,7 @@ import ru.novolmob.backendapi.repositories.IPointDetailRepository
 import ru.novolmob.exposeddatabase.entities.Point
 import ru.novolmob.exposeddatabase.entities.PointDetail
 import ru.novolmob.core.models.Language
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.PointDetailId
 import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.exposeddatabase.tables.PointDetails
@@ -78,7 +78,7 @@ class PointDetailRepositoryImpl(
                 this.schedule = createModel.schedule
                 this.description = createModel.description
                 this.language = createModel.language
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: pointDetailByIdNotFound(id).left()
         }
 
@@ -96,7 +96,7 @@ class PointDetailRepositoryImpl(
                 updateModel.schedule?.let { this.schedule = it }
                 updateModel.description?.let { this.description = it }
                 updateModel.language?.let { this.language = it }
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: pointDetailByIdNotFound(id).left()
         }
 

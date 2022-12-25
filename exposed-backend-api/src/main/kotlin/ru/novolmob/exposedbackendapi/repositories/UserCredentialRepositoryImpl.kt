@@ -12,7 +12,7 @@ import ru.novolmob.exposedbackendapi.util.RepositoryUtil
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IUserCredentialRepository
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.CredentialId
 import ru.novolmob.core.models.ids.UserId
 import ru.novolmob.exposeddatabase.entities.User
@@ -79,7 +79,7 @@ class UserCredentialRepositoryImpl(
                 updateModel.phoneNumber?.let { this.phoneNumber }
                 updateModel.email?.let { this.email }
                 updateModel.password?.let { this.password }
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.credentialByIdNotFoundException(id).left()
         }
 

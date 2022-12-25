@@ -20,7 +20,7 @@ class CustomTextColumnType<T: Any>(
     }
 
     private fun valueToText(value: Any): String =
-        if (klass.isInstance(value)) json.encodeToString(serializer, value as T) else value.toString()
+        if (klass.isInstance(value)) json.encodeToString(serializer, value as T).drop(1).dropLast(1) else value.toString()
     override fun notNullValueToDB(value: Any): Any = valueToText(value)
     override fun nonNullValueToString(value: Any): String = valueToText(value)
 }

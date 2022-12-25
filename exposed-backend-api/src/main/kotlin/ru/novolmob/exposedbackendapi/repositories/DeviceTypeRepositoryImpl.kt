@@ -13,7 +13,7 @@ import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IDeviceTypeDetailRepository
 import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
 import ru.novolmob.core.models.Language
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.DeviceTypeId
 import ru.novolmob.exposedbackendapi.exceptions.deviceTypeByIdNotFound
 import ru.novolmob.exposedbackendapi.mappers.Mapper
@@ -79,7 +79,7 @@ class DeviceTypeRepositoryImpl(
     ): Either<BackendException, DeviceTypeModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceType.findById(id)?.apply {
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke)
                 ?: deviceTypeByIdNotFound(id).left()
         }
@@ -90,7 +90,7 @@ class DeviceTypeRepositoryImpl(
     ): Either<BackendException, DeviceTypeModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceType.findById(id)?.apply {
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke)
                 ?: deviceTypeByIdNotFound(id).left()
         }

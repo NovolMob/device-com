@@ -1,7 +1,7 @@
 package ru.novolmob.core.models
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 
 interface Dated {
-    val date: LocalDateTime
+    val date: LocalDate
 }

@@ -16,7 +16,7 @@ import ru.novolmob.backendapi.repositories.IDeviceRepository
 import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
 import ru.novolmob.backendapi.repositories.IPointToDeviceRepository
 import ru.novolmob.core.models.Language
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound
 import ru.novolmob.exposedbackendapi.exceptions.deviceTypeByIdNotFound
@@ -80,7 +80,7 @@ class DeviceRepositoryImpl(
                 this.article = createModel.article
                 this.type = type
                 this.price = createModel.price
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: deviceByIdNotFound(id).left()
         }
 
@@ -95,7 +95,7 @@ class DeviceRepositoryImpl(
                 updateModel.article?.let { this.article = it }
                 type?.let { this.type = it }
                 updateModel.price?.let { this.price = it }
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: deviceByIdNotFound(id).left()
         }
 

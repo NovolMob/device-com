@@ -109,7 +109,7 @@ class WorkerRepositoryImpl(
                         this.lastname = createModel.lastname
                         this.patronymic = createModel.patronymic
                         this.language = createModel.language
-                        this.updateDate = UpdateDate.now()
+                        this.updateDate = UpdateTime.now()
                     }?.let(mapper::invoke) ?: workerByIdNotFound(id).left()
                 }
             }
@@ -136,7 +136,7 @@ class WorkerRepositoryImpl(
                         updateModel.lastname?.let { this.lastname = it }
                         updateModel.patronymic?.let { this.patronymic = it }
                         updateModel.language?.let { this.language = it }
-                        this.updateDate = UpdateDate.now()
+                        this.updateDate = UpdateTime.now()
                     }?.let(mapper::invoke) ?: workerByIdNotFound(id).left()
                 }
             }

@@ -14,7 +14,7 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IDeviceDetailRepository
 import ru.novolmob.core.models.Language
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.DeviceDetailId
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound
@@ -86,7 +86,7 @@ class DeviceDetailRepositoryImpl(
                 this.description = createModel.description
                 this.features = createModel.features
                 this.language = createModel.language
-                updateDate = UpdateDate.now()
+                updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: deviceDetailByIdNotFound(id).left()
         }
 
@@ -106,7 +106,7 @@ class DeviceDetailRepositoryImpl(
                 updateModel.description?.let { this.description = it }
                 updateModel.features?.let { this.features = it }
                 updateModel.language?.let { this.language = it }
-                this.updateDate = UpdateDate.now()
+                this.updateDate = UpdateTime.now()
             }?.let(mapper::invoke) ?: deviceDetailByIdNotFound(id).left()
         }
 

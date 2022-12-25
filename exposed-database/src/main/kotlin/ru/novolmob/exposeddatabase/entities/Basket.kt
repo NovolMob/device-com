@@ -12,6 +12,6 @@ class Basket(id: EntityID<BasketId>) : Entity<BasketId>(id) {
     var user by User referencedOn Baskets.user
     var device by Device referencedOn Baskets.device
     var amount by Baskets.amount
-    var updateDate by Baskets.updateDate
-    var creationDate by Baskets.creationDate
+    var updateTime by Baskets.updateTime
+    var creationTime by Baskets.creationTime
 }

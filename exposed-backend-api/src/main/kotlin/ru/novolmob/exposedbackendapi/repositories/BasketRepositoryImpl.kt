@@ -14,7 +14,7 @@ import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.*
 import ru.novolmob.core.models.Amount
 import ru.novolmob.core.models.Price
-import ru.novolmob.core.models.UpdateDate
+import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.BasketId
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.UserId
@@ -38,7 +38,7 @@ class BasketRepositoryImpl(
     override suspend fun getBasket(userId: UserId): Either<BackendException, BasketFullModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             Basket.find { Baskets.user eq userId }
-                .sortedByDescending { it.creationDate }
+                .sortedByDescending { it.creationTime }
                 .let {
                     it.parTraverseEither { basket ->
                         userRepository.getLanguage(userId).flatMap { language ->
@@ -74,7 +74,7 @@ class BasketRepositoryImpl(
             if (amount.int > 0) {
                 basketItem?.run {
                     this.amount = amount
-                    this.updateDate = UpdateDate.now()
+                    this.updateTime = UpdateTime.now()
                     true.right()
                 } ?: let {
                     post(BasketCreateModel(userId, deviceId, amount)).flatMap {
@@ -132,7 +132,7 @@ class BasketRepositoryImpl(
                 this.user = user
                 this.device = device
                 this.amount = createModel.amount
-                this.updateDate = UpdateDate.now()
+                this.updateTime = UpdateTime.now()
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.basketByIdNotFoundException(id).left()
         }
 
@@ -151,7 +151,7 @@ class BasketRepositoryImpl(
                 user?.let { this.user = it }
                 device?.let { this.device = it }
                 updateModel.amount?.let { this.amount = it }
-                this.updateDate = UpdateDate.now()
+                this.updateTime = UpdateTime.now()
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.basketByIdNotFoundException(id).left()
         }
 

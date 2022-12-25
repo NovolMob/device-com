@@ -22,16 +22,6 @@ import ru.novolmob.backendapi.exceptions.BackendExceptionCode
 import ru.novolmob.backendapi.repositories.IGrantedRightRepository
 
 suspend fun main() {
-    DatabaseService.connect()
-        .onSuccess {
-            embeddedServer(Netty, host = "0.0.0.0", port = 8080, module = Application::backend).start(true)
-        }
-        .onFailure {
-            it.printStackTrace()
-        }
-}
-
-fun Application.backend() {
     startKoin {
         modules(
             module {
@@ -43,6 +33,16 @@ fun Application.backend() {
             }
         )
     }
+    DatabaseService.connectWithExposed()
+        .onSuccess {
+            embeddedServer(Netty, host = "0.0.0.0", port = 8080, module = Application::backend).start(true)
+        }
+        .onFailure {
+            it.printStackTrace()
+        }
+}
+
+fun Application.backend() {
     install(ContentNegotiation) {
         json()
     }

@@ -4,10 +4,10 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
 import ru.novolmob.exposeddatabase.extensions.TableExtension.code
-import ru.novolmob.exposeddatabase.extensions.TableExtension.creationDate
+import ru.novolmob.exposeddatabase.extensions.TableExtension.creationTime
 import ru.novolmob.exposeddatabase.extensions.TableExtension.idColumn
 import ru.novolmob.exposeddatabase.extensions.TableExtension.price
-import ru.novolmob.exposeddatabase.extensions.TableExtension.updateDate
+import ru.novolmob.exposeddatabase.extensions.TableExtension.updateTime
 import ru.novolmob.core.models.ids.DeviceId
 
 object Devices: IdTable<DeviceId>() {
@@ -17,6 +17,6 @@ object Devices: IdTable<DeviceId>() {
     val code = code()
     val type = reference("type_id", DeviceTypes)
     val price = price(precision = 10, scale = 2)
-    val updateDate = updateDate()
-    val creationDate = creationDate()
+    val updateDate = updateTime()
+    val creationDate = creationTime()
 }

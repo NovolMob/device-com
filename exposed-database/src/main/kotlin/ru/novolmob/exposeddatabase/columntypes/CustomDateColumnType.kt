@@ -12,19 +12,19 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class CustomDateColumnType<T: Dated>(
-    val constructor: (LocalDateTime) -> T,
+    val constructor: (LocalDate) -> T,
 ): ColumnType(), IDateColumnType {
     override val hasTimePart: Boolean = true
     override fun sqlType(): String = currentDialect.dataTypeProvider.dateTimeType()
 
     override fun readObject(rs: ResultSet, index: Int): Any? {
-        return rs.getDate(index)?.time?.let(::longToLocalDateTime)?.let(constructor)
+        return rs.getDate(index)?.time?.let(::longToLocalDateTime)?.let { constructor(it.date) }
     }
 
     override fun nonNullValueToString(value: Any): String {
         val instant = when (value) {
             is String -> return value
-            is Dated -> value.date.toInstant(DEFAULT_TIME_ZONE)
+            is Dated -> value.date.atStartOfDayIn(DEFAULT_TIME_ZONE)
             is LocalDateTime -> value.toInstant(DEFAULT_TIME_ZONE)
             is java.sql.Date -> Instant.fromEpochMilliseconds(value.time)
             is java.sql.Timestamp -> Instant.fromEpochSeconds(value.time / MILLIS_IN_SECOND, value.nanos.toLong())
@@ -44,6 +44,7 @@ class CustomDateColumnType<T: Dated>(
     override fun valueFromDB(value: Any): Any {
         val instant = when (value) {
             is LocalDateTime -> value
+            is LocalDate -> value
             is java.sql.Date -> longToLocalDateTime(value.time)
             is java.sql.Timestamp -> longToLocalDateTime(value.time / MILLIS_IN_SECOND, value.nanos.toLong())
             is Int -> longToLocalDateTime(value.toLong())
@@ -54,7 +55,8 @@ class CustomDateColumnType<T: Dated>(
         }
 
         return when(instant) {
-            is LocalDateTime -> constructor(instant)
+            is LocalDate -> constructor(instant)
+            is LocalDateTime -> constructor(instant.date)
             else -> instant
         }
     }

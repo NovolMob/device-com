@@ -3,13 +3,13 @@ package ru.novolmob.exposeddatabase.tables
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
-import ru.novolmob.exposeddatabase.extensions.TableExtension.creationDate
+import ru.novolmob.exposeddatabase.extensions.TableExtension.creationTime
 import ru.novolmob.exposeddatabase.extensions.TableExtension.description
 import ru.novolmob.exposeddatabase.extensions.TableExtension.features
 import ru.novolmob.exposeddatabase.extensions.TableExtension.idColumn
 import ru.novolmob.exposeddatabase.extensions.TableExtension.language
 import ru.novolmob.exposeddatabase.extensions.TableExtension.title
-import ru.novolmob.exposeddatabase.extensions.TableExtension.updateDate
+import ru.novolmob.exposeddatabase.extensions.TableExtension.updateTime
 import ru.novolmob.core.models.ids.DeviceDetailId
 
 object DeviceDetails: IdTable<DeviceDetailId>() {
@@ -21,6 +21,6 @@ object DeviceDetails: IdTable<DeviceDetailId>() {
     val description = description()
     val features = features()
     val language = language()
-    val updateDate = updateDate()
-    val creationDate = creationDate()
+    val updateDate = updateTime()
+    val creationDate = creationTime()
 }
