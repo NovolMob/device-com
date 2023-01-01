@@ -12,7 +12,7 @@ data class WorkerCredentialModel(
     val id: CredentialId,
     val workerId: WorkerId,
     val phoneNumber: PhoneNumber,
-    val email: Email?,
+    val email: Email? = null,
     val password: Password
 )
 
@@ -20,14 +20,14 @@ data class WorkerCredentialModel(
 data class WorkerCredentialCreateModel(
     val workerId: WorkerId,
     val phoneNumber: PhoneNumber,
-    val email: Email?,
+    val email: Email? = null,
     val password: Password
 )
 
 @Serializable
 data class WorkerCredentialUpdateModel(
-    val workerId: WorkerId?,
-    val phoneNumber: PhoneNumber?,
-    val email: Email?,
-    val password: Password?
+    val workerId: WorkerId? = null,
+    val phoneNumber: PhoneNumber? = null,
+    val email: Email? = null,
+    val password: Password? = null
 )

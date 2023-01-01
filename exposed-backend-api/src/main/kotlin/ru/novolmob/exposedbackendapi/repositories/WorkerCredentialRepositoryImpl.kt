@@ -26,7 +26,7 @@ class WorkerCredentialRepositoryImpl(
     override suspend fun getByWorkerId(workerId: WorkerId): Either<BackendException, WorkerCredentialModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             WorkerCredential.find { WorkerCredentials.worker eq workerId }
-                .limit(1).firstOrNull()?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.workerCredentialByUserIdNotFoundException(
+                .limit(1).firstOrNull()?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.workerCredentialByWorkerIdNotFoundException(
                 workerId
             ).left()
         }

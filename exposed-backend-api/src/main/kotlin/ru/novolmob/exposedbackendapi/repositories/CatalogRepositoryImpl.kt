@@ -14,7 +14,7 @@ import ru.novolmob.exposeddatabase.entities.Device
 import ru.novolmob.exposeddatabase.tables.Devices
 import kotlin.math.ceil
 
-class CatalogRepositoryImpl(): ICatalogRepository {
+class CatalogRepositoryImpl: ICatalogRepository {
     override suspend fun getCatalog(
         sample: CatalogSearchSample,
         language: Language

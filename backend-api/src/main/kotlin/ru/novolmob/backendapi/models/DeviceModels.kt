@@ -25,9 +25,9 @@ data class DeviceCreateModel(
 
 @Serializable
 data class DeviceUpdateModel(
-    val article: Code?,
-    val typeId: DeviceTypeId?,
-    val price: Price?
+    val article: Code? = null,
+    val typeId: DeviceTypeId? = null,
+    val price: Price? = null
 )
 
 @Serializable

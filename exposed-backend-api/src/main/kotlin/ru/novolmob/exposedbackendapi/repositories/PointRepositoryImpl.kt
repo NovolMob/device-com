@@ -38,11 +38,38 @@ class PointRepositoryImpl(
             } ?: pointByIdNotFound(pointId).left()
         }
 
+    override suspend fun getShort(pointId: PointId, language: Language): Either<BackendException, PointShortModel> =
+        newSuspendedTransaction(Dispatchers.IO) {
+            Point.findById(pointId)?.let{
+                pointDetailRepository.getDetailFor(pointId, language).flatMap { detail ->
+                    PointShortModel(
+                        id = pointId,
+                        address = detail.address,
+                        schedule = detail.schedule
+                    ).right()
+                }
+            } ?: pointByIdNotFound(pointId).left()
+        }
+
     override suspend fun getByCity(city: City, language: Language): Either<BackendException, List<PointShortModel>> =
         newSuspendedTransaction(Dispatchers.IO) {
             Point.find { Points.city eq city }
                 .parTraverseEither {
                     pointDetailRepository.getDetailFor(it.id.value, language).flatMap { detail ->
+                        PointShortModel(
+                            id = detail.pointId,
+                            address = detail.address,
+                            schedule = detail.schedule
+                        ).right()
+                    }
+                }
+        }
+
+    override suspend fun getAll(language: Language): Either<BackendException, List<PointShortModel>> =
+        newSuspendedTransaction(Dispatchers.IO) {
+            Point.all()
+                .parTraverseEither { point ->
+                    pointDetailRepository.getDetailFor(point.id.value, language).flatMap { detail ->
                         PointShortModel(
                             id = detail.pointId,
                             address = detail.address,

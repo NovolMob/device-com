@@ -29,9 +29,9 @@ data class PointDetailCreateModel(
 
 @Serializable
 data class PointDetailUpdateModel(
-    val pointId: PointId?,
-    val address: Address?,
-    val schedule: Schedule?,
-    val description: Description?,
-    val language: Language?
+    val pointId: PointId? = null,
+    val address: Address? = null,
+    val schedule: Schedule? = null,
+    val description: Description? = null,
+    val language: Language? = null
 )

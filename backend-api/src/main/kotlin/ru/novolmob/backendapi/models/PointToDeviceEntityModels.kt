@@ -23,7 +23,7 @@ data class PointToDeviceEntityCreateModel(
 
 @Serializable
 data class PointToDeviceEntityUpdateModel(
-    val pointId: PointId?,
-    val deviceId: DeviceId?,
-    val amount: Amount?
+    val pointId: PointId? = null,
+    val deviceId: DeviceId? = null,
+    val amount: Amount? = null
 )

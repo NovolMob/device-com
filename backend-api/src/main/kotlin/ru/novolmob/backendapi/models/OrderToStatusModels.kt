@@ -23,7 +23,7 @@ data class OrderToStatusEntityCreateModel(
 
 @Serializable
 data class OrderToStatusEntityUpdateModel(
-    val orderId: OrderId?,
-    val status: OrderStatusId?,
-    val workerId: WorkerId?,
+    val orderId: OrderId? = null,
+    val status: OrderStatusId? = null,
+    val workerId: WorkerId? = null,
 )

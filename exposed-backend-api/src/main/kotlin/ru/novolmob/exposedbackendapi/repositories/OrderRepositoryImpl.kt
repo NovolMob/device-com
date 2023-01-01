@@ -53,9 +53,25 @@ class OrderRepositoryImpl(
             } ?: ru.novolmob.exposedbackendapi.exceptions.orderByIdNotFound(orderId).left()
         }
 
-    override suspend fun getOrdersFor(userId: UserId): Either<BackendException, List<OrderModel>> =
+    override suspend fun getOrdersFor(userId: UserId, language: Language): Either<BackendException, List<OrderShortModel>> =
         newSuspendedTransaction(Dispatchers.IO) {
-            Order.find { Orders.user eq userId }.parTraverseEither { mapper(it) }
+            Order.find { Orders.user eq userId }.parTraverseEither { order ->
+                val orderId = order.id.value
+                pointRepository.getShort(order.point.id.value, language).flatMap { point ->
+                    orderToDeviceRepository.getDevices(order.id.value).flatMap { devices ->
+                        orderToStatusRepository.getLastStatus(order.id.value, language).flatMap { lastStatus ->
+                            OrderShortModel(
+                                id = orderId,
+                                userId = order.user.id.value,
+                                point = point,
+                                list = devices,
+                                totalCost = order.totalCost,
+                                lastStatus = lastStatus
+                            ).right()
+                        }
+                    }
+                }
+            }
         }
 
     override suspend fun get(id: OrderId): Either<BackendException, OrderModel> =

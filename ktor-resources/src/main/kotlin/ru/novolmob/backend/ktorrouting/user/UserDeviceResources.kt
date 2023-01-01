@@ -8,7 +8,7 @@ import ru.novolmob.core.models.ids.DeviceTypeId
 
 @Serializable
 @Resource("/devices")
-class Devices() {
+class Devices {
     @Serializable
     @Resource("{id}")
     class Id(val devices: Devices, val id: DeviceId)

@@ -12,7 +12,7 @@ data class UserCredentialModel(
     val id: CredentialId,
     val userId: UserId,
     val phoneNumber: PhoneNumber,
-    val email: Email?,
+    val email: Email? = null,
     val password: Password
 )
 
@@ -26,8 +26,8 @@ data class UserCredentialCreateModel(
 
 @Serializable
 data class UserCredentialUpdateModel(
-    val userId: UserId?,
-    val phoneNumber: PhoneNumber?,
-    val email: Email?,
-    val password: Password?
+    val userId: UserId? = null,
+    val phoneNumber: PhoneNumber? = null,
+    val email: Email? = null,
+    val password: Password? = null
 )

@@ -40,5 +40,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
 
+    implementation("io.insert-koin:koin-ktor:$koin_version")
+
     testImplementation(kotlin("test"))
 }

@@ -13,6 +13,7 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.*
 import ru.novolmob.core.models.Amount
+import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.Price
 import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.BasketId
@@ -29,31 +30,27 @@ import ru.novolmob.exposeddatabase.tables.Baskets
 class BasketRepositoryImpl(
     val mapper: Mapper<Basket, BasketModel>,
     val resultRowMapper: Mapper<ResultRow, BasketModel>,
-    val userRepository: IUserRepository,
     val deviceDetailRepository: IDeviceDetailRepository,
 ): IBasketRepository {
 
     private fun find(userId: UserId, deviceId: DeviceId): Basket? =
         Basket.find { (Baskets.user eq userId) and (Baskets.device eq deviceId) }.limit(1).firstOrNull()
-    override suspend fun getBasket(userId: UserId): Either<BackendException, BasketFullModel> =
+    override suspend fun getBasket(userId: UserId, language: Language): Either<BackendException, BasketFullModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             Basket.find { Baskets.user eq userId }
                 .sortedByDescending { it.creationTime }
                 .let {
                     it.parTraverseEither { basket ->
-                        userRepository.getLanguage(userId).flatMap { language ->
-                            val deviceId = basket.device.id.value
-                            deviceDetailRepository.getDetailFor(deviceId, language).flatMap {
-                                BasketItemModel(
-                                    device = DeviceShortModel(
-                                        id = deviceId,
-                                        title = it.title,
-                                        description = it.description,
-                                        price = basket.device.price
-                                    ),
-                                    amount = basket.amount
-                                ).right()
-                            }
+                        deviceDetailRepository.getDetailFor(basket.device.id.value, language).flatMap {
+                            BasketItemModel(
+                                device = DeviceShortModel(
+                                    id = it.deviceId,
+                                    title = it.title,
+                                    description = it.description,
+                                    price = basket.device.price
+                                ),
+                                amount = basket.amount
+                            ).right()
                         }
                     }.flatMap { list ->
                         BasketFullModel(

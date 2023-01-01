@@ -28,7 +28,7 @@ import ru.novolmob.exposeddatabase.tables.credentials.WorkerCredentials
 
 class WorkerRepositoryImpl(
     val mapper: Mapper<Worker, WorkerModel>,
-    val resultRowMapper: Mapper<ResultRow, WorkerModel>,
+    val resultRowInfoMapper: Mapper<ResultRow, WorkerInfoModel>,
     val workerCredentialRepository: IWorkerCredentialRepository
 ): IWorkerRepository {
     override suspend fun getLanguage(workerId: WorkerId): Either<BackendException, Language> =
@@ -63,7 +63,24 @@ class WorkerRepositoryImpl(
         }
 
     override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<WorkerModel>> =
-        RepositoryUtil.generalGatAll(Workers, pagination, resultRowMapper)
+        RepositoryUtil.generalGatAll(Workers, pagination, resultRowInfoMapper).flatMap {  page ->
+            page.list.parTraverseEither { infoModel ->
+                workerCredentialRepository.getByWorkerId(infoModel.id).flatMap { credential ->
+                    WorkerModel(
+                        id = infoModel.id,
+                        pointId = infoModel.pointId,
+                        firstname = infoModel.firstname,
+                        lastname = infoModel.lastname,
+                        patronymic = infoModel.patronymic,
+                        language = infoModel.language,
+                        phoneNumber = credential.phoneNumber,
+                        email = credential.email
+                    ).right()
+                }
+            }.flatMap {
+                Page(page = page.page, size = page.size, list = it).right()
+            }
+        }
 
     override suspend fun post(createModel: WorkerCreateModel): Either<BackendException, WorkerModel> =
         newSuspendedTransaction(Dispatchers.IO) {

@@ -26,8 +26,8 @@ data class OrderToDeviceEntityCreateModel(
 
 @Serializable
 data class OrderToDeviceEntityUpdateModel(
-    val orderId: OrderId?,
-    val deviceId: DeviceId?,
-    val amount: Amount?,
-    val priceForOne: Price?
+    val orderId: OrderId? = null,
+    val deviceId: DeviceId? = null,
+    val amount: Amount? = null,
+    val priceForOne: Price? = null
 )

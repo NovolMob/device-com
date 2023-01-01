@@ -24,9 +24,9 @@ data class BasketCreateModel(
 
 @Serializable
 data class BasketUpdateModel(
-    val userId: UserId?,
-    val deviceId: DeviceId?,
-    val amount: Amount?
+    val userId: UserId? = null,
+    val deviceId: DeviceId? = null,
+    val amount: Amount? = null
 )
 
 @Serializable

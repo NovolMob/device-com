@@ -25,9 +25,19 @@ data class OrderCreateModel(
 
 @Serializable
 data class OrderUpdateModel(
-    val userId: UserId?,
-    val pointId: PointId?,
-    val totalCost: Price?
+    val userId: UserId? = null,
+    val pointId: PointId? = null,
+    val totalCost: Price? = null
+)
+
+@Serializable
+data class OrderShortModel(
+    val id: OrderId,
+    val userId: UserId,
+    val point: PointShortModel,
+    val list: List<OrderItemModel>,
+    val totalCost: Price,
+    val lastStatus: OrderStatusShortModel
 )
 
 @Serializable

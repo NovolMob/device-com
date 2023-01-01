@@ -9,4 +9,5 @@ import ru.novolmob.core.models.ids.OrderToStatusEntityId
 
 interface IOrderToStatusRepository: ICrudRepository<OrderToStatusEntityId, OrderToStatusEntityModel, OrderToStatusEntityCreateModel, OrderToStatusEntityUpdateModel> {
     suspend fun getStatuses(orderId: OrderId, language: Language): Either<BackendException, List<OrderStatusFullModel>>
+    suspend fun getLastStatus(orderId: OrderId, language: Language): Either<BackendException, OrderStatusShortModel>
 }

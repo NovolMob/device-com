@@ -9,5 +9,7 @@ import ru.novolmob.core.models.ids.PointId
 
 interface IPointRepository: ICrudRepository<PointId, PointModel, PointCreateModel, PointUpdateModel> {
     suspend fun getFull(pointId: PointId, language: Language): Either<BackendException, PointFullModel>
+    suspend fun getShort(pointId: PointId, language: Language): Either<BackendException, PointShortModel>
     suspend fun getByCity(city: City, language: Language): Either<BackendException, List<PointShortModel>>
+    suspend fun getAll(language: Language): Either<BackendException, List<PointShortModel>>
 }

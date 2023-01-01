@@ -22,7 +22,7 @@ data class GrantedRightCreateModel(
 
 @Serializable
 data class GrantedRightUpdateModel(
-    val workerId: WorkerId?,
-    val code: Code?,
-    val adminId: WorkerId?
+    val workerId: WorkerId? = null,
+    val code: Code? = null,
+    val adminId: WorkerId? = null
 )

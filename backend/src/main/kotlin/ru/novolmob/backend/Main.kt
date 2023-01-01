@@ -7,30 +7,27 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.module
-import ru.novolmob.exposedbackendapi.mappers.GrantedRightMapper
-import ru.novolmob.exposedbackendapi.mappers.ResultRowGrantedRightMapper
-import ru.novolmob.exposedbackendapi.repositories.GrantedRightRepositoryImpl
+import ru.novolmob.backend.routings.AuthorizationRouting.authorizationRouting
+import ru.novolmob.backend.routings.BasketRouting.basketRouting
+import ru.novolmob.backend.routings.CatalogRouting.catalogRouting
+import ru.novolmob.backend.routings.DevicesRouting.deviceRouting
+import ru.novolmob.backend.routings.OrderRouting.orderRouting
+import ru.novolmob.backend.routings.PointRouting.pointRouting
+import ru.novolmob.backend.routings.UserRouting.userRouting
 import ru.novolmob.backend.services.DatabaseService
-import ru.novolmob.backend.util.AuthUtil.workerPermission
+import ru.novolmob.backend.util.AuthUtil.authentication
+import ru.novolmob.backend.util.AuthUtil.userPermission
 import ru.novolmob.backend.util.NetworkUtil.respondException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
-import ru.novolmob.backendapi.repositories.IGrantedRightRepository
+import ru.novolmob.exposedbackendapi.modules.exposedBackendApiModule
 
 suspend fun main() {
     startKoin {
         modules(
-            module {
-                singleOf(::GrantedRightMapper)
-                singleOf(::ResultRowGrantedRightMapper)
-                single<IGrantedRightRepository> {
-                    GrantedRightRepositoryImpl(get<GrantedRightMapper>(), get<ResultRowGrantedRightMapper>())
-                }
-            }
+            //jdbcDatabaseModule,
+            exposedBackendApiModule
         )
     }
     DatabaseService.connectWithExposed()
@@ -52,30 +49,21 @@ fun Application.backend() {
                 code = BackendExceptionCode.UNKNOWN,
                 message = cause.message ?: "Unknown error"
             )
+            cause.printStackTrace()
         }
     }
-//    authentication {
-//        jwt {
-//            val jwtAudience = this@configureSecurity.environment.config.property("jwt.audience").getString()
-//            realm = this@configureSecurity.environment.config.property("jwt.realm").getString()
-//            verifier(
-//                JWT
-//                    .require(Algorithm.HMAC256("secret"))
-//                    .withAudience(jwtAudience)
-//                    .withIssuer(this@configureSecurity.environment.config.property("jwt.domain").getString())
-//                    .build()
-//            )
-//            validate { credential ->
-//                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
-//            }
-//        }
-//    }
+    authentication()
+
     install(Resources)
     routing {
-        workerPermission {
-            get {
-                call.respond("Hello world")
-            }
+        authorizationRouting()
+        userPermission {
+            catalogRouting()
+            deviceRouting()
+            basketRouting()
+            orderRouting()
+            pointRouting()
+            userRouting()
         }
     }
 }

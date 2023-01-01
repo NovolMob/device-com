@@ -1,0 +1,46 @@
+package ru.novolmob.exposedbackendapi.modules
+
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
+import ru.novolmob.exposedbackendapi.mappers.*
+
+val mapperModule = module {
+    singleOf(::BasketMapper)
+    singleOf(::DeviceDetailMapper)
+    singleOf(::DeviceMapper)
+    singleOf(::DeviceTypeDetailMapper)
+    singleOf(::DeviceTypeMapper)
+    singleOf(::GrantedRightMapper)
+    singleOf(::OrderMapper)
+    singleOf(::OrderStatusDetailMapper)
+    singleOf(::OrderStatusMapper)
+    singleOf(::OrderToDeviceItemMapper)
+    singleOf(::OrderToDeviceMapper)
+    singleOf(::OrderToStatusMapper)
+    singleOf(::PointDetailMapper)
+    singleOf(::PointMapper)
+    singleOf(::PointToDeviceItemMapper)
+    singleOf(::PointToDeviceMapper)
+    singleOf(::ResultRowBasketMapper)
+    singleOf(::ResultRowDeviceDetailMapper)
+    singleOf(::ResultRowDeviceMapper)
+    singleOf(::ResultRowDeviceTypeDetailMapper)
+    singleOf(::ResultRowDeviceTypeMapper)
+    singleOf(::ResultRowGrantedRightMapper)
+    singleOf(::ResultRowOrderMapper)
+    singleOf(::ResultRowOrderStatusDetailMapper)
+    singleOf(::ResultRowOrderStatusMapper)
+    singleOf(::ResultRowOrderToDeviceEntityMapper)
+    singleOf(::ResultRowOrderToStatusMapper)
+    singleOf(::ResultRowPointDetailMapper)
+    singleOf(::ResultRowPointMapper)
+    singleOf(::ResultRowPointToDeviceMapper)
+    singleOf(::ResultRowUserCredentialMapper)
+    singleOf(::ResultRowUserInfoMapper)
+    singleOf(::ResultRowWorkerCredentialMapper)
+    singleOf(::ResultRowWorkerInfoMapper)
+    singleOf(::UserCredentialMapper)
+    singleOf(::UserMapper)
+    singleOf(::WorkerCredentialMapper)
+    singleOf(::WorkerMapper)
+}

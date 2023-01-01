@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
+import arrow.fx.coroutines.parTraverseEither
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
@@ -24,7 +25,7 @@ import ru.novolmob.exposeddatabase.tables.credentials.UserCredentials
 
 class UserRepositoryImpl(
     val mapper: Mapper<User, UserModel>,
-    val resultRowMapper: Mapper<ResultRow, UserModel>,
+    val resultRowInfoMapper: Mapper<ResultRow, UserInfoModel>,
     val userCredentialRepository: IUserCredentialRepository
 ): IUserRepository {
     override suspend fun getLanguage(userId: UserId): Either<BackendException, Language> =
@@ -54,7 +55,24 @@ class UserRepositoryImpl(
         }
 
     override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<UserModel>> =
-        RepositoryUtil.generalGatAll(Users, pagination, resultRowMapper)
+        RepositoryUtil.generalGatAll(Users, pagination, resultRowInfoMapper).flatMap { page ->
+            val list = page.list.parTraverseEither { userInfo ->
+                userCredentialRepository.getByUserId(userInfo.id).flatMap { credential ->
+                    UserModel(
+                        id = userInfo.id,
+                        firstname = userInfo.firstname,
+                        lastname = userInfo.lastname,
+                        patronymic = userInfo.patronymic,
+                        birthday = userInfo.birthday,
+                        city = userInfo.city,
+                        language = userInfo.language,
+                        phoneNumber = credential.phoneNumber,
+                        email = credential.email
+                    ).right()
+                }
+            }
+            list.flatMap { Page(page = page.page, size = page.size, list = it).right() }
+        }
 
     override suspend fun post(createModel: UserCreateModel): Either<BackendException, UserModel> =
         newSuspendedTransaction(Dispatchers.IO) {

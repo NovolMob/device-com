@@ -26,8 +26,8 @@ data class OrderStatusDetailCreateModel(
 
 @Serializable
 data class OrderStatusDetailUpdateModel(
-    val orderStatusId: OrderStatusId?,
-    val title: Title?,
-    val description: Description?,
-    val language: Language?
+    val orderStatusId: OrderStatusId? = null,
+    val title: Title? = null,
+    val description: Description? = null,
+    val language: Language? = null
 )

@@ -28,9 +28,9 @@ data class DeviceDetailCreateModel(
 
 @Serializable
 data class DeviceDetailUpdateModel(
-    val deviceId: DeviceId?,
-    val title: Title?,
-    val description: Description?,
-    val features: Features?,
-    val language: Language?
+    val deviceId: DeviceId? = null,
+    val title: Title? = null,
+    val description: Description? = null,
+    val features: Features? = null,
+    val language: Language? = null
 )

@@ -6,35 +6,47 @@ import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.WorkerId
 
 @Serializable
-data class WorkerModel(
+data class WorkerInfoModel(
     val id: WorkerId,
-    val pointId: PointId?,
+    val pointId: PointId? = null,
     val firstname: Firstname,
     val lastname: Lastname,
-    val patronymic: Patronymic,
+    val patronymic: Patronymic? = null,
     val language: Language
 )
 
 @Serializable
-data class WorkerCreateModel(
-    val pointId: PointId?,
+data class WorkerModel(
+    val id: WorkerId,
+    val pointId: PointId? = null,
     val firstname: Firstname,
     val lastname: Lastname,
-    val patronymic: Patronymic,
+    val patronymic: Patronymic? = null,
     val language: Language,
-    val password: Password,
     val phoneNumber: PhoneNumber,
     val email: Email?
 )
 
 @Serializable
+data class WorkerCreateModel(
+    val pointId: PointId? = null,
+    val firstname: Firstname,
+    val lastname: Lastname,
+    val patronymic: Patronymic? = null,
+    val language: Language,
+    val password: Password,
+    val phoneNumber: PhoneNumber,
+    val email: Email? = null
+)
+
+@Serializable
 data class WorkerUpdateModel(
-    val pointId: PointId?,
-    val firstname: Firstname?,
-    val lastname: Lastname?,
-    val patronymic: Patronymic?,
-    val language: Language?,
-    val password: Password?,
-    val phoneNumber: PhoneNumber?,
-    val email: Email?
+    val pointId: PointId? = null,
+    val firstname: Firstname? = null,
+    val lastname: Lastname? = null,
+    val patronymic: Patronymic? = null,
+    val language: Language? = null,
+    val password: Password? = null,
+    val phoneNumber: PhoneNumber? = null,
+    val email: Email? = null
 )

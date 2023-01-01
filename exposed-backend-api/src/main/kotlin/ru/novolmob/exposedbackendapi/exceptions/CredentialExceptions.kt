@@ -18,7 +18,7 @@ fun userCredentialByUserIdNotFoundException(userId: UserId) =
         "Credential for user $userId not found!"
     )
 
-fun workerCredentialByUserIdNotFoundException(workerId: WorkerId) =
+fun workerCredentialByWorkerIdNotFoundException(workerId: WorkerId) =
     BackendException(
         code = BackendExceptionCode.NOT_FOUND,
         "Credential for worker $workerId not found!"

@@ -21,7 +21,7 @@ class PointCreateModel(
 
 @Serializable
 class PointUpdateModel(
-    val city: City?
+    val city: City? = null
 )
 
 @Serializable
