@@ -9,5 +9,5 @@ interface IService {
     val serviceScope: CoroutineScope
         get() = CoroutineScope(SupervisorJob())
 
-    suspend fun update(): Either<BackendException, Unit>
+    suspend fun update(): Either<BackendException, Any>
 }

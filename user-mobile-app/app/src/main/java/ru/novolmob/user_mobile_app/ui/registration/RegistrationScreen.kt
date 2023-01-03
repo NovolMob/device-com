@@ -38,10 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,21 +50,21 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
 import org.koin.androidx.compose.getViewModel
+import ru.novolmob.core.extensions.LocalDateTimeExtension.now
 import ru.novolmob.user_mobile_app.R
-import ru.novolmob.user_mobile_app.services.ProfileServiceImpl
-import java.time.LocalDate
+import ru.novolmob.user_mobile_app.mutablevalue.MutableValue
+import ru.novolmob.user_mobile_app.mutablevalue.PasswordMutableValue
+import ru.novolmob.user_mobile_app.utils.PhoneNumberVisualTransformation
 import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Preview
 @Composable
 fun RegistrationScreenPreview() {
-    RegistrationScreen(
-        viewModel = RegistrationViewModel(
-            ProfileServiceImpl()
-        )
-    )
+    RegistrationScreen()
 }
 
 @Composable
@@ -135,33 +132,35 @@ fun RegistrationScreen(
                         FioForm(
                             modifier = Modifier
                                 .padding(vertical = 10.dp),
-                            setFirstname = viewModel::firstname,
-                            setLastname = viewModel::lastname,
-                            setPatronymic = viewModel::patronymic
-                        ) { scope.launch { pagerState.animateScrollToPage(1) } }
+                            firstnameState = state.firstname,
+                            lastnameState = state.lastname,
+                            patronymicState = state.patronymic
+                        ) {
+                            focusManager.clearFocus()
+                            scope.launch {
+                                pagerState.animateScrollToPage(1)
+                            }
+                        }
                     },
                     {
                         SecondForm(
                             modifier = Modifier
                                 .padding(vertical = 10.dp),
-                            setBirthday = viewModel::birthday,
-                            birthdayValid = viewModel::validBirthday,
+                            birthdayState = state.birthday,
+                            cityState = state.city,
                             allCities = state.availableCities,
-                            setCity = viewModel::city,
+                            languageState = state.language,
                             allLanguages = state.availableLanguages,
-                            setLanguage = viewModel::language
                         )
                     },
                     {
                         CredentialsForm(
                             modifier = Modifier
                                 .padding(vertical = 10.dp),
-                            setEmail = viewModel::email,
-                            emailValidator = viewModel::validEmail,
-                            setPhoneNumber = viewModel::phoneNumber,
-                            phoneNumberValidator = viewModel::validPhoneNumber,
-                            setPassword = viewModel::password,
-                            onDone = viewModel::registration
+                            emailState = state.email,
+                            phoneNumberState = state.phoneNumber,
+                            passwordState = state.password,
+                            onDone = viewModel::register
                         )
                     },
                     modifier = Modifier.weight(1f),
@@ -174,7 +173,7 @@ fun RegistrationScreen(
                     loading = state.loading,
                     onClick = {
                         focusManager.clearFocus()
-                        viewModel.registration()
+                        viewModel.register()
                     }
                 )
             }
@@ -251,9 +250,9 @@ private fun BodyPager(
 @Composable
 private fun FioForm(
     modifier: Modifier = Modifier,
-    setFirstname: (String) -> Unit,
-    setLastname: (String) -> Unit,
-    setPatronymic: (String) -> Unit,
+    firstnameState: MutableValue<String>,
+    lastnameState: MutableValue<String>,
+    patronymicState: MutableValue<String>,
     onNext: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -261,7 +260,7 @@ private fun FioForm(
         InputField(
             modifier = Modifier
                 .fillMaxWidth(),
-            updateValue = setFirstname,
+            valueState = firstnameState,
             title = stringResource(id = R.string.firstname),
             required = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -270,7 +269,7 @@ private fun FioForm(
         InputField(
             modifier = Modifier
                 .fillMaxWidth(),
-            updateValue = setLastname,
+            valueState = lastnameState,
             title = stringResource(id = R.string.lastname),
             required = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -279,7 +278,7 @@ private fun FioForm(
         InputField(
             modifier = Modifier
                 .fillMaxWidth(),
-            updateValue = setPatronymic,
+            valueState = patronymicState,
             title = stringResource(id = R.string.patronymic),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { onNext() })
@@ -290,31 +289,29 @@ private fun FioForm(
 @Composable
 private fun SecondForm(
     modifier: Modifier = Modifier,
-    setBirthday: (LocalDate?) -> Unit,
-    birthdayValid: (LocalDate) -> Boolean,
+    birthdayState: MutableValue<LocalDate?>,
     allCities: List<String>,
-    setCity: (String?) -> Unit,
+    cityState: MutableValue<String>,
     allLanguages: List<Locale>,
-    setLanguage: (Locale) -> Unit,
+    languageState: MutableValue<String>
 ) {
     Column(modifier = modifier.padding(horizontal = 25.dp)) {
         BirthdayPicker(
             modifier = Modifier
                 .fillMaxWidth(),
-            validator = birthdayValid,
-            setDate = setBirthday
+            birthdayState = birthdayState
         )
         CityField(
             modifier = Modifier
                 .fillMaxWidth(),
             cities = allCities,
-            setCity = setCity
+            cityState = cityState
         )
         LanguageField(
             modifier = Modifier
                 .fillMaxWidth(),
             languages = allLanguages,
-            setLanguage = setLanguage
+            languageState = languageState
         )
     }
 }
@@ -322,50 +319,45 @@ private fun SecondForm(
 @Composable
 private fun CredentialsForm(
     modifier: Modifier = Modifier,
-    setEmail: (String) -> Unit,
-    emailValidator: (String) -> Boolean,
-    setPhoneNumber: (String) -> Unit,
-    phoneNumberValidator: (String) -> Boolean,
-    setPassword: (String) -> Unit,
+    emailState: MutableValue<String>,
+    phoneNumberState: MutableValue<String>,
+    passwordState: PasswordMutableValue,
     onDone: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    var firstPassword by rememberSaveable(inputs = arrayOf()) {
-        mutableStateOf("")
-    }
 
     Column(modifier = modifier.padding(horizontal = 25.dp)) {
         InputField(
             modifier = Modifier
                 .fillMaxWidth(),
-            validator = emailValidator,
-            updateValue = setEmail,
+            valueState = emailState,
             title = stringResource(id = R.string.email),
             placeholder = "example@gmail.com",
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) })
         )
+
         InputField(
             modifier = Modifier
                 .fillMaxWidth(),
-            validator = phoneNumberValidator,
+            valueState = phoneNumberState,
             required = true,
-            updateValue = setPhoneNumber,
             title = stringResource(id = R.string.phone_number),
             placeholder = "+7 999 765 43 21",
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) })
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
+            visualTransformation = PhoneNumberVisualTransformation
         )
         PasswordField(
             title = stringResource(id = R.string.password),
-            setPassword = { firstPassword = it },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            passwordState = passwordState.firstState,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) })
         )
         PasswordField(
             title = stringResource(id = R.string.repeat_password),
-            setPassword = { setPassword(if (it == firstPassword) it else "") },
-            validator = { it == firstPassword },
+            passwordState = passwordState.secondState,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
                 onDone()
@@ -416,7 +408,8 @@ private fun SigninButton(
                 text = if (enable) stringResource(id = R.string.signin) else "",
                 fontSize = 18.sp,
                 color = Color.Black,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                maxLines = 1
             )
         }
     }
@@ -426,18 +419,14 @@ private fun SigninButton(
 private fun CityField(
     modifier: Modifier = Modifier,
     cities: List<String>,
-    setCity: (String?) -> Unit
+    cityState: MutableValue<String>
 ) {
-    var expanded by remember {
-        mutableStateOf(false)
-    }
-    var city by rememberSaveable(inputs = arrayOf()) {
-        mutableStateOf<String?>(null)
-    }
+    var expanded by remember { mutableStateOf(false) }
+    val city by cityState.value.collectAsState()
 
     val textColor by remember(city) {
         derivedStateOf {
-            if (city != null)
+            if (city.isNotEmpty())
                 Color.Black
             else Color.LightGray
         }
@@ -456,7 +445,7 @@ private fun CityField(
                     expanded = true
                 }
                 .padding(horizontal = 5.dp, vertical = 5.dp),
-            text = city ?: "",
+            text = city,
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
             color = textColor
@@ -466,8 +455,7 @@ private fun CityField(
                 .align(Alignment.CenterEnd)
                 .padding(end = 5.dp)
                 .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                    setCity(null)
-                    city = null
+                    cityState.set("")
                 },
             imageVector = Icons.Default.Close,
             contentDescription = null,
@@ -479,7 +467,6 @@ private fun CityField(
             .fillMaxWidth(),
         expanded = expanded,
         onDismissRequest = {
-            setCity(city)
             expanded = false
         }
     ) {
@@ -492,8 +479,7 @@ private fun CityField(
             }
             DropdownMenuItem(
                 onClick = {
-                    setCity(it)
-                    city = it
+                    cityState.set(it)
                     expanded = false
                 }
             ) {
@@ -520,13 +506,12 @@ private fun CityField(
 private fun LanguageField(
     modifier: Modifier = Modifier,
     languages: List<Locale>,
-    setLanguage: (Locale) -> Unit
+    languageState: MutableValue<String>
 ) {
+    val language by languageState.value.collectAsState()
+
     var expanded by remember {
         mutableStateOf(false)
-    }
-    var language by rememberSaveable(inputs = arrayOf()) {
-        mutableStateOf(languages.first())
     }
     FieldStyle(modifier = modifier, title = stringResource(id = R.string.language), required = true) {
         Text(
@@ -541,7 +526,7 @@ private fun LanguageField(
                     expanded = true
                 }
                 .padding(horizontal = 5.dp, vertical = 5.dp),
-            text = language.displayCountry,
+            text = language,
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
             color = Color.Black
@@ -552,21 +537,19 @@ private fun LanguageField(
             .fillMaxWidth(),
         expanded = expanded,
         onDismissRequest = {
-            setLanguage(language)
             expanded = false
         }
     ) {
         languages.forEach {
             val isSelected by remember(language, it) {
-                derivedStateOf { language == it }
+                derivedStateOf { language == it.language }
             }
             val color by remember {
                 derivedStateOf { if (isSelected) Color.Black else Color.LightGray }
             }
             DropdownMenuItem(
                 onClick = {
-                    setLanguage(it)
-                    language = it
+                    languageState.set(it.language)
                     expanded = false
                 }
             ) {
@@ -592,49 +575,40 @@ private fun LanguageField(
 @Composable
 private fun BirthdayPicker(
     modifier: Modifier = Modifier,
-    validator: ((LocalDate) -> Boolean)? = null,
-    setDate: (LocalDate?) -> Unit
+    birthdayState: MutableValue<LocalDate?>
 ) {
+    val date by birthdayState.value.collectAsState()
+    val isValid by birthdayState.valid.collectAsState()
+
     val context = LocalContext.current
-    var date by rememberSaveable(inputs = arrayOf()) {
-        mutableStateOf<LocalDate?>(null)
-    }
     val datePickerDialog by remember(date) {
         derivedStateOf {
             (date ?: LocalDate.now()).let {
                 DatePickerDialog(
                     context,
                     { _: DatePicker, year: Int, month: Int, day: Int ->
-                        LocalDate.of(year, month + 1, day).let { new ->
-                            setDate(new)
-                            date = new
-                        }
-                    }, it.year, it.monthValue - 1, it.dayOfMonth
+                        LocalDate(year, month + 1, day).let(birthdayState::set)
+                    }, it.year, it.monthNumber - 1, it.dayOfMonth
                 )
             }
         }
     }
-    val isValid by remember(date, validator) {
-        derivedStateOf { if (validator == null || date == null) true else validator(date!!)}
-    }
 
-    val color by remember(date) {
+    val color by remember(isValid) {
         derivedStateOf {
             if (date != null)
                 if (isValid) Color.Green else Color.Red
             else Color.LightGray
         }
     }
+    val colorAnimation by animateColorAsState(targetValue = color)
 
     val textColor by remember(date) {
         derivedStateOf {
-            if (date != null)
-                Color.Black
-            else Color.LightGray
+            if (date != null) Color.Black else Color.LightGray
         }
     }
 
-    val colorAnimation by animateColorAsState(targetValue = color)
     FieldStyle(modifier = modifier, title = stringResource(id = R.string.birthday)) {
         Text(
             modifier = Modifier
@@ -648,7 +622,7 @@ private fun BirthdayPicker(
                     datePickerDialog.show()
                 }
                 .padding(horizontal = 5.dp, vertical = 5.dp),
-            text = date?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "",
+            text = date?.toJavaLocalDate()?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "",
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
             color = textColor
@@ -658,8 +632,7 @@ private fun BirthdayPicker(
                 .align(Alignment.CenterEnd)
                 .padding(end = 5.dp)
                 .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                    setDate(null)
-                    date = null
+                    birthdayState.set(null)
                 },
             imageVector = Icons.Default.Close,
             contentDescription = null,
@@ -671,8 +644,7 @@ private fun BirthdayPicker(
 @Composable
 private fun PasswordField(
     modifier: Modifier = Modifier,
-    setPassword: (String) -> Unit,
-    validator: ((String) -> Boolean)? = null,
+    passwordState: MutableValue<String>,
     title: String,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -687,8 +659,7 @@ private fun PasswordField(
             modifier = Modifier.fillMaxWidth(),
             required = true,
             title = title,
-            updateValue = setPassword,
-            validator = validator,
+            valueState = passwordState,
             keyboardActions = keyboardActions,
             keyboardOptions = keyboardOptions,
             visualTransformation = {
@@ -718,8 +689,7 @@ private fun PasswordField(
 @Composable
 private fun InputField(
     modifier: Modifier = Modifier,
-    updateValue: (String) -> Unit,
-    validator: ((String) -> Boolean)? = null,
+    valueState: MutableValue<String>,
     required: Boolean = false,
     title: String,
     placeholder: String = "",
@@ -727,18 +697,13 @@ private fun InputField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
-    var value by rememberSaveable(inputs = arrayOf()) {
-        mutableStateOf("")
-    }
+    val value by valueState.value.collectAsState()
+    val isValid by valueState.valid.collectAsState()
 
-    val isValid by remember(value, validator) {
-        derivedStateOf { validator?.let { it(value)  } }
-    }
-
-    val color by remember(isValid, value) {
+    val color by remember(value) {
         derivedStateOf {
-            if (value.isNotEmpty() && isValid != null)
-                if (isValid!!) Color.Green else Color.Red
+            if (value.isNotEmpty())
+                if (isValid) Color.Green else Color.Red
             else Color.LightGray
         }
     }
@@ -755,10 +720,7 @@ private fun InputField(
                     shape = RoundedCornerShape(15.dp)
                 ),
             value = value,
-            onValueChange = {
-                value = it
-                updateValue(it)
-            },
+            onValueChange = valueState::set,
             singleLine = true,
             textStyle = TextStyle(
                 fontSize = 18.sp,

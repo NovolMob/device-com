@@ -1,6 +1,7 @@
-package ru.novolmob.user_mobile_app.models
+package ru.novolmob.user_mobile_app.utils
 
 import androidx.compose.ui.graphics.Color
+import arrow.core.Either
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,7 +11,8 @@ import ru.novolmob.backendapi.exceptions.BackendException
 data class ScreenNotification(
     val backgroundColor: Color = DEFAULT_COLOR,
     val textColor: Color = DEFAULT_TEXT_COLOR,
-    val message: String = ""
+    val message: String = "",
+    val visible: Boolean = true
 ) {
 
     companion object {
@@ -30,7 +32,7 @@ data class ScreenNotification(
         suspend fun push(notification: ScreenNotification, duration: Long = DEFAULT_DURATION) {
             _notification.update { notification }
             delay(duration)
-            _notification.update { null }
+            _notification.update { it?.copy(visible = false) }
         }
 
         suspend fun push(
@@ -44,6 +46,12 @@ data class ScreenNotification(
             ),
             duration = duration
         )
+
+        suspend fun <M> Either<BackendException, M>.notice(duration: Long = DEFAULT_DURATION) =
+            fold(
+                ifLeft = { push(it) },
+                ifRight = {}
+            )
 
     }
 

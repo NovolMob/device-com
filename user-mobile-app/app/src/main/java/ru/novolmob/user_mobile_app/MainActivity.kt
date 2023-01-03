@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +31,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.inject
 import ru.novolmob.user_mobile_app.models.ProfileAction
-import ru.novolmob.user_mobile_app.models.ScreenNotification
+import ru.novolmob.user_mobile_app.utils.ScreenNotification
 import ru.novolmob.user_mobile_app.navigation.GeneralNavigation
 import ru.novolmob.user_mobile_app.navigation.NavigationRoute.Authorization.navigateToAuthorization
 import ru.novolmob.user_mobile_app.navigation.NavigationRoute.Main.Companion.navigateToMain
@@ -68,6 +69,7 @@ class MainActivity : ComponentActivity() {
                             when (it) {
                                 is ProfileAction.Login -> { navHostController.navigateToMain() }
                                 is ProfileAction.Logout -> { navHostController.navigateToAuthorization() }
+                                is ProfileAction.Registered -> { navHostController.navigateToAuthorization() }
                                 else -> {}
                             }
                         }
@@ -96,36 +98,30 @@ class MainActivity : ComponentActivity() {
         modifier: Modifier = Modifier,
     ) {
         val notification by ScreenNotification.notification.collectAsState()
-        val notificationIsNotNull by remember(notification) {
-            derivedStateOf { notification != null }
-        }
 
-        var prevNotification by remember(notification) {
-            mutableStateOf(ScreenNotification())
-        }
-        LaunchedEffect(key1 = notification) {
-            if (notification != null) prevNotification = notification!!
-        }
-        val widthAnimation by animateFloatAsState(
-            targetValue = if (notificationIsNotNull) 1f else 0f,
-            animationSpec = tween(durationMillis = 200)
+        val alphaAnimation by animateFloatAsState(
+            targetValue = if (notification?.visible == true) 1f else 0f,
+            animationSpec = tween(durationMillis = 400)
         )
 
         Text(
             modifier = modifier
-                .fillMaxWidth(widthAnimation)
+                .graphicsLayer {
+                    alpha = alphaAnimation
+                }
+                .heightIn(max = 300.dp)
                 .border(
                     width = 1.dp,
-                    color = (notification ?: prevNotification).backgroundColor,
+                    color = notification?.backgroundColor ?: Color.Transparent,
                     shape = RoundedCornerShape(10.dp)
                 )
                 .background(
-                    color = (notification ?: prevNotification).backgroundColor.copy(alpha = 0.1f),
+                    color = notification?.backgroundColor?.copy(alpha = 0.1f) ?: Color.Transparent,
                     shape = RoundedCornerShape(10.dp)
                 )
                 .padding(15.dp),
-            text = (notification ?: prevNotification).message,
-            color = (notification ?: prevNotification).textColor,
+            text = notification?.message ?: "",
+            color = notification?.textColor ?: Color.Transparent,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )

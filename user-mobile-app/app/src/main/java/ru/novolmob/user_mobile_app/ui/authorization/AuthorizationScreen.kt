@@ -31,10 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,19 +46,16 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import ru.novolmob.user_mobile_app.R
+import ru.novolmob.user_mobile_app.mutablevalue.MutableValue
 import ru.novolmob.user_mobile_app.navigation.NavigationRoute.Registration.navigateToRegistration
-import ru.novolmob.user_mobile_app.services.ProfileServiceImpl
+import ru.novolmob.user_mobile_app.utils.PhoneNumberVisualTransformation
 
 @Preview(showBackground = true)
 @Composable
 fun AuthorizationScreenPreview(
 
 ) {
-    AuthorizationScreen(
-        viewModel = AuthorizationViewModel(
-            ProfileServiceImpl()
-        )
-    )
+    AuthorizationScreen()
 }
 
 @Composable
@@ -139,11 +133,9 @@ fun AuthorizationScreen(
                     modifier = Modifier
                         .padding(vertical = 10.dp),
                     pagerState = pagerState,
-                    setEmail = viewModel::email,
-                    emailValidator = viewModel::validEmail,
-                    setPhoneNumber = viewModel::phoneNumber,
-                    phoneNumberValidator = viewModel::validPhoneNumber,
-                    setPassword = viewModel::password,
+                    emailState = state.email,
+                    phoneNumberState = state.phoneNumber,
+                    passwordState = state.password,
                     loginByEmail = viewModel::loginByEmail,
                     loginByPhoneNumber = viewModel::loginByPhoneNumber
                 )
@@ -204,11 +196,9 @@ private fun AuthTypesRow(
 private fun Form(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
-    setEmail: (String) -> Unit,
-    emailValidator: (String) -> Boolean,
-    setPhoneNumber: (String) -> Unit,
-    phoneNumberValidator: (String) -> Boolean,
-    setPassword: (String) -> Unit,
+    emailState: MutableValue<String>,
+    phoneNumberState: MutableValue<String>,
+    passwordState: MutableValue<String>,
     loginByEmail: () -> Unit,
     loginByPhoneNumber: () -> Unit
 ) {
@@ -223,22 +213,23 @@ private fun Form(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 25.dp),
-                setLogin = setEmail,
-                loginValidator = emailValidator,
+                loginState = emailState,
                 loginPlaceholder = stringResource(id = R.string.email),
-                setPassword = setPassword,
-                onDone = loginByEmail
+                passwordState = passwordState,
+                onDone = loginByEmail,
+                loginOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next)
             )
         } else {
             AuthForm(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 25.dp),
-                setLogin = setPhoneNumber,
-                loginValidator = phoneNumberValidator,
+                loginState = phoneNumberState,
                 loginPlaceholder = stringResource(id = R.string.phone_number),
-                setPassword = setPassword,
-                onDone = loginByPhoneNumber
+                passwordState = passwordState,
+                onDone = loginByPhoneNumber,
+                loginOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Next),
+                loginVisualTransformation = PhoneNumberVisualTransformation
             )
         }
     }
@@ -290,10 +281,11 @@ private fun SelectingTabForPagerState(
 @Composable
 private fun AuthForm(
     modifier: Modifier = Modifier,
-    setLogin: (String) -> Unit,
-    loginValidator: (String) -> Boolean,
+    loginState: MutableValue<String>,
     loginPlaceholder: String,
-    setPassword: (String) -> Unit,
+    loginOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+    loginVisualTransformation: VisualTransformation = VisualTransformation.None,
+    passwordState: MutableValue<String>,
     onDone: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -305,23 +297,21 @@ private fun AuthForm(
         InputField(
             modifier = Modifier
                 .fillMaxWidth(),
-            updateValue = setLogin,
-            validator = loginValidator,
+            valueState = loginState,
             placeholder = loginPlaceholder,
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            ),
+            keyboardOptions = loginOptions,
             keyboardActions = KeyboardActions(
                 onNext = {
                     focusManager.moveFocus(FocusDirection.Down)
                 }
-            )
+            ),
+            visualTransformation = loginVisualTransformation
         )
 
         PasswordField(
             modifier = Modifier
                 .fillMaxWidth(),
-            setPassword = setPassword
+            passwordState = passwordState
         ) {
             focusManager.clearFocus()
             onDone()
@@ -332,7 +322,7 @@ private fun AuthForm(
 @Composable
 private fun PasswordField(
     modifier: Modifier = Modifier,
-    setPassword: (String) -> Unit,
+    passwordState: MutableValue<String>,
     onDone: () -> Unit
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
@@ -343,8 +333,9 @@ private fun PasswordField(
     Box(modifier = modifier) {
         InputField(
             modifier = Modifier.fillMaxWidth(),
-            updateValue = setPassword,
+            valueState = passwordState,
             placeholder = stringResource(id = R.string.password),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             keyboardActions = KeyboardActions(
                 onDone = { onDone() }
             ),
@@ -423,25 +414,19 @@ private fun LoginButton(
 @Composable
 private fun InputField(
     modifier: Modifier = Modifier,
-    updateValue: (String) -> Unit,
-    validator: ((String) -> Boolean)? = null,
+    valueState: MutableValue<String>,
     placeholder: String,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
-    var value by remember {
-        mutableStateOf("")
-    }
+    val value by valueState.value.collectAsState()
+    val isValid by valueState.valid.collectAsState()
 
-    val isValid by remember(value, validator) {
-        derivedStateOf { validator?.let { it(value) } }
-    }
-
-    val color by remember(isValid, value) {
+    val color by remember(value) {
         derivedStateOf {
-            if (value.isNotEmpty() && isValid != null)
-                if (isValid!!) Color.Green else Color.Red
+            if (value.isNotEmpty())
+                if (isValid) Color.Green else Color.Red
             else Color.LightGray
         }
     }
@@ -454,8 +439,7 @@ private fun InputField(
             .background(color = colorAnimation.copy(alpha = 0.04f), shape = CircleShape),
         value = value,
         onValueChange = {
-            value = it
-            updateValue(it)
+            valueState.set(it)
         },
         singleLine = true,
         textStyle = TextStyle(
