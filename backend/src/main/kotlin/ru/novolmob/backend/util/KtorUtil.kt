@@ -8,18 +8,18 @@ import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
 import ru.novolmob.backendapi.models.ResponseModel
 
-object NetworkUtil {
+object KtorUtil {
     fun BackendExceptionCode.toHttpStatusCode(): HttpStatusCode = HttpStatusCode(httpCode, description)
 
-    suspend fun <T> ApplicationCall.respondData(data: T, code: HttpStatusCode = HttpStatusCode.OK) =
+    suspend inline fun <reified T> ApplicationCall.respondData(data: T, code: HttpStatusCode = HttpStatusCode.OK) =
         respond(status = code, message = ResponseModel(data = data))
     suspend fun ApplicationCall.respondException(exception: BackendException) =
         respond(status = exception.code.toHttpStatusCode(), message = ResponseModel<Unit>(exception = exception))
     suspend fun ApplicationCall.respondException(code: BackendExceptionCode, message: String) =
         respondException(BackendException(code = code, message = message))
-    suspend fun <T> ApplicationCall.respond(either: Either<BackendException, T>, successCode: HttpStatusCode = HttpStatusCode.OK) =
+    suspend inline fun <reified T> ApplicationCall.respond(either: Either<BackendException, T>, successCode: HttpStatusCode = HttpStatusCode.OK) =
         either.fold(
             ifLeft = { respondException(it) },
-            ifRight = { respondData(it) }
+            ifRight = { respondData(it, successCode) }
         )
 }

@@ -7,6 +7,7 @@ plugins {
     application
     java
     `java-library`
+    id("maven-publish")
     kotlin("jvm") version "1.7.22"
     id("io.ktor.plugin") version "2.1.3"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
@@ -35,3 +36,17 @@ dependencies {
 
     testImplementation(kotlin("test"))
 }
+
+publishing {
+    publications {
+        registerPublication(group.toString(), name, version.toString())
+    }
+}
+
+fun PublicationContainer.registerPublication(groupId: String, artifactId: String, version: String) =
+    register<MavenPublication>(artifactId) {
+        this.groupId = groupId
+        this.artifactId = artifactId
+        this.version = version
+        artifact(tasks["jar"])
+    }

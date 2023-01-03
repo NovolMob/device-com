@@ -7,7 +7,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ru.novolmob.backend.ktorrouting.user.Devices
 import ru.novolmob.backend.util.AuthUtil.user
-import ru.novolmob.backend.util.NetworkUtil.respond
+import ru.novolmob.backend.util.KtorUtil.respond
 import ru.novolmob.backendapi.repositories.IDeviceRepository
 import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
 

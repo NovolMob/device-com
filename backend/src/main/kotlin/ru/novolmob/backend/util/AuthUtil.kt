@@ -4,11 +4,9 @@ import arrow.core.getOrElse
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTCreator
 import com.auth0.jwt.algorithms.Algorithm
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 import kotlinx.serialization.decodeFromString
@@ -16,6 +14,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ru.novolmob.backend.util.KtorUtil.respondException
+import ru.novolmob.backendapi.exceptions.dontHaveRightsException
+import ru.novolmob.backendapi.exceptions.notAuthorizedException
 import ru.novolmob.backendapi.models.UserModel
 import ru.novolmob.backendapi.models.WorkerModel
 import ru.novolmob.backendapi.repositories.IGrantedRightRepository
@@ -36,7 +37,8 @@ object AuthUtil: KoinComponent {
         on(AuthenticationChecked) { call ->
             val principal = call.principal<UserPrincipal>()
             if (principal == null) {
-                call.respondText(status = HttpStatusCode.Forbidden, text = "You are not authorized.")
+                call.respondException(notAuthorizedException())
+                return@on
             }
         }
     }
@@ -51,10 +53,10 @@ object AuthUtil: KoinComponent {
         on(AuthenticationChecked) { call ->
             val principal = call.principal<WorkerPrincipal>()
             if (principal == null) {
-                call.respondText(status = HttpStatusCode.Forbidden, text = "You are not authorized.")
+                call.respondException(notAuthorizedException())
                 return@on
             } else if (requiredRight != null && !repository.contains(principal.worker.id, requiredRight).getOrElse { false }) {
-                call.respondText(status = HttpStatusCode.Forbidden, text = "You don't have enough rights.")
+                call.respondException(dontHaveRightsException())
                 return@on
             }
         }

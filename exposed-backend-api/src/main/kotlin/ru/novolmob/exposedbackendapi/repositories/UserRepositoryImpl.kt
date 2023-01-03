@@ -84,6 +84,7 @@ class UserRepositoryImpl(
                 this.city = createModel.city
                 this.language = createModel.language
             }.also {
+                commit()
                 userCredentialRepository.post(
                     UserCredentialCreateModel(
                         userId = it.id.value,
@@ -101,7 +102,6 @@ class UserRepositoryImpl(
                 userCredentialRepository.put(
                     id = it.id,
                     updateModel = UserCredentialUpdateModel(
-                        userId = null,
                         phoneNumber = createModel.phoneNumber,
                         email = createModel.email,
                         password = createModel.password
@@ -126,7 +126,6 @@ class UserRepositoryImpl(
                 userCredentialRepository.put(
                     id = it.id,
                     updateModel = UserCredentialUpdateModel(
-                        userId = null,
                         phoneNumber = updateModel.phoneNumber,
                         email = updateModel.email,
                         password = updateModel.password

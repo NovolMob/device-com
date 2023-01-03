@@ -14,6 +14,7 @@ class CustomTextColumnType<T: Any>(
     eagerLoading: Boolean = false
 ) : TextColumnType(collate, eagerLoading) {
     override fun valueFromDB(value: Any): Any = when (value) {
+        is String -> json.decodeFromString(serializer, "\"$value\"")
         is Clob -> json.decodeFromString(serializer, value.characterStream.readText())
         is ByteArray -> json.decodeFromString(serializer, String(value))
         else -> value

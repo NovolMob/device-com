@@ -13,7 +13,7 @@ import ru.novolmob.backend.ktorrouting.user.Login
 import ru.novolmob.backend.ktorrouting.user.Logout
 import ru.novolmob.backend.ktorrouting.user.Registration
 import ru.novolmob.backend.util.AuthUtil.accessToken
-import ru.novolmob.backend.util.NetworkUtil.respond
+import ru.novolmob.backend.util.KtorUtil.respond
 import ru.novolmob.backendapi.exceptions.badLoginModelException
 import ru.novolmob.backendapi.models.LoginModel
 import ru.novolmob.backendapi.models.TokenModel
@@ -46,7 +46,7 @@ object AuthorizationRouting: KoinComponent {
         }
 
         post<Logout> {
-
+            call.respond(Unit.right())
         }
     }
 }

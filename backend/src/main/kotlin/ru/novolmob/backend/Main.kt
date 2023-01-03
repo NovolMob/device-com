@@ -2,12 +2,14 @@ package ru.novolmob.backend
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 import ru.novolmob.backend.routings.AuthorizationRouting.authorizationRouting
 import ru.novolmob.backend.routings.BasketRouting.basketRouting
@@ -19,7 +21,7 @@ import ru.novolmob.backend.routings.UserRouting.userRouting
 import ru.novolmob.backend.services.DatabaseService
 import ru.novolmob.backend.util.AuthUtil.authentication
 import ru.novolmob.backend.util.AuthUtil.userPermission
-import ru.novolmob.backend.util.NetworkUtil.respondException
+import ru.novolmob.backend.util.KtorUtil.respondException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
 import ru.novolmob.exposedbackendapi.modules.exposedBackendApiModule
 
@@ -32,7 +34,7 @@ suspend fun main() {
     }
     DatabaseService.connectWithExposed()
         .onSuccess {
-            embeddedServer(Netty, host = "0.0.0.0", port = 8080, module = Application::backend).start(true)
+            embeddedServer(Netty, host = "192.168.31.196", port = 8080, module = Application::backend).start(true)
         }
         .onFailure {
             it.printStackTrace()
@@ -41,7 +43,11 @@ suspend fun main() {
 
 fun Application.backend() {
     install(ContentNegotiation) {
-        json()
+        json(
+            Json {
+                encodeDefaults = false
+            }
+        )
     }
     install(StatusPages) {
         exception { call: ApplicationCall, cause: Exception ->
@@ -57,13 +63,15 @@ fun Application.backend() {
     install(Resources)
     routing {
         authorizationRouting()
-        userPermission {
-            catalogRouting()
-            deviceRouting()
-            basketRouting()
-            orderRouting()
-            pointRouting()
-            userRouting()
+        authenticate {
+            userPermission {
+                catalogRouting()
+                deviceRouting()
+                basketRouting()
+                orderRouting()
+                pointRouting()
+                userRouting()
+            }
         }
     }
 }
