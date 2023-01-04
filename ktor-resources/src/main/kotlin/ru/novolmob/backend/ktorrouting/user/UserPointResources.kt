@@ -9,7 +9,7 @@ import ru.novolmob.core.models.ids.PointId
 class Points {
     @Serializable
     @Resource("by_city")
-    class ByCity(val points: Points, val id: PointId)
+    class ByCity(val points: Points)
     @Serializable
     @Resource("{id}")
     class Id(val points: Points, val id: PointId)

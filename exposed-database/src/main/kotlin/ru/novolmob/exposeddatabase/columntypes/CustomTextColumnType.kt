@@ -14,14 +14,14 @@ class CustomTextColumnType<T: Any>(
     eagerLoading: Boolean = false
 ) : TextColumnType(collate, eagerLoading) {
     override fun valueFromDB(value: Any): Any = when (value) {
-        is String -> json.decodeFromString(serializer, "\"$value\"")
+        is String -> json.decodeFromString(serializer, value)
         is Clob -> json.decodeFromString(serializer, value.characterStream.readText())
         is ByteArray -> json.decodeFromString(serializer, String(value))
         else -> value
     }
 
     private fun valueToText(value: Any): String =
-        if (klass.isInstance(value)) json.encodeToString(serializer, value as T).drop(1).dropLast(1) else value.toString()
+        if (klass.isInstance(value)) json.encodeToString(serializer, value as T) else value.toString()
     override fun notNullValueToDB(value: Any): Any = valueToText(value)
     override fun nonNullValueToString(value: Any): String = valueToText(value)
 }

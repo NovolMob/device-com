@@ -9,7 +9,14 @@ class CustomIntegerColumnType<T: Numerical>(
     val constructor: (Int) -> T
 ): ColumnType() {
     override fun sqlType(): String = currentDialect.dataTypeProvider.integerType()
+
+    override fun nonNullValueToString(value: Any): String = when(value) {
+        is Numerical -> super.nonNullValueToString(value.number.toInt())
+        else -> super.nonNullValueToString(value)
+    }
+
     override fun valueFromDB(value: Any): T = when (value) {
+        is Numerical -> value.number.toInt()
         is Int -> value
         is Number -> value.toInt()
         is String -> value.toInt()
@@ -22,7 +29,7 @@ class CustomIntegerColumnType<T: Numerical>(
 
     override fun notNullValueToDB(value: Any): Any =
         when (value) {
-            is Numerical -> value.number
-            else -> value
+            is Numerical -> super.notNullValueToDB(value.number.toInt())
+            else -> super.notNullValueToDB(value)
         }
 }

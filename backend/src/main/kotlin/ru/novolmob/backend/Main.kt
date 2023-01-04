@@ -34,6 +34,62 @@ suspend fun main() {
     }
     DatabaseService.connectWithExposed()
         .onSuccess {
+
+            /*newSuspendedTransaction {
+
+                Device.new {
+                    article = Code("AAA-123")
+                    type = DeviceType.new {}.also {
+                        DeviceTypeDetail.new {
+                            deviceType = it
+                            title = Title("Первый тип устройств")
+                            description = Description("Описание типа устройства")
+                            language = Language("ru")
+                        }
+                    }
+                    price = Price(1999.0.toBigDecimal())
+                }.also {
+                    DeviceDetail.new {
+                        device = it
+                        title = Title("Первое устройство")
+                        description = Description("Описание устройства")
+                        features = Features(
+                            mapOf(
+                                "Надёжность" to "Хорошая",
+                                "Надёжность" to "Хорошая",
+                                "Надёжность" to "Хорошая"
+                            )
+                        )
+                        language = Language("ru")
+                    }
+                }
+            }*/
+
+            /*newSuspendedTransaction {
+                PointDetail.new {
+                    point = Point.new {
+                        city = City("Великий Новгород")
+                    }
+                    address = Address("г.Великий Новгород ул.Ломоносова д.11")
+                    schedule = Schedule(
+                        mapOf(
+                            "Пн-Пт" to "10:00 - 21:00",
+                            "Сб-Вс" to "10:00 - 18:00",
+                        )
+                    )
+                    description = Description("Описание пункта")
+                    language = Language("ru")
+                }
+            }*/
+
+            /*newSuspendedTransaction {
+                PointToDeviceEntity.new {
+                    point = Point.findById(PointId(UUID.fromString("27881e78-154e-45c5-8f35-69aaf76cee1a")))!!
+                    device = Device.findById(DeviceId(UUID.fromString("1b6b0771-6a55-4df7-8034-054b571acdf7")))!!
+                    amount = Amount(11)
+                }
+            }*/
+
             embeddedServer(Netty, host = "192.168.31.196", port = 8080, module = Application::backend).start(true)
         }
         .onFailure {

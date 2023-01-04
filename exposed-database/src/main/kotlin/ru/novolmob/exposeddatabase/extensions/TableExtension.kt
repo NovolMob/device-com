@@ -168,8 +168,8 @@ object TableExtension {
         registerColumn(
             name,
             CustomTextColumnType(
-                Schedule::class,
-                Schedule.serializer(),
+                Title::class,
+                Title.serializer(),
                 json, collate, eagerLoading
             )
         )

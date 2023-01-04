@@ -17,7 +17,18 @@ class CustomDecimalColumnType<T: Numerical>(
         return rs.getBigDecimal(index)?.let(constructor)
     }
 
+    override fun nonNullValueToString(value: Any): String = when(value) {
+        is Numerical -> super.nonNullValueToString(value.number.toDouble().toBigDecimal())
+        else -> super.nonNullValueToString(value)
+    }
+
+    override fun notNullValueToDB(value: Any): Any = when(value) {
+        is Numerical -> super.notNullValueToDB(value.number.toDouble().toBigDecimal())
+        else -> super.notNullValueToDB(value)
+    }
+
     override fun valueFromDB(value: Any): T = when (value) {
+        is Numerical -> value.number.toDouble().toBigDecimal()
         is BigDecimal -> value
         is Double -> {
             if (value.isNaN()) {

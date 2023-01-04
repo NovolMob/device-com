@@ -62,7 +62,7 @@ class CatalogRepositoryImpl: ICatalogRepository {
                 page = page,
                 pageSize = result.size,
                 devices = result,
-                amountOfPages = ceil(result.size.toDouble() / pageSize).toInt()
+                amountOfPages = ceil(list.size.toDouble() / pageSize).toInt()
             ).right()
         }
 }

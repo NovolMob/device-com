@@ -14,6 +14,7 @@ class CustomUUIDColumnType<T: UUIDable>(
     override fun sqlType(): String = currentDialect.dataTypeProvider.uuidType()
 
     override fun valueFromDB(value: Any): T = when {
+        value is UUIDable -> value.uuid
         value is UUID -> value
         value is ByteArray -> ByteBuffer.wrap(value).let { b -> UUID(b.long, b.long) }
         value is String && value.matches(uuidRegexp) -> UUID.fromString(value)

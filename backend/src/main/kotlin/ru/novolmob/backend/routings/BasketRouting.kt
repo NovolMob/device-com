@@ -23,17 +23,17 @@ object BasketRouting: KoinComponent {
         }
         post<Basket.Device> {
             val user = user()
-            val either = basketRepository.setInBasket(userId = user.id, deviceId = it.deviceId, amount = call.receive())
+            val either = basketRepository.setInBasket(userId = user.id, deviceId = it.id, amount = call.receive())
             call.respond(either = either)
         }
         delete<Basket.Device> {
             val user = user()
-            val either = basketRepository.removeFromBasket(userId = user.id, deviceId = it.deviceId)
+            val either = basketRepository.removeFromBasket(userId = user.id, deviceId = it.id)
             call.respond(either = either)
         }
         get<Basket.Device> {
             val user = user()
-            val either = basketRepository.getAmount(userId = user.id, deviceId = it.deviceId)
+            val either = basketRepository.getAmount(userId = user.id, deviceId = it.id)
             call.respond(either = either)
         }
     }

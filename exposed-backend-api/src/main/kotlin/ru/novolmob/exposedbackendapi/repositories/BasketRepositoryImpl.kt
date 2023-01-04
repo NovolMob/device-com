@@ -65,30 +65,32 @@ class BasketRepositoryImpl(
         userId: UserId,
         deviceId: DeviceId,
         amount: Amount
-    ): Either<BackendException, Boolean> =
+    ): Either<BackendException, Price> =
         newSuspendedTransaction(Dispatchers.IO) {
             val basketItem = find(userId, deviceId)
             if (amount.int > 0) {
                 basketItem?.run {
                     this.amount = amount
                     this.updateTime = UpdateTime.now()
-                    true.right()
                 } ?: let {
-                    post(BasketCreateModel(userId, deviceId, amount)).flatMap {
-                        false.right()
-                    }
+                    post(BasketCreateModel(userId, deviceId, amount))
                 }
             } else if (basketItem != null) {
                 removeFromBasket(userId, deviceId)
-            } else false.right()
+            }
+            Basket.find { Baskets.user eq userId }
+                .sortedByDescending { it.creationTime }
+                .sumOf { product -> product.amount.int.toBigDecimal() * product.device.price.bigDecimal }
+                .let(::Price).right()
         }
 
-    override suspend fun removeFromBasket(userId: UserId, deviceId: DeviceId): Either<BackendException, Boolean> =
+    override suspend fun removeFromBasket(userId: UserId, deviceId: DeviceId): Either<BackendException, Price> =
         newSuspendedTransaction(Dispatchers.IO) {
-            find(userId, deviceId)?.run {
-                delete()
-                true.right()
-            } ?: false.right()
+            find(userId, deviceId)?.delete()
+            Basket.find { Baskets.user eq userId }
+                .sortedByDescending { it.creationTime }
+                .sumOf { product -> product.amount.int.toBigDecimal() * product.device.price.bigDecimal }
+                .let(::Price).right()
         }
 
     override suspend fun getAmount(userId: UserId, deviceId: DeviceId): Either<BackendException, Amount> =

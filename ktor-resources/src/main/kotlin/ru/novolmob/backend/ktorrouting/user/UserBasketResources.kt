@@ -9,5 +9,5 @@ import ru.novolmob.core.models.ids.DeviceId
 class Basket {
     @Serializable
     @Resource("devices/{id}")
-    class Device(val basket: Basket, val deviceId: DeviceId)
+    class Device(val basket: Basket, val id: DeviceId)
 }
