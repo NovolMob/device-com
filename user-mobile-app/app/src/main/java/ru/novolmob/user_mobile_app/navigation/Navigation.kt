@@ -3,15 +3,11 @@
 package ru.novolmob.user_mobile_app.navigation
 
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
+import androidx.navigation.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -63,7 +59,7 @@ fun GeneralNavigation(
             MainScreen(
                 modifier = modifier,
                 navHostController = navHostController,
-                tabs = NavigationRoute.Main.tabs.map { it.navigationTab }
+                tabs = NavigationRoute.Main.tabs.mapNotNull { it.navigationTab }
             )
         }
     }
@@ -92,7 +88,10 @@ fun MainNavigation(
                         animationSpec = tween(300)
                     )
                 else
-                    EnterTransition.None
+                    slideIntoContainer(
+                        towards = AnimatedContentScope.SlideDirection.Up,
+                        animationSpec = tween(300)
+                    )
             }
         },
         exitTransition = {
@@ -108,49 +107,65 @@ fun MainNavigation(
                         animationSpec = tween(300)
                     )
                 else
-                    ExitTransition.None
+                    slideOutOfContainer(
+                        towards = AnimatedContentScope.SlideDirection.Up,
+                        animationSpec = tween(300)
+                    )
             }
         },
         popEnterTransition = {
             tabs.compare(initialState, targetState).let {
-                if (it < 0)
+                if (it > 0)
                     slideIntoContainer(
                         towards = AnimatedContentScope.SlideDirection.Right,
                         animationSpec = tween(300)
                     )
-                else if (it > 0)
+                else if (it < 0)
                     slideIntoContainer(
                         towards = AnimatedContentScope.SlideDirection.Left,
                         animationSpec = tween(300)
                     )
                 else
-                    EnterTransition.None
+                    slideIntoContainer(
+                        towards = AnimatedContentScope.SlideDirection.Down,
+                        animationSpec = tween(300)
+                    )
             }
         },
         popExitTransition = {
             tabs.compare(initialState, targetState).let {
-                if (it < 0)
+                if (it > 0)
                     slideOutOfContainer(
                         towards = AnimatedContentScope.SlideDirection.Right,
                         animationSpec = tween(300)
                     )
-                else if (it > 0)
+                else if (it < 0)
                     slideOutOfContainer(
                         towards = AnimatedContentScope.SlideDirection.Left,
                         animationSpec = tween(300)
                     )
                 else
-                    ExitTransition.None
+                    slideOutOfContainer(
+                        towards = AnimatedContentScope.SlideDirection.Down,
+                        animationSpec = tween(300)
+                    )
             }
         }
     ) {
         tabs.forEach { composable(modifier, navHostController, it) }
+        composable(modifier, navHostController, NavigationRoute.Main.Catalog.Device.navigationTab)
     }
 }
 
 private fun List<NavigationTab>.compare(first: NavBackStackEntry, second: NavBackStackEntry): Int = indexOf(first).compareTo(indexOf(second))
 
-private fun List<NavigationTab>.indexOf(entry: NavBackStackEntry): Int = indexOfFirst { it.route == entry.destination.route }
+private fun List<NavigationTab>.indexOf(entry: NavBackStackEntry): Int = indexOfFirst { it.route == entry.destination.route }.takeIf { it >= 0 } ?: entry.position()
+
+private fun NavBackStackEntry.position(): Int = arguments?.getInt("position") ?: -1
+fun position(value: Int) = navArgument("position") {
+    type = NavType.IntType
+    defaultValue = value
+}
 
 private fun NavGraphBuilder.composable(modifier: Modifier, navHostController: NavHostController, tab: NavigationTab) =
     composable(route = tab.route, arguments = tab.arguments, deepLinks = tab.deepLinks) {

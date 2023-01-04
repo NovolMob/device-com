@@ -34,7 +34,7 @@ import ru.novolmob.user_mobile_app.navigation.NavigationRoute
 @Composable
 fun MainScreenPreview() {
     MainScreen(
-        tabs = NavigationRoute.Main.tabs.map { it.navigationTab }
+        tabs = NavigationRoute.Main.tabs.mapNotNull { it.navigationTab }
     )
 }
 
@@ -47,8 +47,9 @@ fun MainScreen(
 ) {
     val destination by innerNavHostController.currentBackStackEntryAsState()
     val selected by remember(tabs, destination) {
-        derivedStateOf { tabs.find { it.route == destination?.destination?.route } }
+        derivedStateOf { tabs.find { destination?.destination?.route?.startsWith(it.route) == true } }
     }
+
     Box(
         modifier = modifier
             .background(color = Color.White)

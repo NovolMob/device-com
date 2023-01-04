@@ -24,4 +24,10 @@
     <string name="save_profile">Сохранить профиль</string>
     <string name="confirm_order">Оформить заказ</string>
     <string name="basket_is_empty">Корзина пуста</string>
+    <string name="device">Устройство</string>
+    <string name="add_to_basket_full">Добавить в корзину</string>
+    <string name="device_type">Тип устройства</string>
+    <string name="points">ПУНКТЫ ВЫДАЧИ:</string>
+    <string name="features">ХАРАКТЕРИСТИКИ:</string>
+    <string name="description">ОПИСАНИЕ:</string>
 </resources>

@@ -6,6 +6,7 @@ import arrow.core.right
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.TokenModel
@@ -58,19 +59,19 @@ class ProfileServiceImpl(
         }
     }
 
-    private suspend fun unauthorizedAction() = _action.emit(ProfileAction.Unauthorized)
+    private fun unauthorizedAction() = _action.update { ProfileAction.Unauthorized }
     private suspend fun loginAction(tokenModel: TokenModel? = null) {
-        _action.emit(ProfileAction.Login)
+        _action.update { ProfileAction.Login }
         tokenModel?.let {
             tokenDataStore.token(it)
         }
     }
     private suspend fun logoutAction() {
-        _action.emit(ProfileAction.Logout)
+        _action.update { ProfileAction.Logout }
         tokenDataStore.token(null)
     }
-    private suspend fun registeredAction() = _action.emit(ProfileAction.Registered)
-    private suspend fun profile(profileModel: UserModel?) = _profile.emit(profileModel)
+    private fun registeredAction() = _action.update { ProfileAction.Registered }
+    private fun profile(profileModel: UserModel?) = _profile.update { profileModel }
 
     override suspend fun update(): Either<BackendException, UserModel> =
         userRepository.get().flatMap { userModel ->

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.novolmob.core.models.Amount
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.user_mobile_app.models.DeviceModel
 import ru.novolmob.user_mobile_app.services.IBasketService
@@ -34,7 +35,7 @@ class BasketViewModel(
 
     fun setDeviceAmount(deviceId: DeviceId, amount: Int) {
         viewModelScope.launch {
-            basketService.setAmount(deviceId, amount)
+            basketService.setAmount(deviceId, Amount(amount))
         }
     }
 

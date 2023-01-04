@@ -9,6 +9,7 @@ import ru.novolmob.backend.ktorrouting.user.Registration
 import ru.novolmob.backend.ktorrouting.user.User
 import ru.novolmob.backendapi.exceptions.BackendException
 import ru.novolmob.backendapi.models.*
+import ru.novolmob.backendapi.repositories.IRepository
 import ru.novolmob.core.models.Email
 import ru.novolmob.core.models.Password
 import ru.novolmob.core.models.PhoneNumber
@@ -16,7 +17,7 @@ import ru.novolmob.user_mobile_app.utils.KtorUtil.get
 import ru.novolmob.user_mobile_app.utils.KtorUtil.post
 import ru.novolmob.user_mobile_app.utils.KtorUtil.put
 
-interface IUserRepository {
+interface IUserRepository: IRepository {
     suspend fun logout(): Either<BackendException, Unit>
     suspend fun login(email: Email, password: Password): Either<BackendException, TokenModel>
     suspend fun login(phoneNumber: PhoneNumber, password: Password): Either<BackendException, TokenModel>

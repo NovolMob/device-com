@@ -31,6 +31,9 @@ open class PasswordMutableValue(
 
         override fun get(): String = _value.value
         override fun isValid(value: String): Boolean = true
+        override fun clear() {
+            set("")
+        }
     }
     val secondState = object: MutableValue<String> {
         protected val _value = MutableStateFlow("")
@@ -45,6 +48,9 @@ open class PasswordMutableValue(
 
         override fun get(): String = _value.value
         override fun isValid(value: String): Boolean = true
+        override fun clear() {
+            set("")
+        }
     }
 
     init {
@@ -53,6 +59,12 @@ open class PasswordMutableValue(
                 if (first == second) first else ""
             }.collectLatest(::set)
         }
+    }
+
+    override fun clear() {
+        firstState.clear()
+        secondState.clear()
+        set("")
     }
 
     override fun isValid(value: String): Boolean = regex.matches(value)

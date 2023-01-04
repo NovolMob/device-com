@@ -1,16 +1,20 @@
 package ru.novolmob.user_mobile_app.services
 
 import arrow.core.Either
+import arrow.core.flatMap
 import arrow.core.right
-import kotlinx.coroutines.flow.*
+import arrow.fx.coroutines.parTraverse
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.novolmob.backendapi.exceptions.BackendException
-import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.DeviceTypeId
 import ru.novolmob.user_mobile_app.models.CatalogModel
 import ru.novolmob.user_mobile_app.models.SearchSampleModel
-import ru.novolmob.user_mobile_app.models.DeviceModel
-import java.util.*
+import ru.novolmob.user_mobile_app.repositories.ICatalogRepository
+import ru.novolmob.user_mobile_app.utils.ScreenNotification
 
 interface ICatalogService: IService {
     val catalog: StateFlow<CatalogModel>
@@ -23,53 +27,60 @@ interface ICatalogService: IService {
 }
 
 class CatalogServiceImpl(
-    private val basketService: IBasketService
+    private val catalogRepository: ICatalogRepository,
+    private val devicesService: IDevicesService
 ): ICatalogService {
-    private val _catalog = MutableStateFlow(
-        CatalogModel(
-            list = List(8) {
-                DeviceModel(
-                    deviceId = DeviceId(UUID.randomUUID()),
-                    title = "Название устройства",
-                    description = "Очень большое описание устройства.",
-                    price = 3999.0,
-                    amountInBasket = 0
-                )
-            },
-            amountOfPage = 1
-        )
-    )
+    private val _catalog = MutableStateFlow(CatalogModel())
     override val catalog: StateFlow<CatalogModel> = _catalog.asStateFlow()
 
-    private val _sample = MutableStateFlow(SearchSampleModel(pageSize = 50))
+    private val _sample = MutableStateFlow(SearchSampleModel(pageSize = 20))
     override val sample: StateFlow<SearchSampleModel> = _sample.asStateFlow()
 
     init {
         serviceScope.launch {
-            launch { update() }
             launch {
-                basketService.basket.collectLatest { basket ->
-                    val basketMap = basket.list.associateBy { it.deviceId }
-                    _catalog.update {
-                        CatalogModel(
-                            list = it.list.toMutableList().map { device -> basketMap[device.deviceId] ?: device },
-                            amountOfPage = it.amountOfPage
-                        )
-                    }
-                }
+                update().fold(
+                    ifLeft = {
+                        ScreenNotification.push(it)
+                    },
+                    ifRight = { }
+                )
             }
         }
     }
 
-    override suspend fun update(): Either<BackendException, Unit> = Unit.right()
+    override suspend fun update(): Either<BackendException, CatalogModel> =
+        catalogRepository.getCatalog(
+            _sample.value.toCatalog()
+        ).flatMap { catalogModel ->
+            CatalogModel(
+                page = catalogModel.page,
+                pageSize = catalogModel.pageSize,
+                list = catalogModel.devices.parTraverse {
+                    devicesService.getOrCreate(it)
+                },
+                amountOfPage = catalogModel.amountOfPages
+            ).also { newCatalogModel ->
+                _catalog.update { newCatalogModel }
+            }.right()
+        }
 
-    override suspend fun page(page: Int) =
+    override suspend fun page(page: Int) {
+        _catalog.update { it.copy(page = page, list = emptyList()) }
         _sample.update { it.copy(page = page) }
+        update()
+    }
 
-    override suspend fun searchString(searchString: String) =
-        _sample.update { it.copy(searchString = searchString) }
+    override suspend fun searchString(searchString: String) {
+        _catalog.update { it.copy(list = emptyList(), page = 0, amountOfPage = 0) }
+        _sample.update { it.copy(searchString = searchString, page = 0) }
+        update()
+    }
 
-    override suspend fun searchByDeviceType(deviceTypeId: DeviceTypeId) =
-        _sample.update { it.copy(deviceTypeId = deviceTypeId) }
+    override suspend fun searchByDeviceType(deviceTypeId: DeviceTypeId) {
+        _catalog.update { it.copy(list = emptyList(), page = 0, amountOfPage = 0) }
+        _sample.update { it.copy(deviceTypeId = deviceTypeId, page = 0) }
+        update()
+    }
 
 }

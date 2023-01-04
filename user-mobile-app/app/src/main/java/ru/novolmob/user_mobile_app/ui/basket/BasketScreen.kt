@@ -2,6 +2,7 @@
 
 package ru.novolmob.user_mobile_app.ui.basket
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,17 +36,12 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import org.koin.androidx.compose.getViewModel
 import ru.novolmob.user_mobile_app.R
 import ru.novolmob.user_mobile_app.models.DeviceModel
-import ru.novolmob.user_mobile_app.services.BasketServiceImpl
 
 
 @Preview
 @Composable
 fun BasketScreenPreview() {
-    BasketScreen(
-        viewModel = BasketViewModel(
-            BasketServiceImpl()
-        )
-    )
+    BasketScreen()
 }
 
 @Composable
@@ -58,6 +54,9 @@ fun BasketScreen(
     val basketIsEmpty by remember(state.list.size) {
         derivedStateOf { state.list.isNotEmpty() }
     }
+
+    BackHandler {}
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -71,13 +70,13 @@ fun BasketScreen(
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             items(state.list) { device ->
-                CatalogItem(
+                BasketItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp),
                     device = device,
-                    setAmountInBasket = { viewModel.setDeviceAmount(device.deviceId, it) },
-                    deleteFromBasket = { viewModel.deleteFromBasket(device.deviceId) }
+                    setAmountInBasket = { viewModel.setDeviceAmount(device.id, it) },
+                    deleteFromBasket = { viewModel.deleteFromBasket(device.id) }
                 )
             }
         }
@@ -140,7 +139,7 @@ private fun ConfirmOrderButton(
 }
 
 @Composable
-private fun CatalogItem(
+private fun BasketItem(
     modifier: Modifier = Modifier,
     device: DeviceModel,
     setAmountInBasket: (Int) -> Unit,

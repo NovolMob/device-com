@@ -4,6 +4,7 @@ package ru.novolmob.user_mobile_app.ui.profile
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -77,6 +78,8 @@ fun ProfileScreen(
     val scope = rememberCoroutineScope()
 
     val state by viewModel.state.collectAsState()
+
+    BackHandler {}
 
     Column(
         modifier = modifier

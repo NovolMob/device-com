@@ -7,51 +7,66 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.novolmob.core.models.Amount
 import ru.novolmob.core.models.ids.DeviceId
-import ru.novolmob.user_mobile_app.models.CatalogModel
-import ru.novolmob.user_mobile_app.models.SearchSampleModel
+import ru.novolmob.core.models.ids.DeviceTypeId
 import ru.novolmob.user_mobile_app.models.DeviceModel
 import ru.novolmob.user_mobile_app.services.IBasketService
 import ru.novolmob.user_mobile_app.services.ICatalogService
+import ru.novolmob.user_mobile_app.services.IDevicesService
 
 data class CatalogState(
-    val catalog: CatalogModel = CatalogModel(),
-    val searchSample: SearchSampleModel
+    val searchString: String = "",
+    val deviceTypeId: DeviceTypeId? = null,
+    val page: Int = 0,
+    val catalog: List<DeviceModel> = emptyList(),
+    val amountOfPage: Int = 0
 )
 
 class CatalogViewModel(
     private val catalogService: ICatalogService,
-    private val basketService: IBasketService
+    private val basketService: IBasketService,
+    private val devicesService: IDevicesService,
 ): ViewModel() {
-    private val _state = MutableStateFlow(CatalogState(searchSample = catalogService.sample.value))
+    private val _state = MutableStateFlow(
+        CatalogState(
+            searchString = catalogService.sample.value.searchString,
+            deviceTypeId = catalogService.sample.value.deviceTypeId,
+            page = catalogService.catalog.value.page,
+            catalog = catalogService.catalog.value.list,
+            amountOfPage = catalogService.catalog.value.amountOfPage
+        )
+    )
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
             launch {
-                catalogService.sample.collectLatest { sample ->
-                    _state.update { it.copy(searchSample = sample) }
-                }
-            }
-            launch {
                 catalogService.catalog.collectLatest { catalog ->
-                    _state.update { it.copy(catalog = catalog) }
+                    _state.update {
+                        it.copy(
+                            page = catalog.page,
+                            catalog = catalog.list,
+                            amountOfPage = catalog.amountOfPage
+                        )
+                    }
                 }
             }
         }
     }
 
     fun searchString(searchString: String) {
-        viewModelScope.launch { catalogService.searchString(searchString) }
+        _state.update { it.copy(searchString = searchString) }
     }
 
     fun selectedPage(selectedPage: Int) {
+        _state.update { it.copy(page = selectedPage) }
         viewModelScope.launch { catalogService.page(selectedPage) }
     }
 
 
     fun search() {
-        viewModelScope.launch { catalogService.update() }
+        viewModelScope.launch { catalogService.searchString(_state.value.searchString) }
     }
 
     fun addToBasket(deviceModel: DeviceModel) {
@@ -62,7 +77,13 @@ class CatalogViewModel(
 
     fun setDeviceAmount(deviceId: DeviceId, amount: Int) {
         viewModelScope.launch {
-            basketService.setAmount(deviceId, amount)
+            basketService.setAmount(deviceId, Amount(amount))
+        }
+    }
+
+    fun openDevice(deviceId: DeviceId) {
+        viewModelScope.launch {
+            devicesService.setDeviceId(deviceId)
         }
     }
 

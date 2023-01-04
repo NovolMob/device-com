@@ -21,6 +21,10 @@ abstract class NullableAbstractLocalDateMutableValue<T>(
             else value?.let(constructor).right()
         }
 
+    override fun clear() {
+        set(null)
+    }
+
     class BirthdayMutableValue(initial: LocalDate? = null): NullableAbstractLocalDateMutableValue<Birthday>(
         initial = initial,
         initialValid = initial?.let { it < LocalDate.now() } ?: true,

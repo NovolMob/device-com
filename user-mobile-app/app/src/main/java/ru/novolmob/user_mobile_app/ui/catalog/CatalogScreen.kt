@@ -2,6 +2,7 @@
 
 package ru.novolmob.user_mobile_app.ui.catalog
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,91 +47,8 @@ import ru.novolmob.core.models.*
 import ru.novolmob.core.models.ids.*
 import ru.novolmob.user_mobile_app.R
 import ru.novolmob.user_mobile_app.models.DeviceModel
-import java.math.BigDecimal
+import ru.novolmob.user_mobile_app.navigation.NavigationRoute.Main.Catalog.Device.navigateToDevice
 import java.util.*
-import kotlin.random.Random
-import kotlin.random.nextUInt
-
-val deviceId = DeviceId(UUID.randomUUID())
-val deviceTypeId = DeviceTypeId(UUID.randomUUID())
-val pointId = PointId(UUID.randomUUID())
-
-val device = DeviceFullModel(
-    id = deviceId,
-    article = Code("code"),
-    type = DeviceTypeFullModel(
-        id = deviceTypeId,
-        detail = DeviceTypeDetailModel(
-            id = DeviceTypeDetailId(UUID.randomUUID()),
-            deviceTypeId = deviceTypeId,
-            title = Title("Название"),
-            description = Description("Большое описание"),
-            language = Language("ru")
-        )
-    ),
-    detailModel = DeviceDetailModel(
-        id = DeviceDetailId(UUID.randomUUID()),
-        deviceId = deviceId,
-        title = Title("Название"),
-        description = Description("Большое описание"),
-        features = Features(
-            mapOf(
-                "Характеристика" to "Значение",
-                "Характеристика" to "Значение",
-                "Характеристика" to "Значение",
-            )
-        ),
-        language = Language("ru")
-    ),
-    points = listOf(
-        NumberOfDeviceInPointModel(
-            pointId = pointId,
-            pointDetail = PointDetailModel(
-                id = PointDetailId(UUID.randomUUID()),
-                pointId = pointId,
-                address = Address("Адрес"),
-                schedule = Schedule(
-                    mapOf(
-                        "Понедельник" to "10-22",
-                        "Вторник" to "10-22",
-                        "Среда" to "10-22",
-                        "Четверг" to "10-22",
-                        "Пятница" to "10-22",
-                        "Суббота" to "10-22",
-                        "Воскресенье" to "10-22",
-                    )
-                ),
-                description = Description("Описание"),
-                language = Language("ru")
-            ),
-            amount = Amount(Random.nextUInt(50u).toInt())
-        ),
-        NumberOfDeviceInPointModel(
-            pointId = pointId,
-            pointDetail = PointDetailModel(
-                id = PointDetailId(UUID.randomUUID()),
-                pointId = pointId,
-                address = Address("Адрес"),
-                schedule = Schedule(
-                    mapOf(
-                        "Понедельник" to "10-22",
-                        "Вторник" to "10-22",
-                        "Среда" to "10-22",
-                        "Четверг" to "10-22",
-                        "Пятница" to "10-22",
-                        "Суббота" to "10-22",
-                        "Воскресенье" to "10-22",
-                    )
-                ),
-                description = Description("Описание"),
-                language = Language("ru")
-            ),
-            amount = Amount(Random.nextUInt(50u).toInt())
-        )
-    ),
-    price = Price(BigDecimal.valueOf(Random.nextUInt(100000u).toDouble()))
-)
-
 
 @Preview
 @Composable
@@ -146,6 +64,8 @@ fun CatalogScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
+    BackHandler {}
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -156,19 +76,23 @@ fun CatalogScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 5.dp),
-            startValue = state.searchSample.searchString,
+            startValue = state.searchString,
             update = viewModel::searchString,
             onDone = viewModel::search
         )
         CatalogContent(
             modifier = Modifier
                 .fillMaxWidth(),
-            catalog = state.catalog.list,
-            amountOfPages = state.catalog.amountOfPage,
-            selectedPage = state.searchSample.page,
+            catalog = state.catalog,
+            amountOfPages = state.amountOfPage,
+            selectedPage = state.page,
             setPage = viewModel::selectedPage,
             setAmountInBasket = viewModel::setDeviceAmount,
-            addToBasket = viewModel::addToBasket
+            addToBasket = viewModel::addToBasket,
+            openDevice = {
+                viewModel.openDevice(it)
+                navHostController.navigateToDevice()
+            }
         )
     }
 }
@@ -181,7 +105,8 @@ private fun CatalogContent(
     selectedPage: Int,
     setAmountInBasket: (DeviceId, Int) -> Unit,
     addToBasket: (DeviceModel) -> Unit,
-    setPage: (Int) -> Unit
+    setPage: (Int) -> Unit,
+    openDevice: (DeviceId) -> Unit
 ) {
     val hasPages by remember(amountOfPages) {
         derivedStateOf { amountOfPages > 1 }
@@ -200,8 +125,9 @@ private fun CatalogContent(
                         .fillMaxWidth()
                         .height(120.dp),
                     device = device,
-                    setAmountInBasket = { setAmountInBasket(device.deviceId, it) },
-                    addToBasket = { addToBasket(device) }
+                    setAmountInBasket = { setAmountInBasket(device.id, it) },
+                    addToBasket = { addToBasket(device) },
+                    onClick = { openDevice(device.id) }
                 )
             }
         }
@@ -224,7 +150,8 @@ private fun CatalogItem(
     modifier: Modifier = Modifier,
     device: DeviceModel,
     setAmountInBasket: (Int) -> Unit,
-    addToBasket: () -> Unit
+    addToBasket: () -> Unit,
+    onClick: () -> Unit
 ) {
     val amountInBasket by device.amountInBasketFlow.collectAsState()
     val containInBasket by remember(amountInBasket) {
@@ -237,7 +164,8 @@ private fun CatalogItem(
     Row(
         modifier = modifier
             .background(color = Color.Gray, shape = RoundedCornerShape(15.dp))
-            .padding(5.dp),
+            .padding(5.dp)
+            .clickable(onClick = onClick),
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Image(
@@ -272,7 +200,8 @@ private fun CatalogItem(
             }
             Row(
                 modifier = Modifier
-                    .height(30.dp),
+                    .height(30.dp)
+                    .padding(1.dp),
                 verticalAlignment = Alignment.Bottom,
             ) {
                 Spacer(modifier = modifier.weight(1f))

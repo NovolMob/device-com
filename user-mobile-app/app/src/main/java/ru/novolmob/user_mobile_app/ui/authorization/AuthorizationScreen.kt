@@ -2,6 +2,7 @@
 
 package ru.novolmob.user_mobile_app.ui.authorization
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -68,6 +69,8 @@ fun AuthorizationScreen(
     val pagerState = rememberPagerState()
     val focusManager = LocalFocusManager.current
 
+    BackHandler {}
+
     LaunchedEffect(key1 = true) {
         launch {
             snapshotFlow { pagerState.currentPage }.collectLatest {
@@ -92,7 +95,7 @@ fun AuthorizationScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                        navHostController.navigateToRegistration()
+                        if (!state.loading) navHostController.navigateToRegistration()
                     },
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
@@ -133,6 +136,7 @@ fun AuthorizationScreen(
                     modifier = Modifier
                         .padding(vertical = 10.dp),
                     pagerState = pagerState,
+                    enabled = !state.loading,
                     emailState = state.email,
                     phoneNumberState = state.phoneNumber,
                     passwordState = state.password,
@@ -142,7 +146,7 @@ fun AuthorizationScreen(
                 LoginButton(
                     modifier = Modifier
                         .padding(vertical = 5.dp),
-                    enable = state.canEnter,
+                    enabled = state.canEnter,
                     loading = state.loading,
                     onClick = {
                         focusManager.clearFocus()
@@ -195,6 +199,7 @@ private fun AuthTypesRow(
 @Composable
 private fun Form(
     modifier: Modifier = Modifier,
+    enabled: Boolean,
     pagerState: PagerState,
     emailState: MutableValue<String>,
     phoneNumberState: MutableValue<String>,
@@ -213,6 +218,7 @@ private fun Form(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 25.dp),
+                enabled = enabled,
                 loginState = emailState,
                 loginPlaceholder = stringResource(id = R.string.email),
                 passwordState = passwordState,
@@ -224,6 +230,7 @@ private fun Form(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 25.dp),
+                enabled = enabled,
                 loginState = phoneNumberState,
                 loginPlaceholder = stringResource(id = R.string.phone_number),
                 passwordState = passwordState,
@@ -281,6 +288,7 @@ private fun SelectingTabForPagerState(
 @Composable
 private fun AuthForm(
     modifier: Modifier = Modifier,
+    enabled: Boolean,
     loginState: MutableValue<String>,
     loginPlaceholder: String,
     loginOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -297,6 +305,7 @@ private fun AuthForm(
         InputField(
             modifier = Modifier
                 .fillMaxWidth(),
+            enabled = enabled,
             valueState = loginState,
             placeholder = loginPlaceholder,
             keyboardOptions = loginOptions,
@@ -311,6 +320,7 @@ private fun AuthForm(
         PasswordField(
             modifier = Modifier
                 .fillMaxWidth(),
+            enabled = enabled,
             passwordState = passwordState
         ) {
             focusManager.clearFocus()
@@ -322,6 +332,7 @@ private fun AuthForm(
 @Composable
 private fun PasswordField(
     modifier: Modifier = Modifier,
+    enabled: Boolean,
     passwordState: MutableValue<String>,
     onDone: () -> Unit
 ) {
@@ -333,6 +344,7 @@ private fun PasswordField(
     Box(modifier = modifier) {
         InputField(
             modifier = Modifier.fillMaxWidth(),
+            enabled = enabled,
             valueState = passwordState,
             placeholder = stringResource(id = R.string.password),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -366,18 +378,18 @@ private fun PasswordField(
 @Composable
 private fun LoginButton(
     modifier: Modifier = Modifier,
-    enable: Boolean,
+    enabled: Boolean,
     loading: Boolean,
     onClick: () -> Unit
 ) {
-    val textWidth by remember(enable) {
-        derivedStateOf { if (enable) 0.8f else 0.4f }
+    val textWidth by remember(enabled) {
+        derivedStateOf { if (enabled) 0.8f else 0.4f }
     }
-    val textHeight by remember(enable) {
-        derivedStateOf { if (enable) 40.dp else 30.dp }
+    val textHeight by remember(enabled) {
+        derivedStateOf { if (enabled) 40.dp else 30.dp }
     }
-    val textBackgroundColor by remember(enable) {
-        derivedStateOf { if (enable) Color.Green else Color.LightGray }
+    val textBackgroundColor by remember(enabled) {
+        derivedStateOf { if (enabled) Color.Green else Color.LightGray }
     }
     val textWidthAnimation by animateFloatAsState(targetValue = textWidth)
     val textHeightAnimation by animateDpAsState(targetValue = textHeight)
@@ -389,7 +401,7 @@ private fun LoginButton(
             .height(textHeightAnimation)
             .background(color = textBackgroundColorAnimation, shape = CircleShape)
             .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                if (enable) onClick()
+                if (enabled) onClick()
             },
         contentAlignment = Alignment.Center
     ) {
@@ -402,7 +414,7 @@ private fun LoginButton(
         } else {
             Text(
                 modifier = Modifier,
-                text = if (enable) stringResource(id = R.string.login) else "",
+                text = if (enabled) stringResource(id = R.string.login) else "",
                 fontSize = 18.sp,
                 color = Color.Black,
                 textAlign = TextAlign.Center
@@ -414,6 +426,7 @@ private fun LoginButton(
 @Composable
 private fun InputField(
     modifier: Modifier = Modifier,
+    enabled: Boolean,
     valueState: MutableValue<String>,
     placeholder: String,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -438,6 +451,7 @@ private fun InputField(
             .border(width = 1.dp, color = colorAnimation, shape = CircleShape)
             .background(color = colorAnimation.copy(alpha = 0.04f), shape = CircleShape),
         value = value,
+        enabled = enabled,
         onValueChange = {
             valueState.set(it)
         },

@@ -23,6 +23,8 @@ abstract class AbstractCharacterMutableValue<T>(
             else constructor(value).right()
         }
 
+    override fun clear() = set("")
+
     class FirstnameMutableValue(initial: String = ""): AbstractCharacterMutableValue<Firstname>(
         initial = initial,
         initialValid = regex.matches(initial),

@@ -30,8 +30,18 @@ class AuthorizationViewModel(
 
     init {
         viewModelScope.launch {
-            _state.collectLatest {
-                it.run {
+            launch {
+                profileService.action.collectLatest { action ->
+                    _state.update {
+                        it.copy(
+                            loading = action == null,
+                            canEnter = action == null
+                        )
+                    }
+                }
+            }
+            launch {
+                state.value.run {
                     combine(email.valid, phoneNumber.valid, password.valid) { array: Array<Boolean> ->
                         (array[0] || array[1]) && array[2]
                     }.collectLatest { canEnter ->
@@ -42,8 +52,13 @@ class AuthorizationViewModel(
         }
     }
 
-    fun reset() =
-        _state.update { AuthorizationState() }
+    fun reset() {
+        state.value.run {
+            email.clear()
+            phoneNumber.clear()
+            password.clear()
+        }
+    }
 
     fun login(): Unit = _state.value.run {
         if (password.valid.value) {

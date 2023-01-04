@@ -5,6 +5,7 @@ import org.koin.dsl.module
 import ru.novolmob.user_mobile_app.ui.authorization.AuthorizationViewModel
 import ru.novolmob.user_mobile_app.ui.basket.BasketViewModel
 import ru.novolmob.user_mobile_app.ui.catalog.CatalogViewModel
+import ru.novolmob.user_mobile_app.ui.device.DeviceViewModel
 import ru.novolmob.user_mobile_app.ui.profile.ProfileViewModel
 import ru.novolmob.user_mobile_app.ui.registration.RegistrationViewModel
 
@@ -22,7 +23,8 @@ val viewModelModule = module {
     viewModel {
         CatalogViewModel(
             basketService = get(),
-            catalogService = get()
+            catalogService = get(),
+            devicesService = get()
         )
     }
     viewModel {
@@ -32,6 +34,12 @@ val viewModelModule = module {
     }
     viewModel {
         BasketViewModel(
+            basketService = get()
+        )
+    }
+    viewModel {
+        DeviceViewModel(
+            deviceService = get(),
             basketService = get()
         )
     }

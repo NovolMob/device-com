@@ -6,14 +6,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import ru.novolmob.core.models.ids.DeviceId
 
 class DeviceModel(
-    val deviceId: DeviceId,
+    val id: DeviceId,
     imageBitmap: ImageBitmap? = null,
     val title: String,
     val description: String,
     val price: Double,
-    val priceString: String = "$price ₽",
     amountInBasket: Int
 ) {
+    val priceString: String
+        get() = "$price ₽"
+
     private val _imageFlow = MutableStateFlow(imageBitmap)
     val imageFlow = _imageFlow.asStateFlow()
 

@@ -8,4 +8,5 @@ interface MutableValue<T> {
     fun set(newValue: T)
     fun isValid(value: T): Boolean
     fun get(): T
+    fun clear()
 }

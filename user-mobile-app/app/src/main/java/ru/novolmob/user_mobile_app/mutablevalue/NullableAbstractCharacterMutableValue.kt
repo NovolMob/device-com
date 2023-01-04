@@ -19,6 +19,10 @@ abstract class NullableAbstractCharacterMutableValue<T>(
             else value.let(constructor).right()
         }
 
+    override fun clear() {
+        set("")
+    }
+
     class PatronymicMutableValue(initial: String = ""): NullableAbstractCharacterMutableValue<Patronymic>(
         initial = initial,
         initialValid = regex.matches(initial),
