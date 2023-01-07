@@ -89,11 +89,6 @@ fun DeviceScreen(
                     type = state.type,
                     features = state.features
                 )
-                Points(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    points = state.points
-                )
             }
             BottomButton(
                 modifier = Modifier
@@ -134,39 +129,6 @@ private fun Description(
             color = Color.Gray,
             fontSize = 16.sp
         )
-    }
-}
-
-@Composable
-private fun Points(
-    modifier: Modifier = Modifier,
-    points: List<String>
-) {
-    if (points.isNotEmpty()) {
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                text = stringResource(id = R.string.points),
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Gray
-            )
-            points.forEach {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 15.dp),
-                    text = it,
-                    fontSize = 16.sp,
-                    color = Color.Gray
-                )
-            }
-        }
     }
 }
 

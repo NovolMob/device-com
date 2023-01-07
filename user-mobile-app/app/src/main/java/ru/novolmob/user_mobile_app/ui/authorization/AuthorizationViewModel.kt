@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import arrow.core.computations.either
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.UserModel
 import ru.novolmob.core.models.Email
 import ru.novolmob.core.models.Password
@@ -74,7 +74,7 @@ class AuthorizationViewModel(
         if (_state.value.canEnter) {
             viewModelScope.launch {
                 _state.update { it.copy(loading = true) }
-                either<BackendException, UserModel> {
+                either<AbstractBackendException, UserModel> {
                     _state.value.run {
                         profileService.loginByEmail(
                             email = email.getModel().bind(),
@@ -96,7 +96,7 @@ class AuthorizationViewModel(
         if (_state.value.canEnter) {
             viewModelScope.launch {
                 _state.update { it.copy(loading = true) }
-                either<BackendException, UserModel> {
+                either<AbstractBackendException, UserModel> {
                     _state.value.run {
                         profileService.loginByPhoneNumber(
                             phoneNumber = phoneNumber.getModel().bind(),

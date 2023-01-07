@@ -5,14 +5,12 @@ import androidx.lifecycle.viewModelScope
 import arrow.core.computations.either
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.UserCreateModel
 import ru.novolmob.backendapi.models.UserModel
 import ru.novolmob.core.models.*
-import ru.novolmob.user_mobile_app.mutablevalue.AbstractCharacterMutableValue
-import ru.novolmob.user_mobile_app.mutablevalue.NullableAbstractCharacterMutableValue
-import ru.novolmob.user_mobile_app.mutablevalue.NullableAbstractLocalDateMutableValue
-import ru.novolmob.user_mobile_app.mutablevalue.PasswordMutableValue
+import ru.novolmob.user_mobile_app.mutablevalue.*
+import ru.novolmob.user_mobile_app.services.ICityService
 import ru.novolmob.user_mobile_app.utils.ScreenNotification
 import ru.novolmob.user_mobile_app.services.IProfileService
 import java.util.*
@@ -24,8 +22,7 @@ data class RegistrationState(
     val lastname: AbstractCharacterMutableValue<Lastname> = AbstractCharacterMutableValue.LastnameMutableValue(),
     val patronymic: NullableAbstractCharacterMutableValue<Patronymic> = NullableAbstractCharacterMutableValue.PatronymicMutableValue(),
     val birthday: NullableAbstractLocalDateMutableValue<Birthday> = NullableAbstractLocalDateMutableValue.BirthdayMutableValue(),
-    val availableCities: List<String> = NullableAbstractCharacterMutableValue.CityMutableValue.availableCities,
-    val city: NullableAbstractCharacterMutableValue<City> = NullableAbstractCharacterMutableValue.CityMutableValue(),
+    val city: CityMutableValue = CityMutableValue(),
     val availableLanguages: List<Locale> = AbstractCharacterMutableValue.LanguageMutableValue.availableLanguages,
     val language: AbstractCharacterMutableValue<Language> = AbstractCharacterMutableValue.LanguageMutableValue(),
     val email: NullableAbstractCharacterMutableValue<Email> = NullableAbstractCharacterMutableValue.EmailMutableValue(),
@@ -36,33 +33,39 @@ data class RegistrationState(
 )
 
 class RegistrationViewModel(
-    private val profileService: IProfileService
+    private val profileService: IProfileService,
+    private val cityService: ICityService
 ): ViewModel() {
     private val _state = MutableStateFlow(RegistrationState())
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            state.value.run {
-                combine(
-                    firstname.valid, lastname.valid, patronymic.valid,
-                    birthday.valid, city.valid, language.valid,
-                    email.valid, phoneNumber.valid, password.valid
-                ) { array: Array<Boolean> ->
-                    array.all { it }
-                }.collectLatest { canSend ->
-                    _state.update { it.copy(canSend = canSend) }
+            launch {
+                cityService.cities.collectLatest { cities ->
+                    state.value.city.cities.update { cities }
+                }
+            }
+            launch {
+                state.value.run {
+                    combine(
+                        firstname.valid, lastname.valid, patronymic.valid,
+                        birthday.valid, city.valid, language.valid,
+                        email.valid, phoneNumber.valid, password.valid
+                    ) { array: Array<Boolean> ->
+                        array.all { it }
+                    }.collectLatest { canSend ->
+                        _state.update { it.copy(canSend = canSend) }
+                    }
                 }
             }
         }
     }
 
-    fun reset() = _state.update { RegistrationState() }
-
     fun register() {
         viewModelScope.launch {
             _state.update { it.copy(loading = true) }
-            either<BackendException, UserModel> {
+            either<AbstractBackendException, UserModel> {
                 _state.value.run {
                     profileService.register(
                         profileModel = UserCreateModel(
@@ -70,7 +73,7 @@ class RegistrationViewModel(
                             lastname = lastname.getModel().bind(),
                             patronymic = patronymic.getModel().bind(),
                             birthday = birthday.getModel().bind(),
-                            city = city.getModel().bind(),
+                            cityId = city.getModel().bind()?.id,
                             language = language.getModel().bind(),
                             email = email.getModel().bind(),
                             phoneNumber = phoneNumber.getModel().bind(),
@@ -83,7 +86,7 @@ class RegistrationViewModel(
                     _state.update { it.copy(loading = false) }
                     ScreenNotification.push(exception)
                 },
-                ifRight = { reset() }
+                ifRight = {  }
             )
         }
     }

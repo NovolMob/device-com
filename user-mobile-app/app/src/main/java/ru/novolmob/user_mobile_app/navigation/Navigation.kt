@@ -152,20 +152,15 @@ fun MainNavigation(
             }
         }
     ) {
-        tabs.forEach { composable(modifier, navHostController, it) }
-        composable(modifier, navHostController, NavigationRoute.Main.Catalog.Device.navigationTab)
+        (tabs + NavigationRoute.Main.Catalog.Device.navigationTab +
+                NavigationRoute.Main.Orders.Order.navigationTab
+        ).forEach { composable(modifier, navHostController, it) }
     }
 }
 
-private fun List<NavigationTab>.compare(first: NavBackStackEntry, second: NavBackStackEntry): Int = indexOf(first).compareTo(indexOf(second))
+private fun List<NavigationTab>.compare(first: NavBackStackEntry, second: NavBackStackEntry): Int = indexOf(second)?.let { indexOf(first)?.compareTo(it) ?: 0 } ?: 0
 
-private fun List<NavigationTab>.indexOf(entry: NavBackStackEntry): Int = indexOfFirst { it.route == entry.destination.route }.takeIf { it >= 0 } ?: entry.position()
-
-private fun NavBackStackEntry.position(): Int = arguments?.getInt("position") ?: -1
-fun position(value: Int) = navArgument("position") {
-    type = NavType.IntType
-    defaultValue = value
-}
+private fun List<NavigationTab>.indexOf(entry: NavBackStackEntry): Int? = indexOfFirst { it.route == entry.destination.route }.takeIf { it >= 0 }
 
 private fun NavGraphBuilder.composable(modifier: Modifier, navHostController: NavHostController, tab: NavigationTab) =
     composable(route = tab.route, arguments = tab.arguments, deepLinks = tab.deepLinks) {

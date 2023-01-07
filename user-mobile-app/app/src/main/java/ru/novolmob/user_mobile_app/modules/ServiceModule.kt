@@ -10,4 +10,7 @@ val serviceModule = module {
     singleOf(::CatalogServiceImpl).bind<ICatalogService>().bind<IService>()
     singleOf(::ProfileServiceImpl).bind<IProfileService>().bind<IService>()
     singleOf(::DevicesServiceImpl).bind<IDevicesService>().bind<IService>()
+    singleOf(::CityServiceImpl).bind<ICityService>().bind<IService>()
+    singleOf(::PointServiceImpl).bind<IPointService>().bind<IService>()
+    singleOf(::OrderServiceImpl).bind<IOrderService>().bind<IService>()
 }

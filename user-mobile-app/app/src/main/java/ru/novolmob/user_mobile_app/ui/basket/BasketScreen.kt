@@ -4,14 +4,14 @@ package ru.novolmob.user_mobile_app.ui.basket
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import org.koin.androidx.compose.getViewModel
+import ru.novolmob.backendapi.models.PointShortModel
+import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.user_mobile_app.R
 import ru.novolmob.user_mobile_app.models.DeviceModel
 
@@ -51,7 +53,7 @@ fun BasketScreen(
     navHostController: NavHostController = rememberAnimatedNavController()
 ) {
     val state by viewModel.state.collectAsState()
-    val basketIsEmpty by remember(state.list.size) {
+    val basketIsNotEmpty by remember(state.list.size) {
         derivedStateOf { state.list.isNotEmpty() }
     }
 
@@ -62,52 +64,158 @@ fun BasketScreen(
             .fillMaxSize()
             .background(color = Color.White),
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .padding(vertical = 5.dp, horizontal = 15.dp),
-            contentPadding = PaddingValues(bottom = 130.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-            items(state.list) { device ->
-                BasketItem(
+        if (state.loading) {
+            CircularProgressIndicator(
+                modifier = modifier
+                    .align(Alignment.Center),
+                color = Color.LightGray
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 15.dp),
+                contentPadding = PaddingValues(bottom = 130.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                items(state.list) { device ->
+                    BasketItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp),
+                        device = device,
+                        setAmountInBasket = { viewModel.setDeviceAmount(device.id, it) },
+                        deleteFromBasket = { viewModel.deleteFromBasket(device.id) }
+                    )
+                }
+            }
+            if (basketIsNotEmpty) {
+                Confirmation(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
-                    device = device,
-                    setAmountInBasket = { viewModel.setDeviceAmount(device.id, it) },
-                    deleteFromBasket = { viewModel.deleteFromBasket(device.id) }
+                        .fillMaxSize(),
+                    points = state.points,
+                    sending = state.sending,
+                    totalPrice = state.totalPriceString,
+                    confirm = viewModel::confirmOrder
+                )
+            } else {
+                Text(
+                    modifier = modifier
+                        .align(Alignment.Center),
+                    text = stringResource(id = R.string.basket_is_empty),
+                    color = Color.LightGray,
+                    maxLines = 1,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
-        if (basketIsEmpty) {
-            ConfirmOrderButton(
+    }
+}
+
+@Composable
+private fun Confirmation(
+    modifier: Modifier = Modifier,
+    points: List<PointShortModel>,
+    sending: Boolean,
+    totalPrice: String,
+    confirm: (PointId) -> Unit
+) {
+    var hiddenAlertDialog by remember {
+        mutableStateOf(true)
+    }
+
+    Box(modifier = modifier) {
+
+        if (!hiddenAlertDialog) {
+            AlertDialog(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 70.dp)
-                    .height(60.dp),
-                totalPrice = state.totalPriceString,
-                onClick = viewModel::confirmOrder
-            )
-        } else {
-            Text(
-                modifier = modifier
-                    .align(Alignment.Center),
-                text = stringResource(id = R.string.basket_is_empty),
-                color = Color.LightGray,
-                maxLines = 1,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                    .padding(10.dp),
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.select_point),
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        maxLines = 1
+                    )
+                },
+                buttons = {
+                    Column(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        points.forEach {
+                            Column(
+                                modifier = Modifier
+                                    .background(color = Color.LightGray, shape = RoundedCornerShape(15))
+                                    .padding(5.dp)
+                                    .clickable {
+                                        confirm(it.id)
+                                        hiddenAlertDialog = true
+                                    },
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 10.dp),
+                                    text = it.address.string,
+                                    color = Color.Gray,
+                                    fontSize = 18.sp,
+                                    textAlign = TextAlign.Center
+                                )
+                                it.schedule.map.forEach { (key, value) ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            modifier = Modifier,
+                                            text = key,
+                                            color = Color.Gray,
+                                            fontSize = 16.sp,
+                                        )
+                                        Text(
+                                            modifier = Modifier,
+                                            text = value,
+                                            color = Color.Gray,
+                                            fontSize = 16.sp,
+                                            textAlign = TextAlign.End
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                onDismissRequest = { hiddenAlertDialog = true }
             )
         }
+
+        ConfirmOrderButton(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 70.dp)
+                .height(60.dp),
+            sending = sending || points.isEmpty(),
+            totalPrice = totalPrice,
+            onClick = {
+                hiddenAlertDialog = false
+            }
+        )
     }
 }
 
 @Composable
 private fun ConfirmOrderButton(
     modifier: Modifier = Modifier,
+    sending: Boolean,
     totalPrice: String,
     onClick: () -> Unit
 ) {
@@ -116,25 +224,33 @@ private fun ConfirmOrderButton(
             .background(color = Color.Green, shape = RoundedCornerShape(100, 100, 0, 0))
             .clickable(
                 interactionSource = MutableInteractionSource(),
-                indication = null,
-                onClick = onClick
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
+                indication = null
+            ) {
+                if (!sending) onClick()
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround
     ) {
-        Text(
-            text = totalPrice,
-            fontSize = 22.sp,
-            maxLines = 1,
-            color = Color.White,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = stringResource(id = R.string.confirm_order),
-            fontSize = 16.sp,
-            maxLines = 1,
-            color = Color.White,
-            fontWeight = FontWeight.Bold
-        )
+        if (sending) {
+            CircularProgressIndicator(
+                color = Color.White
+            )
+        } else {
+            Text(
+                text = totalPrice,
+                fontSize = 22.sp,
+                maxLines = 1,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = stringResource(id = R.string.confirm_order),
+                fontSize = 16.sp,
+                maxLines = 1,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 

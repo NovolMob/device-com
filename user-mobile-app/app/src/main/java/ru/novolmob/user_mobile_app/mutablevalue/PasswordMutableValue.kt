@@ -7,17 +7,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
 import ru.novolmob.core.models.Password
 
 open class PasswordMutableValue(
     private val regex: Regex = Regex("\\w+\\d+"),
-    private val notValidException: BackendException = BackendException(
+    private val notValidException: AbstractBackendException = AbstractBackendException.BackendException(
         code = BackendExceptionCode.BAD_REQUEST,
         message = "Пароли указаны неверно!"
     )
-): AbstractMutableValue<String>("", false) {
+): AbstractMutableValue<Password>(Password(""), false) {
     val firstState = object: MutableValue<String> {
         protected val _value = MutableStateFlow("")
         override val value: StateFlow<String> = _value.asStateFlow()
@@ -57,21 +57,23 @@ open class PasswordMutableValue(
         CoroutineScope(SupervisorJob()).launch {
             combine(firstState.value, secondState.value) { first: String, second: String ->
                 if (first == second) first else ""
-            }.collectLatest(::set)
+            }.collectLatest {
+                set(Password(it))
+            }
         }
     }
 
     override fun clear() {
         firstState.clear()
         secondState.clear()
-        set("")
+        set(Password(""))
     }
 
-    override fun isValid(value: String): Boolean = regex.matches(value)
+    override fun isValid(value: Password): Boolean = regex.matches(value.string)
 
-    fun getModel(): Either<BackendException, Password> =
+    fun getModel(): Either<AbstractBackendException, Password> =
         get().let { value ->
             if (!isValid(value)) notValidException.left()
-            else Password(value).right()
+            else value.right()
         }
 }

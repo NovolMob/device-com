@@ -3,17 +3,20 @@ package ru.novolmob.user_mobile_app.mutablevalue
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
-import ru.novolmob.core.models.*
+import ru.novolmob.core.models.Email
+import ru.novolmob.core.models.Patronymic
+import ru.novolmob.core.models.ids.CityId
+import java.util.*
 
 abstract class NullableAbstractCharacterMutableValue<T>(
     initial: String = "",
     initialValid: Boolean = true,
     private val constructor: (String) -> T,
-    private val notValidException: BackendException
+    private val notValidException: AbstractBackendException
 ): AbstractMutableValue<String>(initial, initialValid) {
-    fun getModel(): Either<BackendException, T?> =
+    fun getModel(): Either<AbstractBackendException, T?> =
         get().let { value ->
             if (!isValid(value)) notValidException.left()
             else value.let(constructor).right()
@@ -27,7 +30,7 @@ abstract class NullableAbstractCharacterMutableValue<T>(
         initial = initial,
         initialValid = regex.matches(initial),
         constructor = { Patronymic(it.replaceFirstChar { it.uppercase() }) },
-        notValidException = BackendException(
+        notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
             message = "Отчество введено неправильно! Оно должно содержать только буквы."
         )
@@ -38,28 +41,22 @@ abstract class NullableAbstractCharacterMutableValue<T>(
 
         override fun isValid(value: String): Boolean = value.isEmpty() || value.let(regex::matches)
     }
-    class CityMutableValue(initial: String = ""): NullableAbstractCharacterMutableValue<City>(
+    class CityMutableValue(initial: String = ""): NullableAbstractCharacterMutableValue<CityId>(
         initial = initial,
-        initialValid = initial.isEmpty() || availableCities.contains(initial),
-        constructor = ::City,
-        notValidException = BackendException(
+        initialValid = initial.isEmpty(),
+        constructor = { CityId(UUID.fromString(it)) },
+        notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
             message = "Город введён неправильно"
         )
     ) {
-        companion object {
-            val availableCities: List<String> = listOf(
-                "Великий Новгород"
-            )
-        }
-
-        override fun isValid(value: String): Boolean = value.isEmpty() || availableCities.contains(value)
+        override fun isValid(value: String): Boolean = value.isEmpty()
     }
     class EmailMutableValue(initial: String = ""): NullableAbstractCharacterMutableValue<Email>(
         initial = initial,
         initialValid = regex.matches(initial),
         constructor = ::Email,
-        notValidException = BackendException(
+        notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
             message = "Электронная почта введена неправильно!"
         )

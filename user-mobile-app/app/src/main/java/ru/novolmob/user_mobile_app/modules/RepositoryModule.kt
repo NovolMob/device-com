@@ -10,4 +10,7 @@ val repositoryModule = module {
     singleOf(::CatalogRepositoryImpl).bind<ICatalogRepository>()
     singleOf(::BasketRepositoryImpl).bind<IBasketRepository>()
     singleOf(::DeviceRepositoryImpl).bind<IDeviceRepository>()
+    singleOf(::CityRepositoryImpl).bind<ICityRepository>()
+    singleOf(::PointRepositoryImpl).bind<IPointRepository>()
+    singleOf(::OrderRepositoryImpl).bind<IOrderRepository>()
 }

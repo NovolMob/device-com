@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.TokenModel
 import ru.novolmob.backendapi.models.UserCreateModel
 import ru.novolmob.backendapi.models.UserModel
@@ -25,13 +25,13 @@ interface IProfileService: IService {
     val profile: StateFlow<UserModel?>
     val action: StateFlow<ProfileAction?>
 
-    suspend fun updateProfile(profileModel: UserUpdateModel): Either<BackendException, UserModel>
-    suspend fun register(profileModel: UserCreateModel): Either<BackendException, UserModel>
+    suspend fun updateProfile(profileModel: UserUpdateModel): Either<AbstractBackendException, UserModel>
+    suspend fun register(profileModel: UserCreateModel): Either<AbstractBackendException, UserModel>
 
-    suspend fun loginByEmail(email: Email, password: Password): Either<BackendException, UserModel>
-    suspend fun loginByPhoneNumber(phoneNumber: PhoneNumber, password: Password): Either<BackendException, UserModel>
+    suspend fun loginByEmail(email: Email, password: Password): Either<AbstractBackendException, UserModel>
+    suspend fun loginByPhoneNumber(phoneNumber: PhoneNumber, password: Password): Either<AbstractBackendException, UserModel>
 
-    suspend fun logout(): Either<BackendException, Unit>
+    suspend fun logout(): Either<AbstractBackendException, Unit>
 
     fun get(): UserModel?
 }
@@ -73,19 +73,19 @@ class ProfileServiceImpl(
     private fun registeredAction() = _action.update { ProfileAction.Registered }
     private fun profile(profileModel: UserModel?) = _profile.update { profileModel }
 
-    override suspend fun update(): Either<BackendException, UserModel> =
+    override suspend fun update(): Either<AbstractBackendException, UserModel> =
         userRepository.get().flatMap { userModel ->
             profile(userModel)
             userModel.right()
         }
 
-    override suspend fun updateProfile(profileModel: UserUpdateModel): Either<BackendException, UserModel> =
+    override suspend fun updateProfile(profileModel: UserUpdateModel): Either<AbstractBackendException, UserModel> =
         userRepository.put(updateModel = profileModel).flatMap { newProfile ->
             profile(newProfile)
             newProfile.right()
         }
 
-    override suspend fun register(profileModel: UserCreateModel): Either<BackendException, UserModel> =
+    override suspend fun register(profileModel: UserCreateModel): Either<AbstractBackendException, UserModel> =
         userRepository.registration(createModel = profileModel).flatMap {
             registeredAction()
             it.right()
@@ -94,7 +94,7 @@ class ProfileServiceImpl(
     override suspend fun loginByEmail(
         email: Email,
         password: Password
-    ): Either<BackendException, UserModel> =
+    ): Either<AbstractBackendException, UserModel> =
         userRepository.login(email = email, password = password)
             .flatMap {
                 loginAction(it)
@@ -104,14 +104,14 @@ class ProfileServiceImpl(
     override suspend fun loginByPhoneNumber(
         phoneNumber: PhoneNumber,
         password: Password
-    ): Either<BackendException, UserModel> =
+    ): Either<AbstractBackendException, UserModel> =
         userRepository.login(phoneNumber = phoneNumber, password = password)
             .flatMap {
                 loginAction(it)
                 update()
             }
 
-    override suspend fun logout(): Either<BackendException, Unit> =
+    override suspend fun logout(): Either<AbstractBackendException, Unit> =
         userRepository.logout().flatMap {
             logoutAction()
             Unit.right()

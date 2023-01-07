@@ -55,6 +55,7 @@ import kotlinx.datetime.toJavaLocalDate
 import org.koin.androidx.compose.getViewModel
 import ru.novolmob.core.extensions.LocalDateTimeExtension.now
 import ru.novolmob.user_mobile_app.R
+import ru.novolmob.user_mobile_app.mutablevalue.CityMutableValue
 import ru.novolmob.user_mobile_app.mutablevalue.MutableValue
 import ru.novolmob.user_mobile_app.mutablevalue.PasswordMutableValue
 import ru.novolmob.user_mobile_app.utils.PhoneNumberVisualTransformation
@@ -140,7 +141,6 @@ fun ProfileScreen(
                     modifier = Modifier
                         .padding(vertical = 10.dp),
                     birthdayState = state.birthday,
-                    allCities = state.availableCities,
                     cityState = state.city,
                     allLanguages = state.availableLanguages,
                     languageState = state.language
@@ -295,8 +295,7 @@ private fun FioForm(
 private fun SecondForm(
     modifier: Modifier = Modifier,
     birthdayState: MutableValue<LocalDate?>,
-    allCities: List<String>,
-    cityState: MutableValue<String>,
+    cityState: CityMutableValue,
     allLanguages: List<Locale>,
     languageState: MutableValue<String>,
 ) {
@@ -309,7 +308,6 @@ private fun SecondForm(
         CityField(
             modifier = Modifier
                 .fillMaxWidth(),
-            cities = allCities,
             cityState = cityState
         )
         LanguageField(
@@ -418,16 +416,16 @@ private fun SaveButton(
 @Composable
 private fun CityField(
     modifier: Modifier = Modifier,
-    cities: List<String>,
-    cityState: MutableValue<String>
+    cityState: CityMutableValue
 ) {
     var expanded by remember {
         mutableStateOf(false)
     }
     val city by cityState.value.collectAsState()
+    val cities by cityState.cities.collectAsState()
     val textColor by remember(city) {
         derivedStateOf {
-            if (city.isNotEmpty()) Color.Black
+            if (city != null) Color.Black
             else Color.LightGray
         }
     }
@@ -445,18 +443,18 @@ private fun CityField(
                     expanded = true
                 }
                 .padding(horizontal = 5.dp, vertical = 5.dp),
-            text = city,
+            text = city?.title?.string ?: "",
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
             color = textColor
         )
-        if (city.isNotEmpty()) {
+        if (city != null) {
             Icon(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .padding(end = 5.dp)
                     .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                        cityState.set("")
+                        cityState.set(cityId = null)
                     },
                 imageVector = Icons.Default.Close,
                 contentDescription = null,
@@ -466,9 +464,9 @@ private fun CityField(
     }
     DropdownMenu(
         expanded = expanded,
-        toString = String::toString,
+        toString = { it.title.string },
         list = cities,
-        selected = city,
+        selected = { it.id == city?.id },
         onDismissRequest = {
             expanded = false
         }
@@ -515,7 +513,7 @@ private fun LanguageField(
         expanded = expanded,
         toString = { it.language },
         list = languages,
-        selected = language,
+        selected = { it.language == language },
         onDismissRequest = {
             expanded = false
         }
@@ -531,7 +529,7 @@ private fun <T> DropdownMenu(
     expanded: Boolean,
     toString: (T) -> String,
     list: List<T>,
-    selected: String,
+    selected: (T) -> Boolean,
     onDismissRequest: () -> Unit = {},
     onClick: (T) -> Unit
 ) {
@@ -543,7 +541,7 @@ private fun <T> DropdownMenu(
     ) {
         list.forEach {
             val isSelected by remember(selected, it) {
-                derivedStateOf { selected == toString(it) }
+                derivedStateOf { selected(it) }
             }
             val color by remember {
                 derivedStateOf { if (isSelected) Color.Black else Color.LightGray }

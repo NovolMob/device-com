@@ -56,6 +56,7 @@ import kotlinx.datetime.toJavaLocalDate
 import org.koin.androidx.compose.getViewModel
 import ru.novolmob.core.extensions.LocalDateTimeExtension.now
 import ru.novolmob.user_mobile_app.R
+import ru.novolmob.user_mobile_app.mutablevalue.CityMutableValue
 import ru.novolmob.user_mobile_app.mutablevalue.MutableValue
 import ru.novolmob.user_mobile_app.mutablevalue.PasswordMutableValue
 import ru.novolmob.user_mobile_app.utils.PhoneNumberVisualTransformation
@@ -153,7 +154,6 @@ fun RegistrationScreen(
                             enabled = !state.loading,
                             birthdayState = state.birthday,
                             cityState = state.city,
-                            allCities = state.availableCities,
                             languageState = state.language,
                             allLanguages = state.availableLanguages,
                         )
@@ -301,8 +301,7 @@ private fun SecondForm(
     modifier: Modifier = Modifier,
     enabled: Boolean,
     birthdayState: MutableValue<LocalDate?>,
-    allCities: List<String>,
-    cityState: MutableValue<String>,
+    cityState: CityMutableValue,
     allLanguages: List<Locale>,
     languageState: MutableValue<String>
 ) {
@@ -317,7 +316,6 @@ private fun SecondForm(
             modifier = Modifier
                 .fillMaxWidth(),
             enabled = enabled,
-            cities = allCities,
             cityState = cityState
         )
         LanguageField(
@@ -438,15 +436,15 @@ private fun SigninButton(
 private fun CityField(
     modifier: Modifier = Modifier,
     enabled: Boolean,
-    cities: List<String>,
-    cityState: MutableValue<String>
+    cityState: CityMutableValue
 ) {
     var expanded by remember { mutableStateOf(false) }
     val city by cityState.value.collectAsState()
+    val cities by cityState.cities.collectAsState()
 
     val textColor by remember(city) {
         derivedStateOf {
-            if (city.isNotEmpty())
+            if (city != null)
                 Color.Black
             else Color.LightGray
         }
@@ -465,7 +463,7 @@ private fun CityField(
                     if (enabled) expanded = true
                 }
                 .padding(horizontal = 5.dp, vertical = 5.dp),
-            text = city,
+            text = city?.title?.string ?: "",
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
             color = textColor
@@ -475,7 +473,7 @@ private fun CityField(
                 .align(Alignment.CenterEnd)
                 .padding(end = 5.dp)
                 .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                    if (enabled) cityState.set("")
+                    if (enabled) cityState.set(cityId = null)
                 },
             imageVector = Icons.Default.Close,
             contentDescription = null,
@@ -506,7 +504,7 @@ private fun CityField(
                 Text(
                     modifier = Modifier
                         .weight(1f),
-                    text = it,
+                    text = it.title.string,
                     color = color,
                     maxLines = 1,
                 )

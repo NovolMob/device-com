@@ -20,7 +20,6 @@ data class DeviceState(
     val type: String = "",
     val price: Double = 0.0,
     val features: Map<String, String> = emptyMap(),
-    val points: List<String> = emptyList(),
 ) {
     val priceString: String
         get() = "$price ₽"
@@ -48,8 +47,7 @@ class DeviceViewModel(
                                 description = fullModel?.detailModel?.description?.string ?: deviceModel.description,
                                 type = fullModel?.type?.detail?.title?.string ?: "",
                                 price = fullModel?.price?.bigDecimal?.toDouble() ?: deviceModel.price,
-                                features = fullModel?.detailModel?.features?.map ?: emptyMap(),
-                                points = fullModel?.points?.map { it.pointDetail.address.string } ?: emptyList()
+                                features = fullModel?.detailModel?.features?.map ?: emptyMap()
                             )
                         }
                     }

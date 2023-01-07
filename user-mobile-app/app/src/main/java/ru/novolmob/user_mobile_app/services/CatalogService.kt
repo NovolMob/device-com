@@ -9,12 +9,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.core.models.ids.DeviceTypeId
 import ru.novolmob.user_mobile_app.models.CatalogModel
 import ru.novolmob.user_mobile_app.models.SearchSampleModel
 import ru.novolmob.user_mobile_app.repositories.ICatalogRepository
-import ru.novolmob.user_mobile_app.utils.ScreenNotification
+import ru.novolmob.user_mobile_app.utils.ScreenNotification.Companion.notice
 
 interface ICatalogService: IService {
     val catalog: StateFlow<CatalogModel>
@@ -39,17 +39,12 @@ class CatalogServiceImpl(
     init {
         serviceScope.launch {
             launch {
-                update().fold(
-                    ifLeft = {
-                        ScreenNotification.push(it)
-                    },
-                    ifRight = { }
-                )
+                update().notice()
             }
         }
     }
 
-    override suspend fun update(): Either<BackendException, CatalogModel> =
+    override suspend fun update(): Either<AbstractBackendException, CatalogModel> =
         catalogRepository.getCatalog(
             _sample.value.toCatalog()
         ).flatMap { catalogModel ->

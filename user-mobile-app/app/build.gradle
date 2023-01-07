@@ -76,9 +76,9 @@ dependencies {
     implementation "io.ktor:ktor-serialization-kotlinx-json:2.2.1"
     implementation "io.ktor:ktor-client-android:2.2.1"
 
-    implementation 'ru.novolmob.bd-practice:core:0.0.4@jar'
-    implementation 'ru.novolmob.bd-practice:backend-api:0.0.5@jar'
-    implementation 'ru.novolmob.bd-practice:ktor-resources:0.0.2@jar'
+    implementation 'ru.novolmob.bd-practice:core:0.0.5@jar'
+    implementation 'ru.novolmob.bd-practice:backend-api:0.0.8@jar'
+    implementation 'ru.novolmob.bd-practice:ktor-resources:0.0.5@jar'
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'

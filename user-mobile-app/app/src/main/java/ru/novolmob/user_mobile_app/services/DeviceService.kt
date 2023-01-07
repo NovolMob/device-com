@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.BasketItemModel
 import ru.novolmob.backendapi.models.DeviceFullModel
 import ru.novolmob.backendapi.models.DeviceShortModel
@@ -19,7 +19,7 @@ interface IDevicesService: IService {
     val devices: StateFlow<List<DeviceModel>>
     val device: StateFlow<Pair<DeviceModel, DeviceFullModel?>?>
 
-    suspend fun setDeviceId(deviceId: DeviceId): Either<BackendException, Pair<DeviceModel, DeviceFullModel>>
+    suspend fun setDeviceId(deviceId: DeviceId): Either<AbstractBackendException, Pair<DeviceModel, DeviceFullModel>>
 
     fun addAll(list: List<DeviceModel>)
 
@@ -38,7 +38,7 @@ class DevicesServiceImpl(
     private val _device = MutableStateFlow<Pair<DeviceModel, DeviceFullModel?>?>(null)
     override val device: StateFlow<Pair<DeviceModel, DeviceFullModel?>?> = _device.asStateFlow()
 
-    override suspend fun setDeviceId(deviceId: DeviceId): Either<BackendException, Pair<DeviceModel, DeviceFullModel>> {
+    override suspend fun setDeviceId(deviceId: DeviceId): Either<AbstractBackendException, Pair<DeviceModel, DeviceFullModel>> {
         if (deviceId != device.value?.first?.id) {
             _device.update { get(deviceId)?.let { it to null } }
         }
@@ -50,7 +50,7 @@ class DevicesServiceImpl(
         }
     }
 
-    override suspend fun update(): Either<BackendException, Any> =
+    override suspend fun update(): Either<AbstractBackendException, Any> =
         _device.value?.first?.id?.let { setDeviceId(it) } ?: Unit.right()
 
     override fun addAll(list: List<DeviceModel>) {

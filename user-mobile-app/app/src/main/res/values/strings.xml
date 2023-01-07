@@ -30,4 +30,15 @@
     <string name="points">ПУНКТЫ ВЫДАЧИ:</string>
     <string name="features">ХАРАКТЕРИСТИКИ:</string>
     <string name="description">ОПИСАНИЕ:</string>
+    <string name="select_point">Выберите пункт выдачи</string>
+    <string name="orders">Заказы</string>
+    <string name="order">Заказ</string>
+    <string name="order_by_date">Заказ от %s</string>
+    <string name="products">ТОВАРЫ:</string>
+    <string name="point">ПУНКТ ВЫДАЧИ:</string>
+    <string name="empty_status">В обработке</string>
+    <string name="cancel_order">Отменить</string>
+    <string name="order_cancellation_confirmation">Вы точно хотите удалить заказ от %s?</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="cancel">Отменить</string>
 </resources>

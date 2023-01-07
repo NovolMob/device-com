@@ -3,7 +3,7 @@ package ru.novolmob.user_mobile_app.mutablevalue
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
 import ru.novolmob.core.models.*
 import ru.novolmob.core.utils.PhoneNumberUtil
@@ -15,9 +15,9 @@ abstract class AbstractCharacterMutableValue<T>(
     initial: String,
     initialValid: Boolean = false,
     private val constructor: (String) -> T,
-    private val notValidException: BackendException,
+    private val notValidException: AbstractBackendException,
 ): AbstractMutableValue<String>(initial, initialValid) {
-    fun getModel(): Either<BackendException, T> =
+    fun getModel(): Either<AbstractBackendException, T> =
         get().let { value ->
             if (!isValid(value)) notValidException.left()
             else constructor(value).right()
@@ -29,7 +29,7 @@ abstract class AbstractCharacterMutableValue<T>(
         initial = initial,
         initialValid = regex.matches(initial),
         constructor = { Firstname(it.replaceFirstChar { it.uppercase() }) },
-        notValidException = BackendException(
+        notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
             message = "Имя указано неправильно! Оно должно содержать только буквы."
         )
@@ -44,7 +44,7 @@ abstract class AbstractCharacterMutableValue<T>(
         initial = initial,
         initialValid = regex.matches(initial),
         constructor = { Lastname(it.replaceFirstChar { it.uppercase() }) },
-        notValidException = BackendException(
+        notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
             message = "Фамилия указана неправильно! Она должно содержать только буквы."
         )
@@ -59,7 +59,7 @@ abstract class AbstractCharacterMutableValue<T>(
         initial = initial,
         initialValid = availableLanguages.any { it.language == initial },
         constructor = ::Language,
-        notValidException = BackendException(
+        notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
             message = "Язык указан неправильно!"
         )
@@ -78,7 +78,7 @@ abstract class AbstractCharacterMutableValue<T>(
         constructor = {
             PhoneNumberUtil.deserializePhoneNumber(PhoneNumberOffsetMapping.phoneNumber(it))!!
         },
-        notValidException = BackendException(
+        notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
             message = "Номер телефона указан неправильно!"
         )
@@ -98,7 +98,7 @@ abstract class AbstractCharacterMutableValue<T>(
         initial = initial,
         initialValid = regex.matches(initial),
         constructor = ::Email,
-        notValidException = BackendException(
+        notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
             message = "Электронная почта введена неправильно!"
         )
@@ -113,7 +113,7 @@ abstract class AbstractCharacterMutableValue<T>(
         initial = initial,
         initialValid = regex.matches(initial),
         constructor = ::Password,
-        notValidException = BackendException(
+        notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
             message = "Электронная почта введена неправильно!"
         )

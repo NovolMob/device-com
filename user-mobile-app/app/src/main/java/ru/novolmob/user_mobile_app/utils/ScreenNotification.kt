@@ -6,7 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 
 data class ScreenNotification(
     val backgroundColor: Color = DEFAULT_COLOR,
@@ -23,10 +23,10 @@ data class ScreenNotification(
         private val DEFAULT_COLOR = Color(213, 213, 213, 255)
         private val DEFAULT_TEXT_COLOR = Color.Black
 
-        private fun BackendException.toScreenNotification() =
+        private fun AbstractBackendException.toScreenNotification() =
             ScreenNotification(backgroundColor = Color.Red, message = message)
 
-        suspend fun push(exception: BackendException, duration: Long = DEFAULT_DURATION) =
+        suspend fun push(exception: AbstractBackendException, duration: Long = DEFAULT_DURATION) =
             push(notification = exception.toScreenNotification(), duration = duration)
 
         suspend fun push(notification: ScreenNotification, duration: Long = DEFAULT_DURATION) {
@@ -47,10 +47,13 @@ data class ScreenNotification(
             duration = duration
         )
 
-        suspend fun <M> Either<BackendException, M>.notice(duration: Long = DEFAULT_DURATION) =
+        suspend fun <M> Either<AbstractBackendException, M>.notice(duration: Long = DEFAULT_DURATION): M? =
             fold(
-                ifLeft = { push(it) },
-                ifRight = {}
+                ifLeft = {
+                    push(it, duration)
+                    null
+                },
+                ifRight = { it }
             )
 
     }

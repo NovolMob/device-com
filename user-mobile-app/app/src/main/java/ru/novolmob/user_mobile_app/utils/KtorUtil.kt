@@ -9,24 +9,25 @@ import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
 import ru.novolmob.backendapi.models.ResponseModel
 
 object KtorUtil {
-    suspend inline fun <reified E> HttpResponse.response(): Either<BackendException, E> =
+    suspend inline fun <reified E> HttpResponse.response(): Either<AbstractBackendException, E> =
         kotlin.runCatching {
             body<ResponseModel<E>>().let { model ->
                 model.exception?.left() ?: model.data!!.right()
             }
         }.getOrElse {
-            BackendException(
+            it.printStackTrace()
+            AbstractBackendException.BackendException(
                 code = BackendExceptionCode.NOT_FOUND,
                 message = "Body is empty!"
             ).left()
         }
 
-    suspend inline fun <reified Resource: Any, reified Body, reified Response> HttpClient.post(resource: Resource, body: Body): Either<BackendException, Response> =
+    suspend inline fun <reified Resource: Any, reified Body, reified Response> HttpClient.post(resource: Resource, body: Body): Either<AbstractBackendException, Response> =
         post(
             resource = resource,
             builder = {
@@ -35,13 +36,13 @@ object KtorUtil {
             }
         ).response()
 
-    suspend inline fun <reified Resource: Any, reified Response> HttpClient.post(resource: Resource): Either<BackendException, Response> =
+    suspend inline fun <reified Resource: Any, reified Response> HttpClient.post(resource: Resource): Either<AbstractBackendException, Response> =
         post(
             resource = resource,
             builder = { }
         ).response()
 
-    suspend inline fun <reified Resource: Any, reified Body, reified Response> HttpClient.put(resource: Resource, body: Body): Either<BackendException, Response> =
+    suspend inline fun <reified Resource: Any, reified Body, reified Response> HttpClient.put(resource: Resource, body: Body): Either<AbstractBackendException, Response> =
         put(
             resource = resource,
             builder = {
@@ -50,15 +51,15 @@ object KtorUtil {
             }
         ).response()
 
-    suspend inline fun <reified Resource: Any, reified Response> HttpClient.put(resource: Resource): Either<BackendException, Response> =
+    suspend inline fun <reified Resource: Any, reified Response> HttpClient.put(resource: Resource): Either<AbstractBackendException, Response> =
         put(
             resource = resource,
             builder = { }
         ).response()
 
-    suspend inline fun <reified Resource: Any, reified Response> HttpClient.get(resource: Resource): Either<BackendException, Response> =
+    suspend inline fun <reified Resource: Any, reified Response> HttpClient.get(resource: Resource): Either<AbstractBackendException, Response> =
         get(resource = resource, builder = {}).response()
 
-    suspend inline fun <reified Resource: Any, reified Response> HttpClient.delete(resource: Resource): Either<BackendException, Response> =
+    suspend inline fun <reified Resource: Any, reified Response> HttpClient.delete(resource: Resource): Either<AbstractBackendException, Response> =
         delete(resource = resource, builder = {}).response()
 }

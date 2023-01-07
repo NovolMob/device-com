@@ -6,6 +6,7 @@ import ru.novolmob.user_mobile_app.ui.authorization.AuthorizationViewModel
 import ru.novolmob.user_mobile_app.ui.basket.BasketViewModel
 import ru.novolmob.user_mobile_app.ui.catalog.CatalogViewModel
 import ru.novolmob.user_mobile_app.ui.device.DeviceViewModel
+import ru.novolmob.user_mobile_app.ui.order.OrdersViewModel
 import ru.novolmob.user_mobile_app.ui.profile.ProfileViewModel
 import ru.novolmob.user_mobile_app.ui.registration.RegistrationViewModel
 
@@ -17,7 +18,8 @@ val viewModelModule = module {
     }
     viewModel {
         RegistrationViewModel(
-            profileService = get()
+            profileService = get(),
+            cityService = get()
         )
     }
     viewModel {
@@ -29,18 +31,26 @@ val viewModelModule = module {
     }
     viewModel {
         ProfileViewModel(
-            profileService = get()
+            profileService = get(),
+            cityService = get()
         )
     }
     viewModel {
         BasketViewModel(
-            basketService = get()
+            basketService = get(),
+            pointService = get(),
+            orderService = get()
         )
     }
     viewModel {
         DeviceViewModel(
             deviceService = get(),
             basketService = get()
+        )
+    }
+    viewModel {
+        OrdersViewModel(
+            orderService = get()
         )
     }
 }

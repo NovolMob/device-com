@@ -22,6 +22,7 @@ val clientModule = module {
                 json(
                     Json {
                         encodeDefaults = false
+                        ignoreUnknownKeys = true
                     }
                 )
             }
