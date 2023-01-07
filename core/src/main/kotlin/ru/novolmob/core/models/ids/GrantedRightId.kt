@@ -11,4 +11,5 @@ value class GrantedRightId(
     override val uuid: UUID
 ): Comparable<GrantedRightId>, UUIDable {
     override fun compareTo(other: GrantedRightId): Int = uuid.compareTo(other.uuid)
+    override fun toString(): String = uuid.toString()
 }

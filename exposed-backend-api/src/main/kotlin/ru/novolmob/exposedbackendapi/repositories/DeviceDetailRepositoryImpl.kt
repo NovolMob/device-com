@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.exposedbackendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IDeviceDetailRepository
 import ru.novolmob.core.models.Language
@@ -31,14 +31,14 @@ class DeviceDetailRepositoryImpl(
     override suspend fun getDetailFor(
         deviceId: DeviceId,
         language: Language
-    ): Either<BackendException, DeviceDetailModel> =
+    ): Either<AbstractBackendException, DeviceDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceDetail.find { (DeviceDetails.device eq deviceId) and (DeviceDetails.language eq language) }
                 .limit(1).firstOrNull()
                 ?.let(mapper::invoke) ?: deviceDetailByDeviceIdAndLanguageNotFound(deviceId, language).left()
         }
 
-    override suspend fun removeDetailFor(deviceId: DeviceId): Either<BackendException, Boolean> =
+    override suspend fun removeDetailFor(deviceId: DeviceId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceDetail.find { DeviceDetails.device eq deviceId }
                 .takeIf { !it.empty() }
@@ -48,17 +48,17 @@ class DeviceDetailRepositoryImpl(
                 } ?: false.right()
         }
 
-    override suspend fun get(id: DeviceDetailId): Either<BackendException, DeviceDetailModel> =
+    override suspend fun get(id: DeviceDetailId): Either<AbstractBackendException, DeviceDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceDetail.findById(id)?.let(mapper::invoke) ?: deviceDetailByIdNotFound(
                 id
             ).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<DeviceDetailModel>> =
-        RepositoryUtil.generalGatAll(DeviceDetails, pagination, resultRowMapper)
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<DeviceDetailModel>> =
+        RepositoryUtil.generalGetAll(DeviceDetails, pagination, resultRowMapper)
 
-    override suspend fun post(createModel: DeviceDetailCreateModel): Either<BackendException, DeviceDetailModel> =
+    override suspend fun post(createModel: DeviceDetailCreateModel): Either<AbstractBackendException, DeviceDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val device = Device.findById(createModel.deviceId) ?: return@newSuspendedTransaction deviceByIdNotFound(
                 createModel.deviceId
@@ -75,7 +75,7 @@ class DeviceDetailRepositoryImpl(
     override suspend fun post(
         id: DeviceDetailId,
         createModel: DeviceDetailCreateModel
-    ): Either<BackendException, DeviceDetailModel> =
+    ): Either<AbstractBackendException, DeviceDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val device = Device.findById(createModel.deviceId) ?: return@newSuspendedTransaction deviceByIdNotFound(
                 createModel.deviceId
@@ -93,7 +93,7 @@ class DeviceDetailRepositoryImpl(
     override suspend fun put(
         id: DeviceDetailId,
         updateModel: DeviceDetailUpdateModel
-    ): Either<BackendException, DeviceDetailModel> =
+    ): Either<AbstractBackendException, DeviceDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val device = updateModel.deviceId?.let {
                 Device.findById(it) ?: return@newSuspendedTransaction deviceByIdNotFound(
@@ -110,7 +110,7 @@ class DeviceDetailRepositoryImpl(
             }?.let(mapper::invoke) ?: deviceDetailByIdNotFound(id).left()
         }
 
-    override suspend fun delete(id: DeviceDetailId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: DeviceDetailId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceDetail.findById(id)?.let {
                 it.device

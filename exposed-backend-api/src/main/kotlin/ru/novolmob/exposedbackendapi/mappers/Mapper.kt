@@ -1,8 +1,8 @@
 package ru.novolmob.exposedbackendapi.mappers
 
 import arrow.core.Either
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 
 interface Mapper<Input, Output> {
-    operator fun invoke(input: Input): Either<BackendException, Output>
+    operator fun invoke(input: Input): Either<AbstractBackendException, Output>
 }

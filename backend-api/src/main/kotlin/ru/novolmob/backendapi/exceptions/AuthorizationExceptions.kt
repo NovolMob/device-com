@@ -1,18 +1,18 @@
 package ru.novolmob.backendapi.exceptions
-fun badLoginModelException(): BackendException =
-    BackendException(
+fun badLoginModelException(): AbstractBackendException =
+    AbstractBackendException.BackendException(
         code = BackendExceptionCode.BAD_REQUEST,
         message = "Login form is empty!"
     )
 
-fun notAuthorizedException(): BackendException =
-    BackendException(
+fun notAuthorizedException(): AbstractBackendException =
+    AbstractBackendException.BackendException(
         code = BackendExceptionCode.FORBIDDEN,
         message = "You are not authorized."
     )
 
-fun dontHaveRightsException(): BackendException =
-    BackendException(
+fun dontHaveRightsException(): AbstractBackendException =
+    AbstractBackendException.BackendException(
         code = BackendExceptionCode.FORBIDDEN,
         message = "You don't have enough rights."
     )

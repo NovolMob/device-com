@@ -12,12 +12,15 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import ru.novolmob.exposedbackendapi.exceptions.userByIdNotFound
 import ru.novolmob.exposedbackendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IUserCredentialRepository
 import ru.novolmob.backendapi.repositories.IUserRepository
 import ru.novolmob.core.models.*
 import ru.novolmob.core.models.ids.UserId
+import ru.novolmob.exposedbackendapi.exceptions.cityByIdNotFound
+import ru.novolmob.exposedbackendapi.exceptions.userCredentialByUserIdNotFoundException
+import ru.novolmob.exposeddatabase.entities.City
 import ru.novolmob.exposeddatabase.entities.User
 import ru.novolmob.exposeddatabase.entities.UserCredential
 import ru.novolmob.exposeddatabase.tables.Users
@@ -28,12 +31,12 @@ class UserRepositoryImpl(
     val resultRowInfoMapper: Mapper<ResultRow, UserInfoModel>,
     val userCredentialRepository: IUserCredentialRepository
 ): IUserRepository {
-    override suspend fun getLanguage(userId: UserId): Either<BackendException, Language> =
+    override suspend fun getLanguage(userId: UserId): Either<AbstractBackendException, Language> =
         newSuspendedTransaction(Dispatchers.IO) {
             User.findById(userId)?.language?.right() ?: userByIdNotFound(userId).left()
         }
 
-    override suspend fun login(phoneNumber: PhoneNumber, password: Password): Either<BackendException, UserModel> =
+    override suspend fun login(phoneNumber: PhoneNumber, password: Password): Either<AbstractBackendException, UserModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             UserCredential.find { (UserCredentials.phoneNumber eq phoneNumber) and (UserCredentials.password eq password) }
                 .limit(1).firstOrNull()?.let {
@@ -41,7 +44,7 @@ class UserRepositoryImpl(
                 } ?: ru.novolmob.exposedbackendapi.exceptions.badCredentialsException().left()
         }
 
-    override suspend fun login(email: Email, password: Password): Either<BackendException, UserModel> =
+    override suspend fun login(email: Email, password: Password): Either<AbstractBackendException, UserModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             UserCredential.find { (UserCredentials.email eq email) and (UserCredentials.password eq password) }
                 .limit(1).firstOrNull()?.let {
@@ -49,13 +52,13 @@ class UserRepositoryImpl(
                 } ?: ru.novolmob.exposedbackendapi.exceptions.badCredentialsException().left()
         }
 
-    override suspend fun get(id: UserId): Either<BackendException, UserModel> =
+    override suspend fun get(id: UserId): Either<AbstractBackendException, UserModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             User.findById(id)?.let(mapper::invoke) ?: userByIdNotFound(id).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<UserModel>> =
-        RepositoryUtil.generalGatAll(Users, pagination, resultRowInfoMapper).flatMap { page ->
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<UserModel>> =
+        RepositoryUtil.generalGetAll(Users, pagination, resultRowInfoMapper).flatMap { page ->
             val list = page.list.parTraverseEither { userInfo ->
                 userCredentialRepository.getByUserId(userInfo.id).flatMap { credential ->
                     UserModel(
@@ -64,7 +67,7 @@ class UserRepositoryImpl(
                         lastname = userInfo.lastname,
                         patronymic = userInfo.patronymic,
                         birthday = userInfo.birthday,
-                        city = userInfo.city,
+                        cityId = userInfo.cityId,
                         language = userInfo.language,
                         phoneNumber = credential.phoneNumber,
                         email = credential.email
@@ -74,14 +77,17 @@ class UserRepositoryImpl(
             list.flatMap { Page(page = page.page, size = page.size, list = it).right() }
         }
 
-    override suspend fun post(createModel: UserCreateModel): Either<BackendException, UserModel> =
+    override suspend fun post(createModel: UserCreateModel): Either<AbstractBackendException, UserModel> =
         newSuspendedTransaction(Dispatchers.IO) {
+            val city = createModel.cityId?.let {
+                City.findById(it) ?: return@newSuspendedTransaction cityByIdNotFound(it).left()
+            }
             User.new {
                 this.firstname = createModel.firstname
                 this.lastname = createModel.lastname
                 this.patronymic = createModel.patronymic
                 this.birthday = createModel.birthday
-                this.city = createModel.city
+                this.city = city
                 this.language = createModel.language
             }.also {
                 commit()
@@ -96,55 +102,53 @@ class UserRepositoryImpl(
             }.let(mapper::invoke)
         }
 
-    override suspend fun post(id: UserId, createModel: UserCreateModel): Either<BackendException, UserModel> =
+    override suspend fun post(id: UserId, createModel: UserCreateModel): Either<AbstractBackendException, UserModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            userCredentialRepository.getByUserId(id).flatMap {
-                userCredentialRepository.put(
-                    id = it.id,
-                    updateModel = UserCredentialUpdateModel(
-                        phoneNumber = createModel.phoneNumber,
-                        email = createModel.email,
-                        password = createModel.password
-                    )
-                ).flatMap {
-                    User.findById(id)?.apply {
-                        this.firstname = createModel.firstname
-                        this.lastname = createModel.lastname
-                        this.patronymic = createModel.patronymic
-                        this.birthday = createModel.birthday
-                        this.city = createModel.city
-                        this.language = createModel.language
-                        this.updateDate = UpdateTime.now()
-                    }?.let(mapper::invoke) ?: userByIdNotFound(id).left()
-                }
+            val city = createModel.cityId?.let {
+                City.findById(it) ?: return@newSuspendedTransaction cityByIdNotFound(it).left()
             }
+            val user = User.findById(id) ?: return@newSuspendedTransaction userByIdNotFound(id).left()
+            UserCredential.find { UserCredentials.user eq id }.limit(1).singleOrNull()?.apply {
+                this.email = createModel.email
+                this.phoneNumber = createModel.phoneNumber
+                this.password = createModel.password
+                this.updateDate = UpdateTime.now()
+            } ?: return@newSuspendedTransaction userCredentialByUserIdNotFoundException(id).left()
+            user.apply {
+                this.firstname = createModel.firstname
+                this.lastname = createModel.lastname
+                this.patronymic = createModel.patronymic
+                this.birthday = createModel.birthday
+                this.city = city
+                this.language = createModel.language
+                this.updateDate = UpdateTime.now()
+            }.let(mapper::invoke)
         }
 
-    override suspend fun put(id: UserId, updateModel: UserUpdateModel): Either<BackendException, UserModel> =
+    override suspend fun put(id: UserId, updateModel: UserUpdateModel): Either<AbstractBackendException, UserModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            userCredentialRepository.getByUserId(id).flatMap {
-                userCredentialRepository.put(
-                    id = it.id,
-                    updateModel = UserCredentialUpdateModel(
-                        phoneNumber = updateModel.phoneNumber,
-                        email = updateModel.email,
-                        password = updateModel.password
-                    )
-                ).flatMap {
-                    User.findById(id)?.apply {
-                        updateModel.firstname?.let { this.firstname = it }
-                        updateModel.lastname?.let { this.lastname = it }
-                        updateModel.patronymic?.let { this.patronymic = it }
-                        updateModel.birthday?.let { this.birthday = it }
-                        updateModel.city?.let { this.city = it }
-                        updateModel.language?.let { this.language = it }
-                        this.updateDate = UpdateTime.now()
-                    }?.let(mapper::invoke) ?: userByIdNotFound(id).left()
-                }
+            val city = updateModel.cityId?.let {
+                City.findById(it) ?: return@newSuspendedTransaction cityByIdNotFound(it).left()
             }
+            val user = User.findById(id) ?: return@newSuspendedTransaction userByIdNotFound(id).left()
+            UserCredential.find { UserCredentials.user eq id }.limit(1).singleOrNull()?.apply {
+                updateModel.email?.let { this.email = it }
+                updateModel.phoneNumber?.let { this.phoneNumber = it }
+                updateModel.password?.let { this.password = it }
+                this.updateDate = UpdateTime.now()
+            } ?: return@newSuspendedTransaction userCredentialByUserIdNotFoundException(id).left()
+            user.apply {
+                updateModel.firstname?.let { this.firstname = it }
+                updateModel.lastname?.let { this.lastname = it }
+                updateModel.patronymic?.let { this.patronymic = it }
+                updateModel.birthday?.let { this.birthday = it }
+                city?.let { this.city = it }
+                updateModel.language?.let { this.language = it }
+                this.updateDate = UpdateTime.now()
+            }.let(mapper::invoke)
         }
 
-    override suspend fun delete(id: UserId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: UserId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             User.findById(id)?.let {
                 it.delete()

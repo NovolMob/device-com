@@ -13,10 +13,10 @@ import ru.novolmob.backend.util.AuthUtil.user
 import ru.novolmob.backend.util.KtorUtil.respond
 import ru.novolmob.backendapi.repositories.IUserRepository
 
-object UserRouting: KoinComponent {
+object UserRouting: KoinComponent, IRouting {
     private val userRepository: IUserRepository by inject()
 
-    fun Route.userRouting() {
+    override fun Route.routingForUser() {
         get<User> {
             val user = user()
             val either = userRepository.get(id = user.id)

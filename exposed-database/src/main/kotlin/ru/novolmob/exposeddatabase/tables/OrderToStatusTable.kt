@@ -12,7 +12,7 @@ object OrderToStatusTable: IdTable<OrderToStatusEntityId>() {
     override val primaryKey = PrimaryKey(OrderStatusDetails.id)
 
     val order = reference("order_id", Orders)
-    val orderStatus = reference("order_id", OrderStatuses)
+    val orderStatus = reference("order_status_id", OrderStatuses)
     val worker = reference("worker_id", Workers)
     val creationDate = creationTime()
 

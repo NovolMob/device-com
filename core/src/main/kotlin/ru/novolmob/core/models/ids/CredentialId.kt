@@ -11,4 +11,5 @@ value class CredentialId(
     override val uuid: UUID
 ): Comparable<CredentialId>, UUIDable {
     override fun compareTo(other: CredentialId): Int = uuid.compareTo(other.uuid)
+    override fun toString(): String = uuid.toString()
 }

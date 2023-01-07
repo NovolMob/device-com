@@ -1,9 +1,11 @@
 package ru.novolmob.jdbcdatabase.tables
 
+import ru.novolmob.core.models.Amount
 import ru.novolmob.core.models.Code
 import ru.novolmob.core.models.Price
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.DeviceTypeId
+import ru.novolmob.jdbcdatabase.extensions.TableExtension.amount
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.code
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.creationTime
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.idColumn
@@ -17,6 +19,7 @@ object Devices: Table() {
     val id = idColumn(constructor = ::DeviceId)
     val code = code()
     val typeId = reference("type_id", DeviceTypes.id)
+    val amount = amount()
     val price = price(precision = 10, scale = 2)
     val updateTime = updateTime()
     val creationTime = creationTime()
@@ -25,11 +28,13 @@ object Devices: Table() {
         id: DeviceId? = null,
         code: Code,
         typeId: DeviceTypeId,
+        amount: Amount,
         price: Price
     ) {
         val list = mutableListOf(
             this.code valueOf code,
             this.typeId valueOf typeId,
+            this.amount valueOf amount,
             this.price valueOf price
         )
         id?.let { this.id valueOf it }
@@ -41,12 +46,14 @@ object Devices: Table() {
         id: DeviceId,
         code: Code? = null,
         typeId: DeviceTypeId? = null,
+        amount: Amount? = null,
         price: Price? = null
     ) {
         val list = mutableListOf<ColumnValue<*>>()
 
         code?.let { this.code valueOf it }
         typeId?.let { this.typeId valueOf it }
+        amount?.let { this.amount valueOf it }
         price?.let { this.price valueOf it }
 
         update(

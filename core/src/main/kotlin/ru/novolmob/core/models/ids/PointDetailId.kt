@@ -11,4 +11,5 @@ value class PointDetailId(
     override val uuid: UUID
 ): Comparable<PointDetailId>, UUIDable {
     override fun compareTo(other: PointDetailId): Int = uuid.compareTo(other.uuid)
+    override fun toString(): String = uuid.toString()
 }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IOrderStatusDetailRepository
 import ru.novolmob.backendapi.repositories.IOrderToStatusRepository
@@ -33,7 +33,7 @@ class OrderToStatusRepositoryImpl(
     override suspend fun getStatuses(
         orderId: OrderId,
         language: Language
-    ): Either<BackendException, List<OrderStatusFullModel>> =
+    ): Either<AbstractBackendException, List<OrderStatusFullModel>> =
         newSuspendedTransaction(Dispatchers.IO) {
             OrderToStatusEntity.find { OrderToStatusTable.order eq orderId }
                 .sortedByDescending { it.creationDate }
@@ -54,7 +54,7 @@ class OrderToStatusRepositoryImpl(
     override suspend fun getLastStatus(
         orderId: OrderId,
         language: Language
-    ): Either<BackendException, OrderStatusShortModel> =
+    ): Either<AbstractBackendException, OrderStatusShortModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             OrderToStatusEntity.find { OrderToStatusTable.order eq orderId }
                 .orderBy(OrderToStatusTable.creationDate to SortOrder.DESC)
@@ -75,17 +75,17 @@ class OrderToStatusRepositoryImpl(
                 } ?: ru.novolmob.exposedbackendapi.exceptions.orderStatusByOrderIdNotFound(orderId).left()
         }
 
-    override suspend fun get(id: OrderToStatusEntityId): Either<BackendException, OrderToStatusEntityModel> =
+    override suspend fun get(id: OrderToStatusEntityId): Either<AbstractBackendException, OrderToStatusEntityModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             OrderToStatusEntity.findById(id)?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.orderToStatusEntityByIdNotFound(
                 id
             ).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<OrderToStatusEntityModel>> =
-        RepositoryUtil.generalGatAll(OrderToStatusTable, pagination, resultRowMapper)
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<OrderToStatusEntityModel>> =
+        RepositoryUtil.generalGetAll(OrderToStatusTable, pagination, resultRowMapper)
 
-    override suspend fun post(createModel: OrderToStatusEntityCreateModel): Either<BackendException, OrderToStatusEntityModel> =
+    override suspend fun post(createModel: OrderToStatusEntityCreateModel): Either<AbstractBackendException, OrderToStatusEntityModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val order = Order.findById(createModel.orderId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.orderByIdNotFound(
                 createModel.orderId
@@ -104,7 +104,7 @@ class OrderToStatusRepositoryImpl(
     override suspend fun post(
         id: OrderToStatusEntityId,
         createModel: OrderToStatusEntityCreateModel
-    ): Either<BackendException, OrderToStatusEntityModel> =
+    ): Either<AbstractBackendException, OrderToStatusEntityModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val order = Order.findById(createModel.orderId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.orderByIdNotFound(
                 createModel.orderId
@@ -123,7 +123,7 @@ class OrderToStatusRepositoryImpl(
     override suspend fun put(
         id: OrderToStatusEntityId,
         updateModel: OrderToStatusEntityUpdateModel
-    ): Either<BackendException, OrderToStatusEntityModel> =
+    ): Either<AbstractBackendException, OrderToStatusEntityModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val order = updateModel.orderId?.let {
                 Order.findById(it) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.orderByIdNotFound(
@@ -145,7 +145,7 @@ class OrderToStatusRepositoryImpl(
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.orderToStatusEntityByIdNotFound(id).left()
         }
 
-    override suspend fun delete(id: OrderToStatusEntityId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: OrderToStatusEntityId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             OrderToStatusEntity.findById(id)?.let {
                 it.delete()

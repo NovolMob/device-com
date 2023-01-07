@@ -12,6 +12,7 @@ class Device(id: EntityID<DeviceId>) : Entity<DeviceId>(id) {
 
     var article by Devices.code
     var type by DeviceType referencedOn Devices.type
+    var amount by Devices.amount
     var price by Devices.price
     var updateDate by Devices.updateDate
     var creationDate by Devices.creationDate

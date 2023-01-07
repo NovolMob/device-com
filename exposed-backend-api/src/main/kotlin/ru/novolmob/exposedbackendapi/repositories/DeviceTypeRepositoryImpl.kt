@@ -8,7 +8,7 @@ import arrow.fx.coroutines.parTraverseEither
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IDeviceTypeDetailRepository
 import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
@@ -29,7 +29,7 @@ class DeviceTypeRepositoryImpl(
     override suspend fun getFull(
         deviceTypeId: DeviceTypeId,
         language: Language
-    ): Either<BackendException, DeviceTypeFullModel> =
+    ): Either<AbstractBackendException, DeviceTypeFullModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceType.findById(deviceTypeId)?.let {
                 deviceTypeDetailRepository.getDetailFor(deviceTypeId, language).flatMap {
@@ -44,8 +44,8 @@ class DeviceTypeRepositoryImpl(
     override suspend fun getAll(
         pagination: Pagination,
         language: Language
-    ): Either<BackendException, Page<DeviceTypeShortModel>> =
-        RepositoryUtil.generalGatAll(DeviceTypes, pagination, resultRowMapper).flatMap { page ->
+    ): Either<AbstractBackendException, Page<DeviceTypeShortModel>> =
+        RepositoryUtil.generalGetAll(DeviceTypes, pagination, resultRowMapper).flatMap { page ->
             page.list.parTraverseEither {
                 deviceTypeDetailRepository.getDetailFor(it.id, language).flatMap { typeDetail ->
                     DeviceTypeShortModel(
@@ -58,17 +58,17 @@ class DeviceTypeRepositoryImpl(
             }
         }
 
-    override suspend fun get(id: DeviceTypeId): Either<BackendException, DeviceTypeModel> =
+    override suspend fun get(id: DeviceTypeId): Either<AbstractBackendException, DeviceTypeModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceType.findById(id)?.let(mapper::invoke) ?: deviceTypeByIdNotFound(
                 id
             ).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<DeviceTypeModel>> =
-        RepositoryUtil.generalGatAll(DeviceTypes, pagination, resultRowMapper)
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<DeviceTypeModel>> =
+        RepositoryUtil.generalGetAll(DeviceTypes, pagination, resultRowMapper)
 
-    override suspend fun post(createModel: DeviceTypeCreateModel): Either<BackendException, DeviceTypeModel> =
+    override suspend fun post(createModel: DeviceTypeCreateModel): Either<AbstractBackendException, DeviceTypeModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceType.new {  }.let(mapper::invoke)
         }
@@ -76,7 +76,7 @@ class DeviceTypeRepositoryImpl(
     override suspend fun post(
         id: DeviceTypeId,
         createModel: DeviceTypeCreateModel
-    ): Either<BackendException, DeviceTypeModel> =
+    ): Either<AbstractBackendException, DeviceTypeModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceType.findById(id)?.apply {
                 this.updateDate = UpdateTime.now()
@@ -87,7 +87,7 @@ class DeviceTypeRepositoryImpl(
     override suspend fun put(
         id: DeviceTypeId,
         updateModel: DeviceTypeUpdateModel
-    ): Either<BackendException, DeviceTypeModel> =
+    ): Either<AbstractBackendException, DeviceTypeModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceType.findById(id)?.apply {
                 this.updateDate = UpdateTime.now()
@@ -95,7 +95,7 @@ class DeviceTypeRepositoryImpl(
                 ?: deviceTypeByIdNotFound(id).left()
         }
 
-    override suspend fun delete(id: DeviceTypeId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: DeviceTypeId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceType.findById(id)?.let {
                 it.delete()

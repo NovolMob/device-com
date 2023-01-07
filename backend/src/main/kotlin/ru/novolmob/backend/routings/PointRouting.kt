@@ -12,20 +12,20 @@ import ru.novolmob.backend.util.KtorUtil.respond
 import ru.novolmob.backendapi.models.PointShortModel
 import ru.novolmob.backendapi.repositories.IPointRepository
 
-object PointRouting: KoinComponent {
+object PointRouting: KoinComponent, IRouting {
     private val pointRepository: IPointRepository by inject()
 
-    fun Route.pointRouting() {
+    override fun Route.routingForUser() {
         get<Points.ByCity> {
             val user = user()
-            val either = user.city?.let {
-                pointRepository.getByCity(city = it, language = user.language)
+            val either = user.cityId?.let {
+                pointRepository.getByCity(cityId = it, language = user.language)
             } ?: emptyList<PointShortModel>().right()
             call.respond(either)
         }
         get<Points> {
             val user = user()
-            val either = pointRepository.getAll(language = user.language)
+            val either = pointRepository.getAll(pagination = it, language = user.language)
             call.respond(either)
         }
         get<Points.Id> {

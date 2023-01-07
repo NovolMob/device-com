@@ -9,12 +9,11 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.exposedbackendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IDeviceDetailRepository
 import ru.novolmob.backendapi.repositories.IDeviceRepository
 import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
-import ru.novolmob.backendapi.repositories.IPointToDeviceRepository
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.DeviceId
@@ -28,38 +27,35 @@ class DeviceRepositoryImpl(
     val mapper: Mapper<Device, DeviceModel>,
     val resultRowMapper: Mapper<ResultRow, DeviceModel>,
     val deviceDetailRepository: IDeviceDetailRepository,
-    val deviceTypeRepository: IDeviceTypeRepository,
-    val pointToDeviceRepository: IPointToDeviceRepository
+    val deviceTypeRepository: IDeviceTypeRepository
 ): IDeviceRepository {
-    override suspend fun getFull(deviceId: DeviceId, language: Language): Either<BackendException, DeviceFullModel> =
+    override suspend fun getFull(deviceId: DeviceId, language: Language): Either<AbstractBackendException, DeviceFullModel> =
         newSuspendedTransaction(Dispatchers.IO) { 
             Device.findById(deviceId)?.let {
                 deviceDetailRepository.getDetailFor(deviceId, language).flatMap { detail ->
                     deviceTypeRepository.getFull(it.type.id.value, language).flatMap { type ->
-                        pointToDeviceRepository.getPoints(deviceId, language).flatMap { points ->
-                            DeviceFullModel(
-                                id = deviceId,
-                                article = it.article,
-                                type = type,
-                                detailModel = detail,
-                                points = points,
-                                price = it.price
-                            ).right()
-                        }
+                        DeviceFullModel(
+                            id = deviceId,
+                            article = it.article,
+                            type = type,
+                            detailModel = detail,
+                            price = it.price,
+                            amount = it.amount
+                        ).right()
                     }
                 }
             } ?: deviceByIdNotFound(deviceId).left()
         }
 
-    override suspend fun get(id: DeviceId): Either<BackendException, DeviceModel> =
+    override suspend fun get(id: DeviceId): Either<AbstractBackendException, DeviceModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             Device.findById(id)?.let(mapper::invoke) ?: deviceByIdNotFound(id).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<DeviceModel>> =
-        RepositoryUtil.generalGatAll(Devices, pagination, resultRowMapper)
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<DeviceModel>> =
+        RepositoryUtil.generalGetAll(Devices, pagination, resultRowMapper)
 
-    override suspend fun post(createModel: DeviceCreateModel): Either<BackendException, DeviceModel> =
+    override suspend fun post(createModel: DeviceCreateModel): Either<AbstractBackendException, DeviceModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val type = DeviceType.findById(createModel.typeId) ?: return@newSuspendedTransaction deviceTypeByIdNotFound(
                 createModel.typeId
@@ -71,7 +67,7 @@ class DeviceRepositoryImpl(
             }.let(mapper::invoke)
         }
 
-    override suspend fun post(id: DeviceId, createModel: DeviceCreateModel): Either<BackendException, DeviceModel> =
+    override suspend fun post(id: DeviceId, createModel: DeviceCreateModel): Either<AbstractBackendException, DeviceModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val type = DeviceType.findById(createModel.typeId) ?: return@newSuspendedTransaction deviceTypeByIdNotFound(
                 createModel.typeId
@@ -84,7 +80,7 @@ class DeviceRepositoryImpl(
             }?.let(mapper::invoke) ?: deviceByIdNotFound(id).left()
         }
 
-    override suspend fun put(id: DeviceId, updateModel: DeviceUpdateModel): Either<BackendException, DeviceModel> =
+    override suspend fun put(id: DeviceId, updateModel: DeviceUpdateModel): Either<AbstractBackendException, DeviceModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val type = updateModel.typeId?.let {
                 DeviceType.findById(it) ?: return@newSuspendedTransaction deviceTypeByIdNotFound(
@@ -99,7 +95,7 @@ class DeviceRepositoryImpl(
             }?.let(mapper::invoke) ?: deviceByIdNotFound(id).left()
         }
 
-    override suspend fun delete(id: DeviceId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: DeviceId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) { 
             Device.findById(id)?.let { 
                 it.delete()

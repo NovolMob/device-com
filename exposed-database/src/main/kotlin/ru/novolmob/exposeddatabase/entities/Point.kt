@@ -10,7 +10,7 @@ import ru.novolmob.exposeddatabase.tables.Points
 class Point(id: EntityID<PointId>) : Entity<PointId>(id) {
     companion object: EntityClass<PointId, Point>(Points)
 
-    var city by Points.city
+    var city by City referencedOn Points.city
     var updateDate by Points.updateDate
     var creationDate by Points.creationDate
 

@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.right
 import arrow.fx.coroutines.parTraverse
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.CatalogModel
 import ru.novolmob.backendapi.models.CatalogSearchSample
 import ru.novolmob.backendapi.models.DeviceShortModel
@@ -18,7 +18,7 @@ class CatalogRepositoryImpl: ICatalogRepository {
     override suspend fun getCatalog(
         sample: CatalogSearchSample,
         language: Language
-    ): Either<BackendException, CatalogModel> =
+    ): Either<AbstractBackendException, CatalogModel> =
         newSuspendedTransaction {
             val page = sample.page?.let { maxOf(it, 0) } ?: 0
             val pageSize = sample.pageSize?.let { maxOf(it, 1) } ?: 1
@@ -53,7 +53,8 @@ class CatalogRepositoryImpl: ICatalogRepository {
                             id = device.id.value,
                             title = detail.title,
                             description = detail.description,
-                            price = device.price
+                            price = device.price,
+                            amount = device.amount
                         )
                     }
             } else emptyList()

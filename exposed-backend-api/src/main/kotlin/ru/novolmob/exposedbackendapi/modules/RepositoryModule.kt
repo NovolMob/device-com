@@ -9,6 +9,13 @@ import ru.novolmob.exposedbackendapi.repositories.*
 
 val repositoryModule = module {
     //details
+    single<ICityDetailRepository> {
+        CityDetailRepositoryImpl(
+            mapper = get<CityDetailMapper>(),
+            resultRowMapper = get<ResultRowCityDetailMapper>()
+        )
+    }
+
     single<IDeviceDetailRepository> {
         DeviceDetailRepositoryImpl(
             mapper = get<DeviceDetailMapper>(),
@@ -42,7 +49,6 @@ val repositoryModule = module {
     single<IOrderToDeviceRepository> {
         OrderToDeviceRepositoryImpl(
             mapper = get<OrderToDeviceMapper>(),
-            itemMapper = get<OrderToDeviceItemMapper>(),
             resultRowMapper = get<ResultRowOrderToDeviceEntityMapper>(),
         )
     }
@@ -52,15 +58,6 @@ val repositoryModule = module {
             mapper = get<OrderToStatusMapper>(),
             resultRowMapper = get<ResultRowOrderToStatusMapper>(),
             orderStatusDetailRepository = get()
-        )
-    }
-
-    single<IPointToDeviceRepository> {
-        PointToDeviceRepositoryImpl(
-            mapper = get<PointToDeviceMapper>(),
-            itemMapper = get<PointToDeviceItemMapper>(),
-            resultRowMapper = get<ResultRowPointToDeviceMapper>(),
-            pointDetailRepository = get()
         )
     }
 
@@ -75,6 +72,14 @@ val repositoryModule = module {
     }
 
     singleOf(::CatalogRepositoryImpl).bind<ICatalogRepository>()
+
+    single<ICityRepository> {
+        CityRepositoryImpl(
+            mapper = get<CityMapper>(),
+            resultRowMapper = get<ResultRowCityMapper>(),
+            cityDetailRepository = get()
+        )
+    }
 
     single<IDeviceTypeRepository> {
         DeviceTypeRepositoryImpl(
@@ -102,6 +107,7 @@ val repositoryModule = module {
         PointRepositoryImpl(
             mapper = get<PointMapper>(),
             resultRowMapper = get<ResultRowPointMapper>(),
+            cityRepository = get(),
             pointDetailRepository = get()
         )
     }
@@ -127,8 +133,7 @@ val repositoryModule = module {
             mapper = get<DeviceMapper>(),
             resultRowMapper = get<ResultRowDeviceMapper>(),
             deviceDetailRepository = get(),
-            deviceTypeRepository = get(),
-            pointToDeviceRepository = get()
+            deviceTypeRepository = get()
         )
     }
 
@@ -136,6 +141,7 @@ val repositoryModule = module {
         OrderRepositoryImpl(
             mapper = get<OrderMapper>(),
             resultRowMapper = get<ResultRowOrderMapper>(),
+            deviceDetailRepository = get(),
             pointRepository = get(),
             orderToDeviceRepository = get(),
             orderToStatusRepository = get()

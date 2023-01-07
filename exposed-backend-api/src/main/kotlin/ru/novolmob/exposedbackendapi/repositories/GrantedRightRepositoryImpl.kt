@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import ru.novolmob.exposedbackendapi.exceptions.workerByIdNotFound
 import ru.novolmob.exposedbackendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IGrantedRightRepository
 import ru.novolmob.core.models.Code
@@ -30,18 +30,18 @@ class GrantedRightRepositoryImpl(
         GrantedRight.find { (GrantedRights.worker eq workerId) and (GrantedRights.code eq code) }
             .limit(1).firstOrNull()
 
-    override suspend fun getAllRightsFor(workerId: WorkerId): Either<BackendException, List<GrantedRightModel>> =
+    override suspend fun getAllRightsFor(workerId: WorkerId): Either<AbstractBackendException, List<GrantedRightModel>> =
         newSuspendedTransaction(Dispatchers.IO) {
             GrantedRight.find { GrantedRights.worker eq workerId }
                 .parTraverseEither { mapper(it) }
         }
 
-    override suspend fun contains(workerId: WorkerId, code: Code): Either<BackendException, Boolean> =
+    override suspend fun contains(workerId: WorkerId, code: Code): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             (find(workerId, code) != null).right()
         }
 
-    override suspend fun removeFor(workerId: WorkerId, code: Code): Either<BackendException, Boolean> =
+    override suspend fun removeFor(workerId: WorkerId, code: Code): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             find(workerId, code)?.let {
                 it.delete()
@@ -49,17 +49,17 @@ class GrantedRightRepositoryImpl(
             } ?: false.right()
         }
 
-    override suspend fun get(id: GrantedRightId): Either<BackendException, GrantedRightModel> =
+    override suspend fun get(id: GrantedRightId): Either<AbstractBackendException, GrantedRightModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             GrantedRight.findById(id)?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.grantedRightByIdNotFound(
                 id
             ).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<GrantedRightModel>> =
-        RepositoryUtil.generalGatAll(GrantedRights, pagination, resultRowMapper)
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<GrantedRightModel>> =
+        RepositoryUtil.generalGetAll(GrantedRights, pagination, resultRowMapper)
 
-    override suspend fun post(createModel: GrantedRightCreateModel): Either<BackendException, GrantedRightModel> =
+    override suspend fun post(createModel: GrantedRightCreateModel): Either<AbstractBackendException, GrantedRightModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val worker = Worker.findById(createModel.workerId) ?: return@newSuspendedTransaction workerByIdNotFound(createModel.workerId).left()
             val admin = Worker.findById(createModel.adminId) ?: return@newSuspendedTransaction workerByIdNotFound(createModel.adminId).left()
@@ -70,7 +70,7 @@ class GrantedRightRepositoryImpl(
             }.let(mapper::invoke)
         }
 
-    override suspend fun post(id: GrantedRightId, createModel: GrantedRightCreateModel): Either<BackendException, GrantedRightModel> =
+    override suspend fun post(id: GrantedRightId, createModel: GrantedRightCreateModel): Either<AbstractBackendException, GrantedRightModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val worker = Worker.findById(createModel.workerId) ?: return@newSuspendedTransaction workerByIdNotFound(createModel.workerId).left()
             val admin = Worker.findById(createModel.adminId) ?: return@newSuspendedTransaction workerByIdNotFound(createModel.adminId).left()
@@ -81,7 +81,7 @@ class GrantedRightRepositoryImpl(
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.grantedRightByIdNotFound(id).left()
         }
 
-    override suspend fun put(id: GrantedRightId, updateModel: GrantedRightUpdateModel): Either<BackendException, GrantedRightModel> =
+    override suspend fun put(id: GrantedRightId, updateModel: GrantedRightUpdateModel): Either<AbstractBackendException, GrantedRightModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val worker = updateModel.workerId?.let {
                 Worker.findById(it) ?: return@newSuspendedTransaction workerByIdNotFound(it).left()
@@ -96,7 +96,7 @@ class GrantedRightRepositoryImpl(
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.grantedRightByIdNotFound(id).left()
         }
 
-    override suspend fun delete(id: GrantedRightId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: GrantedRightId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             GrantedRight.findById(id)?.let {
                 it.delete()

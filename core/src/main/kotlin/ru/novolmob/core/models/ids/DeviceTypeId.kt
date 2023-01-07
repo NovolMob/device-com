@@ -11,4 +11,5 @@ value class DeviceTypeId(
     override val uuid: UUID
 ): Comparable<DeviceTypeId>, UUIDable {
     override fun compareTo(other: DeviceTypeId): Int = uuid.compareTo(other.uuid)
+    override fun toString(): String = uuid.toString()
 }

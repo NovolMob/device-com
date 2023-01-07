@@ -11,4 +11,5 @@ value class OrderStatusDetailId(
     override val uuid: UUID
 ): Comparable<OrderStatusDetailId>, UUIDable {
     override fun compareTo(other: OrderStatusDetailId): Int = uuid.compareTo(other.uuid)
+    override fun toString(): String = uuid.toString()
 }

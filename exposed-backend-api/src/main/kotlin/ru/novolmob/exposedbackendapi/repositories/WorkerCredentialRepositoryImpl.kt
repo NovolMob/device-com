@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import ru.novolmob.exposedbackendapi.exceptions.workerByIdNotFound
 import ru.novolmob.exposedbackendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IWorkerCredentialRepository
 import ru.novolmob.core.models.UpdateTime
@@ -23,7 +23,7 @@ class WorkerCredentialRepositoryImpl(
     val mapper: Mapper<WorkerCredential, WorkerCredentialModel>,
     val resultRowMapper: Mapper<ResultRow, WorkerCredentialModel>
 ): IWorkerCredentialRepository {
-    override suspend fun getByWorkerId(workerId: WorkerId): Either<BackendException, WorkerCredentialModel> =
+    override suspend fun getByWorkerId(workerId: WorkerId): Either<AbstractBackendException, WorkerCredentialModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             WorkerCredential.find { WorkerCredentials.worker eq workerId }
                 .limit(1).firstOrNull()?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.workerCredentialByWorkerIdNotFoundException(
@@ -31,17 +31,17 @@ class WorkerCredentialRepositoryImpl(
             ).left()
         }
 
-    override suspend fun get(id: CredentialId): Either<BackendException, WorkerCredentialModel> =
+    override suspend fun get(id: CredentialId): Either<AbstractBackendException, WorkerCredentialModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             WorkerCredential.findById(id)?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.credentialByIdNotFoundException(
                 id
             ).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<WorkerCredentialModel>> =
-        RepositoryUtil.generalGatAll(WorkerCredentials, pagination, resultRowMapper)
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<WorkerCredentialModel>> =
+        RepositoryUtil.generalGetAll(WorkerCredentials, pagination, resultRowMapper)
 
-    override suspend fun post(createModel: WorkerCredentialCreateModel): Either<BackendException, WorkerCredentialModel> =
+    override suspend fun post(createModel: WorkerCredentialCreateModel): Either<AbstractBackendException, WorkerCredentialModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val worker = Worker.findById(createModel.workerId) ?: return@newSuspendedTransaction workerByIdNotFound(createModel.workerId).left()
             WorkerCredential.new {
@@ -55,7 +55,7 @@ class WorkerCredentialRepositoryImpl(
     override suspend fun post(
         id: CredentialId,
         createModel: WorkerCredentialCreateModel
-    ): Either<BackendException, WorkerCredentialModel> =
+    ): Either<AbstractBackendException, WorkerCredentialModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val worker = Worker.findById(createModel.workerId) ?: return@newSuspendedTransaction workerByIdNotFound(createModel.workerId).left()
             WorkerCredential.findById(id)?.apply {
@@ -69,7 +69,7 @@ class WorkerCredentialRepositoryImpl(
     override suspend fun put(
         id: CredentialId,
         updateModel: WorkerCredentialUpdateModel
-    ): Either<BackendException, WorkerCredentialModel> =
+    ): Either<AbstractBackendException, WorkerCredentialModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val worker = updateModel.workerId?.let {
                 Worker.findById(it) ?: return@newSuspendedTransaction workerByIdNotFound(it).left()
@@ -83,7 +83,7 @@ class WorkerCredentialRepositoryImpl(
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.credentialByIdNotFoundException(id).left()
         }
 
-    override suspend fun delete(id: CredentialId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: CredentialId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             WorkerCredential.findById(id)?.let {
                 it.delete()

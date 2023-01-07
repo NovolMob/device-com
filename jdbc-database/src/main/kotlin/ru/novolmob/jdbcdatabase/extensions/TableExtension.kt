@@ -15,7 +15,6 @@ object TableExtension {
     fun Table.lastname(name: String = "lastname") = registerColumn(name, SerializableColumnType(Lastname.serializer()))
     fun Table.patronymic(name: String = "patronymic") = registerColumn(name, SerializableColumnType(Patronymic.serializer()))
     fun Table.birthdate(name: String = "birthdate") = registerColumn(name, CustomDateColumnType(::Birthday))
-    fun Table.city(name: String = "city") = registerColumn(name, SerializableColumnType(City.serializer()))
     fun Table.language(name: String = "language") = registerColumn(name, SerializableColumnType(Language.serializer()))
     fun Table.updateTime(name: String = "update_time") = registerColumn(name, CustomDateTimeColumnType(::UpdateTime))
         .default(DatabaseVocabulary.UPDATE_TIME_GENERATION)

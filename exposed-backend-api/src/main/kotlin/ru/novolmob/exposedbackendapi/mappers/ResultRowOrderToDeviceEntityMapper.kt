@@ -3,12 +3,12 @@ package ru.novolmob.exposedbackendapi.mappers
 import arrow.core.Either
 import arrow.core.right
 import org.jetbrains.exposed.sql.ResultRow
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.OrderToDeviceEntityModel
 import ru.novolmob.exposeddatabase.tables.OrderToDeviceTable
 
 class ResultRowOrderToDeviceEntityMapper: Mapper<ResultRow, OrderToDeviceEntityModel> {
-    override fun invoke(input: ResultRow): Either<BackendException, OrderToDeviceEntityModel> =
+    override fun invoke(input: ResultRow): Either<AbstractBackendException, OrderToDeviceEntityModel> =
         OrderToDeviceEntityModel(
             id = input[OrderToDeviceTable.id].value,
             orderId = input[OrderToDeviceTable.order].value,

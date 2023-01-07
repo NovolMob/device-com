@@ -11,11 +11,11 @@ import ru.novolmob.backend.util.KtorUtil.respond
 import ru.novolmob.backendapi.repositories.IDeviceRepository
 import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
 
-object DevicesRouting: KoinComponent {
+object DevicesRouting: KoinComponent, IRouting {
     private val deviceRepository: IDeviceRepository by inject()
     private val deviceTypeRepository: IDeviceTypeRepository by inject()
 
-    fun Route.deviceRouting() {
+    override fun Route.routingForUser() {
         get<Devices.Id> {
             val user = user()
             val either = deviceRepository.getFull(deviceId = it.id, language = user.language)

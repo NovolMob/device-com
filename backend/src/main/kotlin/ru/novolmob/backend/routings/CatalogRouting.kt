@@ -10,10 +10,10 @@ import ru.novolmob.backend.util.AuthUtil.user
 import ru.novolmob.backend.util.KtorUtil.respond
 import ru.novolmob.backendapi.repositories.ICatalogRepository
 
-object CatalogRouting: KoinComponent {
+object CatalogRouting: KoinComponent, IRouting {
     private val catalogRepository: ICatalogRepository by inject()
 
-    fun Route.catalogRouting() {
+    override fun Route.routingForUser() {
         get<Catalog> {
             val user = user()
             val either = catalogRepository.getCatalog(sample = it, language = user.language)

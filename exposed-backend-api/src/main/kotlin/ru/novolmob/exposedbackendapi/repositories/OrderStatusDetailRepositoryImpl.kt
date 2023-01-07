@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.exposedbackendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IOrderStatusDetailRepository
 import ru.novolmob.core.models.Language
@@ -28,7 +28,7 @@ class OrderStatusDetailRepositoryImpl(
     override suspend fun getDetailFor(
         orderStatusId: OrderStatusId,
         language: Language
-    ): Either<BackendException, OrderStatusDetailModel> =
+    ): Either<AbstractBackendException, OrderStatusDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             OrderStatusDetail
                 .find { (OrderStatusDetails.orderStatus eq orderStatusId) and (OrderStatusDetails.language eq language) }
@@ -38,7 +38,7 @@ class OrderStatusDetailRepositoryImpl(
             ).left()
         }
 
-    override suspend fun removeDetailFor(orderStatusId: OrderStatusId): Either<BackendException, Boolean> =
+    override suspend fun removeDetailFor(orderStatusId: OrderStatusId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             OrderStatusDetail.find { OrderStatusDetails.orderStatus eq orderStatusId }
                 .takeIf { !it.empty() }?.let {
@@ -47,17 +47,17 @@ class OrderStatusDetailRepositoryImpl(
                 } ?: false.right()
         }
 
-    override suspend fun get(id: OrderStatusDetailId): Either<BackendException, OrderStatusDetailModel> =
+    override suspend fun get(id: OrderStatusDetailId): Either<AbstractBackendException, OrderStatusDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             OrderStatusDetail.findById(id)?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.orderStatusDetailByIdNotFound(
                 id
             ).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<OrderStatusDetailModel>> =
-        RepositoryUtil.generalGatAll(OrderStatusDetails, pagination, resultRowMapper)
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<OrderStatusDetailModel>> =
+        RepositoryUtil.generalGetAll(OrderStatusDetails, pagination, resultRowMapper)
 
-    override suspend fun post(createModel: OrderStatusDetailCreateModel): Either<BackendException, OrderStatusDetailModel> =
+    override suspend fun post(createModel: OrderStatusDetailCreateModel): Either<AbstractBackendException, OrderStatusDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val orderStatus = OrderStatus.findById(createModel.orderStatusId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.orderStatusByIdNotFound(
                 createModel.orderStatusId
@@ -73,7 +73,7 @@ class OrderStatusDetailRepositoryImpl(
     override suspend fun post(
         id: OrderStatusDetailId,
         createModel: OrderStatusDetailCreateModel
-    ): Either<BackendException, OrderStatusDetailModel> =
+    ): Either<AbstractBackendException, OrderStatusDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val orderStatus = OrderStatus.findById(createModel.orderStatusId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.orderStatusByIdNotFound(
                 createModel.orderStatusId
@@ -90,7 +90,7 @@ class OrderStatusDetailRepositoryImpl(
     override suspend fun put(
         id: OrderStatusDetailId,
         updateModel: OrderStatusDetailUpdateModel
-    ): Either<BackendException, OrderStatusDetailModel> =
+    ): Either<AbstractBackendException, OrderStatusDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val orderStatus = updateModel.orderStatusId?.let {
                 OrderStatus.findById(it) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.orderStatusByIdNotFound(
@@ -106,7 +106,7 @@ class OrderStatusDetailRepositoryImpl(
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.orderStatusDetailByIdNotFound(id).left()
         }
 
-    override suspend fun delete(id: OrderStatusDetailId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: OrderStatusDetailId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             OrderStatusDetail.findById(id)?.let {
                 it.delete()

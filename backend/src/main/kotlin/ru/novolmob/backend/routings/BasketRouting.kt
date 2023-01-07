@@ -12,10 +12,10 @@ import ru.novolmob.backend.util.AuthUtil.user
 import ru.novolmob.backend.util.KtorUtil.respond
 import ru.novolmob.backendapi.repositories.IBasketRepository
 
-object BasketRouting: KoinComponent {
+object BasketRouting: KoinComponent, IRouting {
     private val basketRepository: IBasketRepository by inject()
 
-    fun Route.basketRouting() {
+    override fun Route.routingForUser() {
         get<Basket> {
             val user = user()
             val either = basketRepository.getBasket(userId = user.id, language = user.language)

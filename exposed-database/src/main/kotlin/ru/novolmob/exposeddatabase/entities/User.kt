@@ -14,7 +14,7 @@ class User(id: EntityID<UserId>) : Entity<UserId>(id) {
     var lastname by Users.lastname
     var patronymic by Users.patronymic
     var birthday by Users.birthday
-    var city by Users.city
+    var city by City optionalReferencedOn Users.city
     var language by Users.language
     var updateDate by Users.updateDate
     var creationDate by Users.creationDate

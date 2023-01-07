@@ -13,7 +13,7 @@ import ru.novolmob.exposedbackendapi.exceptions.pointDetailByIdNotFound
 import ru.novolmob.exposedbackendapi.exceptions.pointDetailByPointIdAndLanguageNotFound
 import ru.novolmob.exposedbackendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IPointDetailRepository
 import ru.novolmob.exposeddatabase.entities.Point
@@ -31,13 +31,13 @@ class PointDetailRepositoryImpl(
     override suspend fun getDetailFor(
         pointId: PointId,
         language: Language
-    ): Either<BackendException, PointDetailModel> =
+    ): Either<AbstractBackendException, PointDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             PointDetail.find { (PointDetails.point eq pointId) and (PointDetails.language eq language) }
                 .limit(1).firstOrNull()?.let(mapper::invoke) ?: pointDetailByPointIdAndLanguageNotFound(pointId, language).left()
         }
 
-    override suspend fun removeFor(pointId: PointId): Either<BackendException, Boolean> =
+    override suspend fun removeFor(pointId: PointId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             PointDetail.find { PointDetails.point eq pointId }
                 .takeIf { !it.empty() }?.let {
@@ -46,15 +46,15 @@ class PointDetailRepositoryImpl(
                 } ?: false.right()
         }
 
-    override suspend fun get(id: PointDetailId): Either<BackendException, PointDetailModel> =
+    override suspend fun get(id: PointDetailId): Either<AbstractBackendException, PointDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             PointDetail.findById(id)?.let(mapper::invoke) ?: pointDetailByIdNotFound(id).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<PointDetailModel>> =
-        RepositoryUtil.generalGatAll(PointDetails, pagination, resultRowMapper)
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<PointDetailModel>> =
+        RepositoryUtil.generalGetAll(PointDetails, pagination, resultRowMapper)
 
-    override suspend fun post(createModel: PointDetailCreateModel): Either<BackendException, PointDetailModel> =
+    override suspend fun post(createModel: PointDetailCreateModel): Either<AbstractBackendException, PointDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val point = Point.findById(createModel.pointId) ?: return@newSuspendedTransaction pointByIdNotFound(createModel.pointId).left()
             PointDetail.new {
@@ -69,7 +69,7 @@ class PointDetailRepositoryImpl(
     override suspend fun post(
         id: PointDetailId,
         createModel: PointDetailCreateModel
-    ): Either<BackendException, PointDetailModel> =
+    ): Either<AbstractBackendException, PointDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val point = Point.findById(createModel.pointId) ?: return@newSuspendedTransaction pointByIdNotFound(createModel.pointId).left()
             PointDetail.findById(id)?.apply {
@@ -85,7 +85,7 @@ class PointDetailRepositoryImpl(
     override suspend fun put(
         id: PointDetailId,
         updateModel: PointDetailUpdateModel
-    ): Either<BackendException, PointDetailModel> =
+    ): Either<AbstractBackendException, PointDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val point = updateModel.pointId?.let {
                 Point.findById(it) ?: return@newSuspendedTransaction pointByIdNotFound(it).left()
@@ -100,7 +100,7 @@ class PointDetailRepositoryImpl(
             }?.let(mapper::invoke) ?: pointDetailByIdNotFound(id).left()
         }
 
-    override suspend fun delete(id: PointDetailId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: PointDetailId): Either<AbstractBackendException, Boolean> =
         PointDetail.findById(id)?.let {
             it.delete()
             true.right()

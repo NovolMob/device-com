@@ -36,13 +36,14 @@ object DatabaseUtil {
             newSuspendedTransaction(Dispatchers.IO) {
                 SchemaUtils.createMissingTablesAndColumns(
                     UserCredentials, WorkerCredentials,
+                    Cities, CityDetails,
                     Baskets, DeviceDetails, Devices,
                     DeviceTypeDetails, DeviceTypes,
                     GrantedRights, Orders,
                     OrderStatusDetails, OrderStatuses,
-                    OrderToDeviceTable, PointDetails,
-                    Points, PointToDeviceTable, Users,
-                    Workers
+                    OrderToStatusTable, OrderToDeviceTable,
+                    PointDetails, Points,
+                    Users, Workers
                 )
             }
         }

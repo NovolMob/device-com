@@ -11,4 +11,5 @@ value class BasketId(
     override val uuid: UUID
 ): Comparable<BasketId>, UUIDable {
     override fun compareTo(other: BasketId): Int = uuid.compareTo(other.uuid)
+    override fun toString(): String = uuid.toString()
 }

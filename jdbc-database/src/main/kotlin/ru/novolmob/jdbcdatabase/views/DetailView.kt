@@ -1,13 +1,12 @@
 package ru.novolmob.jdbcdatabase.views
 
 import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.ids.CityId
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.DeviceTypeId
 import ru.novolmob.jdbcdatabase.databases.DatabaseVocabulary
 import ru.novolmob.jdbcdatabase.extensions.IColumnExtension.tableColumnString
-import ru.novolmob.jdbcdatabase.tables.DeviceTypeDetails
-import ru.novolmob.jdbcdatabase.tables.DeviceTypes
-import ru.novolmob.jdbcdatabase.tables.Devices
+import ru.novolmob.jdbcdatabase.tables.*
 import ru.novolmob.jdbcdatabase.tables.columns.IColumn
 import ru.novolmob.jdbcdatabase.tables.expressions.DeviceDetails
 import ru.novolmob.jdbcdatabase.tables.expressions.Expression.Companion.eq
@@ -39,6 +38,16 @@ sealed class DetailView<T: Any>(
     fun select(id: T): ResultSet = select(expression = first eq id)
     fun select(id: T, language: Language): ResultSet = select(expression = (first eq id) and (languageColumn eq language))
 
+    object CityDetailView: DetailView<CityId>(
+        columns = listOf(
+            Cities.id,
+            CityDetails.title,
+            CityDetails.language,
+        ),
+        first = Cities.id,
+        second = CityDetails.cityId,
+        languageColumn = CityDetails.language
+    )
 
     object DeviceTypeDetailView: DetailView<DeviceTypeId>(
         columns = listOf(
@@ -55,6 +64,10 @@ sealed class DetailView<T: Any>(
     object DeviceDetailView: DetailView<DeviceId>(
         columns = listOf(
             Devices.id,
+            Devices.code,
+            Devices.typeId,
+            Devices.amount,
+            Devices.price,
             DeviceDetails.title,
             DeviceDetails.description,
             DeviceDetails.features,

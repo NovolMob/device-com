@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "ru.novolmob.bd-practice"
-version = "0.0.2"
+version = "0.0.5"
 application {
     mainClass.set("MainKt")
 

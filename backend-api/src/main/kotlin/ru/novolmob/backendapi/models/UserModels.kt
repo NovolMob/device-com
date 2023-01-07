@@ -2,6 +2,7 @@ package ru.novolmob.backendapi.models
 
 import kotlinx.serialization.Serializable
 import ru.novolmob.core.models.*
+import ru.novolmob.core.models.ids.CityId
 import ru.novolmob.core.models.ids.UserId
 
 @Serializable
@@ -11,7 +12,7 @@ data class UserInfoModel(
     val lastname: Lastname,
     val patronymic: Patronymic? = null,
     val birthday: Birthday? = null,
-    val city: City? = null,
+    val cityId: CityId? = null,
     val language: Language,
 )
 
@@ -22,7 +23,7 @@ data class UserModel(
     val lastname: Lastname,
     val patronymic: Patronymic? = null,
     val birthday: Birthday? = null,
-    val city: City? = null,
+    val cityId: CityId? = null,
     val language: Language,
     val phoneNumber: PhoneNumber,
     val email: Email? = null
@@ -34,7 +35,7 @@ data class UserCreateModel(
     val lastname: Lastname,
     val patronymic: Patronymic? = null,
     val birthday: Birthday? = null,
-    val city: City? = null,
+    val cityId: CityId? = null,
     val language: Language,
     val password: Password,
     val phoneNumber: PhoneNumber,
@@ -47,7 +48,7 @@ data class UserUpdateModel(
     val lastname: Lastname? = null,
     val patronymic: Patronymic? = null,
     val birthday: Birthday? = null,
-    val city: City? = null,
+    val cityId: CityId? = null,
     val language: Language? = null,
     val password: Password? = null,
     val phoneNumber: PhoneNumber? = null,

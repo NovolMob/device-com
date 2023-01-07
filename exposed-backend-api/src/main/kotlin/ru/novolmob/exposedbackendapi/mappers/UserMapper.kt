@@ -3,13 +3,13 @@ package ru.novolmob.exposedbackendapi.mappers
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.UserModel
 import ru.novolmob.exposedbackendapi.exceptions.userCredentialByUserIdNotFoundException
 import ru.novolmob.exposeddatabase.entities.User
 
 class UserMapper: Mapper<User, UserModel> {
-    override fun invoke(input: User): Either<BackendException, UserModel> =
+    override fun invoke(input: User): Either<AbstractBackendException, UserModel> =
         input.credentials.firstOrNull()?.let {
             UserModel(
                 id = input.id.value,
@@ -17,7 +17,7 @@ class UserMapper: Mapper<User, UserModel> {
                 lastname = input.lastname,
                 patronymic = input.patronymic,
                 birthday = input.birthday,
-                city = input.city,
+                cityId = input.city?.id?.value,
                 language = input.language,
                 phoneNumber = it.phoneNumber,
                 email = it.email

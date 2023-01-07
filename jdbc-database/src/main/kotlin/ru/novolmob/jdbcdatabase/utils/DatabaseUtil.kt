@@ -12,11 +12,12 @@ object DatabaseUtil: KoinComponent {
     val tables = listOf(
         DeviceTypes, DeviceTypeDetails,
         Devices, DeviceDetails,
+        Cities, CityDetails,
         Users, Baskets
     )
 
     val views = listOf(
-        DetailView.DeviceTypeDetailView, DetailView.DeviceDetailView
+        DetailView.DeviceTypeDetailView, DetailView.DeviceDetailView, DetailView.CityDetailView
     )
 
     fun connectAndCreateAllTables(

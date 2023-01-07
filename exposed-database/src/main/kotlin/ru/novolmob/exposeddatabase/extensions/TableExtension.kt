@@ -72,16 +72,6 @@ object TableExtension {
             CustomDateColumnType(::Birthday)
         )
 
-    fun Table.city(name: String = "city", json: Json = Json, collate: String? = null, eagerLoading: Boolean = false): Column<City> =
-        registerColumn(
-            name,
-            CustomTextColumnType(
-                City::class,
-                City.serializer(),
-                json, collate, eagerLoading
-            )
-        )
-
     fun Table.creationTime(name: String = "creation_date"): Column<CreationTime> =
         registerColumn<CreationTime>(
             name,

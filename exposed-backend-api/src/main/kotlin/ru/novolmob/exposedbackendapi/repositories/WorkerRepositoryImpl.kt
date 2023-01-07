@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IWorkerCredentialRepository
 import ru.novolmob.backendapi.repositories.IWorkerRepository
@@ -31,17 +31,17 @@ class WorkerRepositoryImpl(
     val resultRowInfoMapper: Mapper<ResultRow, WorkerInfoModel>,
     val workerCredentialRepository: IWorkerCredentialRepository
 ): IWorkerRepository {
-    override suspend fun getLanguage(workerId: WorkerId): Either<BackendException, Language> =
+    override suspend fun getLanguage(workerId: WorkerId): Either<AbstractBackendException, Language> =
         newSuspendedTransaction(Dispatchers.IO) {
             Worker.findById(workerId)?.language?.right() ?: workerByIdNotFound(workerId).left()
         }
 
-    override suspend fun getAllByPointId(pointId: PointId): Either<BackendException, List<WorkerModel>> =
+    override suspend fun getAllByPointId(pointId: PointId): Either<AbstractBackendException, List<WorkerModel>> =
         newSuspendedTransaction(Dispatchers.IO) {
             Worker.find { Workers.point eq pointId }.parTraverseEither { mapper(it) }
         }
 
-    override suspend fun login(phoneNumber: PhoneNumber, password: Password): Either<BackendException, WorkerModel> =
+    override suspend fun login(phoneNumber: PhoneNumber, password: Password): Either<AbstractBackendException, WorkerModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             WorkerCredential.find { (WorkerCredentials.phoneNumber eq phoneNumber) and (WorkerCredentials.password eq password) }
                 .limit(1).firstOrNull()?.let {
@@ -49,7 +49,7 @@ class WorkerRepositoryImpl(
                 } ?: ru.novolmob.exposedbackendapi.exceptions.badCredentialsException().left()
         }
 
-    override suspend fun login(email: Email, password: Password): Either<BackendException, WorkerModel> =
+    override suspend fun login(email: Email, password: Password): Either<AbstractBackendException, WorkerModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             WorkerCredential.find { (WorkerCredentials.email eq email) and (WorkerCredentials.password eq password) }
                 .limit(1).firstOrNull()?.let {
@@ -57,13 +57,13 @@ class WorkerRepositoryImpl(
                 } ?: ru.novolmob.exposedbackendapi.exceptions.badCredentialsException().left()
         }
 
-    override suspend fun get(id: WorkerId): Either<BackendException, WorkerModel> =
+    override suspend fun get(id: WorkerId): Either<AbstractBackendException, WorkerModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             Worker.findById(id)?.let(mapper::invoke) ?: workerByIdNotFound(id).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<WorkerModel>> =
-        RepositoryUtil.generalGatAll(Workers, pagination, resultRowInfoMapper).flatMap {  page ->
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<WorkerModel>> =
+        RepositoryUtil.generalGetAll(Workers, pagination, resultRowInfoMapper).flatMap { page ->
             page.list.parTraverseEither { infoModel ->
                 workerCredentialRepository.getByWorkerId(infoModel.id).flatMap { credential ->
                     WorkerModel(
@@ -82,7 +82,7 @@ class WorkerRepositoryImpl(
             }
         }
 
-    override suspend fun post(createModel: WorkerCreateModel): Either<BackendException, WorkerModel> =
+    override suspend fun post(createModel: WorkerCreateModel): Either<AbstractBackendException, WorkerModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val point = createModel.pointId?.let {
                 Point.findById(it) ?: return@newSuspendedTransaction pointByIdNotFound(it).left()
@@ -105,7 +105,7 @@ class WorkerRepositoryImpl(
             }.let(mapper::invoke)
         }
 
-    override suspend fun post(id: WorkerId, createModel: WorkerCreateModel): Either<BackendException, WorkerModel> =
+    override suspend fun post(id: WorkerId, createModel: WorkerCreateModel): Either<AbstractBackendException, WorkerModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val point = createModel.pointId?.let {
                 Point.findById(it) ?: return@newSuspendedTransaction pointByIdNotFound(it).left()
@@ -132,7 +132,7 @@ class WorkerRepositoryImpl(
             }
         }
 
-    override suspend fun put(id: WorkerId, updateModel: WorkerUpdateModel): Either<BackendException, WorkerModel> =
+    override suspend fun put(id: WorkerId, updateModel: WorkerUpdateModel): Either<AbstractBackendException, WorkerModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val point = updateModel.pointId?.let {
                 Point.findById(it) ?: return@newSuspendedTransaction pointByIdNotFound(it).left()
@@ -159,7 +159,7 @@ class WorkerRepositoryImpl(
             }
         }
 
-    override suspend fun delete(id: WorkerId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: WorkerId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             Worker.findById(id)?.let {
                 it.delete()

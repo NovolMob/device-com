@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.exposedbackendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
-import ru.novolmob.backendapi.exceptions.BackendException
+import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IDeviceTypeDetailRepository
 import ru.novolmob.core.models.Language
@@ -28,7 +28,7 @@ class DeviceTypeDetailRepositoryImpl(
     override suspend fun getDetailFor(
         deviceTypeId: DeviceTypeId,
         language: Language
-    ): Either<BackendException, DeviceTypeDetailModel> =
+    ): Either<AbstractBackendException, DeviceTypeDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceTypeDetail
                 .find { (DeviceTypeDetails.deviceType eq deviceTypeId) and (DeviceTypeDetails.language eq language) }
@@ -39,7 +39,7 @@ class DeviceTypeDetailRepositoryImpl(
             ).left()
         }
 
-    override suspend fun removeDetailFor(deviceTypeId: DeviceTypeId): Either<BackendException, Boolean> =
+    override suspend fun removeDetailFor(deviceTypeId: DeviceTypeId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceTypeDetail.find { DeviceTypeDetails.deviceType eq deviceTypeId }
                 .takeIf { !it.empty() }
@@ -49,17 +49,17 @@ class DeviceTypeDetailRepositoryImpl(
                 } ?: false.right()
         }
 
-    override suspend fun get(id: DeviceTypeDetailId): Either<BackendException, DeviceTypeDetailModel> =
+    override suspend fun get(id: DeviceTypeDetailId): Either<AbstractBackendException, DeviceTypeDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceTypeDetail.findById(id)?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.deviceTypeDetailByIdNotFound(
                 id
             ).left()
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<BackendException, Page<DeviceTypeDetailModel>> =
-        RepositoryUtil.generalGatAll(DeviceTypeDetails, pagination, resultRowMapper)
+    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<DeviceTypeDetailModel>> =
+        RepositoryUtil.generalGetAll(DeviceTypeDetails, pagination, resultRowMapper)
 
-    override suspend fun post(createModel: DeviceTypeDetailCreateModel): Either<BackendException, DeviceTypeDetailModel> =
+    override suspend fun post(createModel: DeviceTypeDetailCreateModel): Either<AbstractBackendException, DeviceTypeDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val deviceType = DeviceType.findById(createModel.deviceTypeId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceTypeByIdNotFound(
                 createModel.deviceTypeId
@@ -75,7 +75,7 @@ class DeviceTypeDetailRepositoryImpl(
     override suspend fun post(
         id: DeviceTypeDetailId,
         createModel: DeviceTypeDetailCreateModel
-    ): Either<BackendException, DeviceTypeDetailModel> =
+    ): Either<AbstractBackendException, DeviceTypeDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val deviceType = DeviceType.findById(createModel.deviceTypeId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceTypeByIdNotFound(
                 createModel.deviceTypeId
@@ -92,7 +92,7 @@ class DeviceTypeDetailRepositoryImpl(
     override suspend fun put(
         id: DeviceTypeDetailId,
         updateModel: DeviceTypeDetailUpdateModel
-    ): Either<BackendException, DeviceTypeDetailModel> =
+    ): Either<AbstractBackendException, DeviceTypeDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val deviceType = updateModel.deviceTypeId?.let {
                 DeviceType.findById(it) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceTypeByIdNotFound(
@@ -109,7 +109,7 @@ class DeviceTypeDetailRepositoryImpl(
             }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.deviceTypeDetailByIdNotFound(id).left()
         }
 
-    override suspend fun delete(id: DeviceTypeDetailId): Either<BackendException, Boolean> =
+    override suspend fun delete(id: DeviceTypeDetailId): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
             DeviceTypeDetail.findById(id)?.let {
                 it.delete()

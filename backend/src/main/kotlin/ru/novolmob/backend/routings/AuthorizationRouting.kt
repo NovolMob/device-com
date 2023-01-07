@@ -19,9 +19,10 @@ import ru.novolmob.backendapi.models.LoginModel
 import ru.novolmob.backendapi.models.TokenModel
 import ru.novolmob.backendapi.repositories.IUserRepository
 
-object AuthorizationRouting: KoinComponent {
+object AuthorizationRouting: KoinComponent, IRouting {
     private val userRepository: IUserRepository by inject()
-    fun Route.authorizationRouting() {
+
+    override fun Route.generalRouting() {
         post<Registration> {
             val either = userRepository.post(createModel = call.receive())
             call.respond(either)

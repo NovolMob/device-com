@@ -11,13 +11,7 @@ import io.ktor.server.resources.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
-import ru.novolmob.backend.routings.AuthorizationRouting.authorizationRouting
-import ru.novolmob.backend.routings.BasketRouting.basketRouting
-import ru.novolmob.backend.routings.CatalogRouting.catalogRouting
-import ru.novolmob.backend.routings.DevicesRouting.deviceRouting
-import ru.novolmob.backend.routings.OrderRouting.orderRouting
-import ru.novolmob.backend.routings.PointRouting.pointRouting
-import ru.novolmob.backend.routings.UserRouting.userRouting
+import ru.novolmob.backend.routings.*
 import ru.novolmob.backend.services.DatabaseService
 import ru.novolmob.backend.util.AuthUtil.authentication
 import ru.novolmob.backend.util.AuthUtil.userPermission
@@ -85,8 +79,8 @@ suspend fun main() {
             /*newSuspendedTransaction {
                 PointToDeviceEntity.new {
                     point = Point.findById(PointId(UUID.fromString("27881e78-154e-45c5-8f35-69aaf76cee1a")))!!
-                    device = Device.findById(DeviceId(UUID.fromString("1b6b0771-6a55-4df7-8034-054b571acdf7")))!!
-                    amount = Amount(11)
+                    device = Device.findById(DeviceId(UUID.fromString("4e77c4a9-a0df-420a-b1ed-00c608f01e42")))!!
+                    amount = Amount(6)
                 }
             }*/
 
@@ -118,15 +112,36 @@ fun Application.backend() {
 
     install(Resources)
     routing {
-        authorizationRouting()
-        authenticate {
-            userPermission {
-                catalogRouting()
-                deviceRouting()
-                basketRouting()
-                orderRouting()
-                pointRouting()
-                userRouting()
+        apply(
+            AuthorizationRouting,
+            BasketRouting,
+            CatalogRouting,
+            CityRouting,
+            DevicesRouting,
+            OrderRouting,
+            PointRouting,
+            UserRouting
+        )
+    }
+}
+
+fun Route.apply(vararg routing: IRouting) {
+    routing.forEach {
+        with(it) {
+            generalRouting()
+        }
+    }
+    authenticate {
+        userPermission {
+            routing.forEach {
+                with(it) {
+                    routingForUser()
+                }
+            }
+        }
+        routing.forEach {
+            with(it) {
+                routingForWorker()
             }
         }
     }
