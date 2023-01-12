@@ -20,7 +20,8 @@ data class CatalogState(
     val deviceTypeId: DeviceTypeId? = null,
     val page: Int = 0,
     val catalog: List<DeviceModel> = emptyList(),
-    val amountOfPage: Int = 0
+    val amountOfPage: Int = 0,
+    val searching: Boolean = false
 )
 
 class CatalogViewModel(
@@ -66,7 +67,11 @@ class CatalogViewModel(
 
 
     fun search() {
-        viewModelScope.launch { catalogService.searchString(_state.value.searchString) }
+        viewModelScope.launch {
+            _state.update { it.copy(searching = true) }
+            catalogService.searchString(_state.value.searchString)
+            _state.update { it.copy(searching = false) }
+        }
     }
 
     fun addToBasket(deviceModel: DeviceModel) {

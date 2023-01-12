@@ -50,6 +50,11 @@ class OrderServiceImpl(
             orders.right()
         }
 
+    override suspend fun clear() {
+        _orders.update { emptyList() }
+        _order.update { null }
+    }
+
     override suspend fun selectOrder(orderId: OrderId): Either<AbstractBackendException, OrderFullModel> =
         orderRepository.get(orderId).flatMap { orderFullModel ->
             _order.update { orderFullModel }

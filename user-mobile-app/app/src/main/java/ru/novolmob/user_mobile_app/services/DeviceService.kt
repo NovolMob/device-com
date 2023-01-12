@@ -53,6 +53,11 @@ class DevicesServiceImpl(
     override suspend fun update(): Either<AbstractBackendException, Any> =
         _device.value?.first?.id?.let { setDeviceId(it) } ?: Unit.right()
 
+    override suspend fun clear() {
+        _devices.update { emptyList() }
+        _device.update { null }
+    }
+
     override fun addAll(list: List<DeviceModel>) {
         _devices.update {
             it.toMutableList().apply {
@@ -69,38 +74,45 @@ class DevicesServiceImpl(
     override suspend fun getOrCreate(basketItem: BasketItemModel): DeviceModel =
         devices.value
             .find { it.id == basketItem.device.id }
-            ?.also { it.amountInBasket(basketItem.amount.int) } ?:
+            ?.apply {
+                amountInBasket(basketItem.amount.int)
+                title = basketItem.device.title.string
+                description = basketItem.device.description.string
+                price = basketItem.device.price.bigDecimal.toDouble()
+            } ?:
         DeviceModel(
             id = basketItem.device.id,
-            imageBitmap = null,
             title = basketItem.device.title.string,
             description = basketItem.device.description.string,
             price = basketItem.device.price.bigDecimal.toDouble(),
-            amountInBasket = basketItem.amount.int
-        ).add()
+        ).also { it.amountInBasket(basketItem.amount.int) }.add()
 
     override suspend fun getOrCreate(deviceShortModel: DeviceShortModel): DeviceModel =
         devices.value
-            .find { it.id == deviceShortModel.id } ?:
+                .find { it.id == deviceShortModel.id }?.apply {
+                    title = deviceShortModel.title.string
+                    description = deviceShortModel.description.string
+                    price = deviceShortModel.price.bigDecimal.toDouble()
+                } ?:
         DeviceModel(
             id = deviceShortModel.id,
-            imageBitmap = null,
             title = deviceShortModel.title.string,
             description = deviceShortModel.description.string,
             price = deviceShortModel.price.bigDecimal.toDouble(),
-            amountInBasket = 0
         ).add()
 
     override suspend fun getOrCreate(deviceFullModel: DeviceFullModel): DeviceModel =
         devices.value
-            .find { it.id == deviceFullModel.id } ?:
+                .find { it.id == deviceFullModel.id }?.apply {
+                    title = deviceFullModel.detailModel.title.string
+                    description = deviceFullModel.detailModel.description.string
+                    price = deviceFullModel.price.bigDecimal.toDouble()
+                } ?:
         DeviceModel(
             id = deviceFullModel.id,
-            imageBitmap = null,
             title = deviceFullModel.detailModel.title.string,
             description = deviceFullModel.detailModel.description.string,
             price = deviceFullModel.price.bigDecimal.toDouble(),
-            amountInBasket = 0
         ).add()
 
 }

@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalAnimationApi::class)
+@file:OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 
 package ru.novolmob.user_mobile_app.ui.basket
 
@@ -12,10 +12,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -53,6 +57,7 @@ fun BasketScreen(
     navHostController: NavHostController = rememberAnimatedNavController()
 ) {
     val state by viewModel.state.collectAsState()
+    val pullRefreshState = rememberPullRefreshState(refreshing = state.loading, onRefresh = viewModel::update)
     val basketIsNotEmpty by remember(state.list.size) {
         derivedStateOf { state.list.isNotEmpty() }
     }
@@ -61,9 +66,15 @@ fun BasketScreen(
 
     Box(
         modifier = modifier
+            .pullRefresh(pullRefreshState)
             .fillMaxSize()
             .background(color = Color.White),
     ) {
+        Column(
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {}
         if (state.loading) {
             CircularProgressIndicator(
                 modifier = modifier
@@ -73,6 +84,7 @@ fun BasketScreen(
         } else {
             LazyColumn(
                 modifier = Modifier
+                    .fillMaxSize()
                     .padding(vertical = 5.dp, horizontal = 15.dp),
                 contentPadding = PaddingValues(bottom = 130.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -99,17 +111,28 @@ fun BasketScreen(
                     confirm = viewModel::confirmOrder
                 )
             } else {
-                Text(
-                    modifier = modifier
-                        .align(Alignment.Center),
-                    text = stringResource(id = R.string.basket_is_empty),
-                    color = Color.LightGray,
-                    maxLines = 1,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        modifier = modifier,
+                        text = stringResource(id = R.string.basket_is_empty),
+                        color = Color.LightGray,
+                        maxLines = 1,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
+        PullRefreshIndicator(
+            modifier = Modifier
+                .align(Alignment.TopCenter),
+            refreshing = state.loading,
+            state = pullRefreshState
+        )
     }
 }
 
@@ -150,7 +173,10 @@ private fun Confirmation(
                         points.forEach {
                             Column(
                                 modifier = Modifier
-                                    .background(color = Color.LightGray, shape = RoundedCornerShape(15))
+                                    .background(
+                                        color = Color.LightGray,
+                                        shape = RoundedCornerShape(15)
+                                    )
                                     .padding(5.dp)
                                     .clickable {
                                         confirm(it.id)
@@ -203,7 +229,7 @@ private fun Confirmation(
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 70.dp)
                 .height(60.dp),
-            sending = sending || points.isEmpty(),
+            sending = sending,
             totalPrice = totalPrice,
             onClick = {
                 hiddenAlertDialog = false

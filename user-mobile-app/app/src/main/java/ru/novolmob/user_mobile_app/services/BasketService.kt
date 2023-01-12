@@ -49,10 +49,10 @@ class BasketServiceImpl(
 
     override suspend fun update(): Either<AbstractBackendException, BasketFullModel> =
         basketRepository.getBasket().flatMap { basketFullModel ->
+            clearBasket()
             val list = basketFullModel.list.parTraverse {
                 devicesService.getOrCreate(it)
             }
-            clearBasket()
             BasketModel(
                 list = list,
                 totalPrice = basketFullModel.totalPrice.bigDecimal.toDouble(),
@@ -61,6 +61,11 @@ class BasketServiceImpl(
             }
             basketFullModel.right()
         }
+
+    override suspend fun clear() {
+        clearBasket()
+        _basket.update { BasketModel() }
+    }
 
     override suspend fun add(deviceModel: DeviceModel): Either<AbstractBackendException, Unit> =
         basketRepository.setInBasket(deviceId = deviceModel.id, amount = Amount(1)).flatMap { totalPrice ->

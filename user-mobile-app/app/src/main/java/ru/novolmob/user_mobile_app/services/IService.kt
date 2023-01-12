@@ -10,4 +10,5 @@ interface IService {
         get() = CoroutineScope(SupervisorJob())
 
     suspend fun update(): Either<AbstractBackendException, Any>
+    suspend fun clear()
 }

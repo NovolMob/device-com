@@ -19,6 +19,7 @@ import ru.novolmob.core.models.PhoneNumber
 import ru.novolmob.user_mobile_app.datastore.TokenDataStore
 import ru.novolmob.user_mobile_app.models.ProfileAction
 import ru.novolmob.user_mobile_app.repositories.IUserRepository
+import ru.novolmob.user_mobile_app.utils.ServiceUtil
 
 
 interface IProfileService: IService {
@@ -65,6 +66,7 @@ class ProfileServiceImpl(
         tokenModel?.let {
             tokenDataStore.token(it)
         }
+        ServiceUtil.updateAllServices()
     }
     private suspend fun logoutAction() {
         _action.update { ProfileAction.Logout }
@@ -79,9 +81,13 @@ class ProfileServiceImpl(
             userModel.right()
         }
 
+    override suspend fun clear() {
+        logoutAction()
+    }
+
     override suspend fun updateProfile(profileModel: UserUpdateModel): Either<AbstractBackendException, UserModel> =
         userRepository.put(updateModel = profileModel).flatMap { newProfile ->
-            profile(newProfile)
+            ServiceUtil.updateAllServices()
             newProfile.right()
         }
 
@@ -114,6 +120,7 @@ class ProfileServiceImpl(
     override suspend fun logout(): Either<AbstractBackendException, Unit> =
         userRepository.logout().flatMap {
             logoutAction()
+            ServiceUtil.clearAllServices()
             Unit.right()
         }
 

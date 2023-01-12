@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import arrow.core.computations.either
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.CityShortModel
 import ru.novolmob.backendapi.models.UserModel
@@ -39,8 +40,7 @@ data class ProfileState(
         AbstractCharacterMutableValue.PhoneNumberMutableValue(currentProfile?.phoneNumber?.trim() ?: ""),
     val password: PasswordMutableValue = PasswordMutableValue(),
     val canSave: Boolean = false,
-    val loading: Boolean = false,
-    val logout: Boolean = false
+    val loading: Boolean = false
 ) {
     val initials = currentProfile?.let { "${it.firstname.string.first { it.isLetter() }}${it.lastname.string.first { it.isLetter() }}" } ?: ""
 }
@@ -80,32 +80,30 @@ class ProfileViewModel(
             launch {
                 profileService.profile.collectLatest { userModel ->
                     setProfile(userModel)
+                    state.value.run {
+                        combine(
+                            firstname.value, lastname.value, patronymic.value,
+                            birthday.value, city.value, language.value,
+                            email.value, phoneNumber.value, password.value
+                        ) { array ->
+                            (array[0] != userModel?.firstname?.string && firstname.isValid(array[0] as String)) ||
+                                    (array[1] != userModel?.lastname?.string && lastname.isValid(array[1] as String)) ||
+                                    (array[2] != userModel?.patronymic?.string && patronymic.isValid(array[2] as String)) ||
+                                    (array[3] != userModel?.birthday?.date && birthday.isValid(array[3] as LocalDate?)) ||
+                                    ((array[4] as CityShortModel?)?.id != userModel?.cityId && city.isValid(array[4] as CityShortModel?)) ||
+                                    (array[5] != userModel?.language?.string && language.isValid(array[5] as String))||
+                                    (array[6] != userModel?.email?.string && email.isValid(array[6] as String)) ||
+                                    (array[7] != userModel?.phoneNumber?.trim() && phoneNumber.isValid(array[7] as String)) ||
+                                    (array[8].toString().isNotEmpty() && password.isValid(array[8] as Password))
+                        }.collectLatest { canSave ->
+                            _state.update { it.copy(canSave = canSave) }
+                        }
+                    }
                 }
             }
             launch {
                 cityService.cities.collectLatest { cities ->
                     state.value.city.cities.update { cities }
-                }
-            }
-            launch {
-                state.value.run {
-                    combine(
-                        firstname.value, lastname.value, patronymic.value,
-                        birthday.value, city.value, language.value,
-                        email.value, phoneNumber.value, password.value
-                    ) { array ->
-                        (array[0] != currentProfile?.firstname?.string && firstname.valid.value) ||
-                                (array[1] != currentProfile?.lastname?.string && lastname.valid.value) ||
-                                (array[2] != currentProfile?.patronymic?.string && patronymic.valid.value) ||
-                                (array[3] != currentProfile?.birthday?.date && birthday.valid.value) ||
-                                ((array[4] as CityShortModel?)?.id != currentProfile?.cityId && city.valid.value) ||
-                                (array[5] != currentProfile?.language?.string && language.valid.value)||
-                                (array[6] != currentProfile?.email?.string && email.valid.value) ||
-                                (array[7] != currentProfile?.phoneNumber?.trim() && phoneNumber.valid.value) ||
-                                (array[8].toString().isNotEmpty() && password.valid.value)
-                    }.collectLatest { canSave ->
-                        _state.update { it.copy(canSave = canSave) }
-                    }
                 }
             }
         }
@@ -132,12 +130,13 @@ class ProfileViewModel(
                 }
             }.fold(
                 ifLeft = { exception ->
-                    _state.update { it.copy(loading = false) }
                     ScreenNotification.push(exception)
+                    _state.update { it.copy(loading = false) }
                 },
                 ifRight = { profile ->
                     setProfile(profile)
                     ScreenNotification.push(message = "Профиль обновлён")
+                    _state.update { it.copy(loading = false) }
                 }
             )
         }

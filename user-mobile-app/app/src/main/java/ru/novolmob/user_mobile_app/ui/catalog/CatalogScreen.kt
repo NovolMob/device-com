@@ -1,12 +1,14 @@
-@file:OptIn(ExperimentalAnimationApi::class)
+@file:OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 
 package ru.novolmob.user_mobile_app.ui.catalog
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,11 +18,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.ShoppingCart
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -42,13 +48,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import org.koin.androidx.compose.getViewModel
-import ru.novolmob.backendapi.models.*
-import ru.novolmob.core.models.*
-import ru.novolmob.core.models.ids.*
+import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.user_mobile_app.R
 import ru.novolmob.user_mobile_app.models.DeviceModel
 import ru.novolmob.user_mobile_app.navigation.NavigationRoute.Main.Catalog.Device.navigateToDevice
-import java.util.*
 
 @Preview
 @Composable
@@ -63,36 +66,60 @@ fun CatalogScreen(
     navHostController: NavHostController = rememberAnimatedNavController()
 ) {
     val state by viewModel.state.collectAsState()
+    val pullRefreshState = rememberPullRefreshState(refreshing = state.searching, onRefresh = viewModel::search)
 
     BackHandler {}
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .background(color = Color.White)
+            .pullRefresh(pullRefreshState)
     ) {
-        SearchRow(
+        Column(
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {}
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            startValue = state.searchString,
-            update = viewModel::searchString,
-            onDone = viewModel::search
-        )
-        CatalogContent(
-            modifier = Modifier
-                .fillMaxWidth(),
-            catalog = state.catalog,
-            amountOfPages = state.amountOfPage,
-            selectedPage = state.page,
-            setPage = viewModel::selectedPage,
-            setAmountInBasket = viewModel::setDeviceAmount,
-            addToBasket = viewModel::addToBasket,
-            openDevice = {
-                viewModel.openDevice(it)
-                navHostController.navigateToDevice()
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            SearchRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                startValue = state.searchString,
+                update = viewModel::searchString,
+                onDone = viewModel::search
+            )
+            AnimatedVisibility(
+                visible = !state.searching,
+                enter = expandVertically(tween(200)),
+                exit = shrinkVertically(tween(200))
+            ) {
+                CatalogContent(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    catalog = state.catalog,
+                    amountOfPages = state.amountOfPage,
+                    selectedPage = state.page,
+                    setPage = viewModel::selectedPage,
+                    setAmountInBasket = viewModel::setDeviceAmount,
+                    addToBasket = viewModel::addToBasket,
+                    openDevice = {
+                        viewModel.openDevice(it)
+                        navHostController.navigateToDevice()
+                    }
+                )
             }
+        }
+        PullRefreshIndicator(
+            modifier = Modifier
+                .align(Alignment.TopCenter),
+            refreshing = state.searching,
+            state = pullRefreshState
         )
     }
 }
@@ -113,7 +140,8 @@ private fun CatalogContent(
     }
     Box(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier,
+            modifier = Modifier
+                .fillMaxSize(),
             contentPadding = PaddingValues(top = if (hasPages) 70.dp else 0.dp, bottom = 70.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)

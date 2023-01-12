@@ -33,7 +33,7 @@ class CatalogServiceImpl(
     private val _catalog = MutableStateFlow(CatalogModel())
     override val catalog: StateFlow<CatalogModel> = _catalog.asStateFlow()
 
-    private val _sample = MutableStateFlow(SearchSampleModel(pageSize = 20))
+    private val _sample = MutableStateFlow(SearchSampleModel())
     override val sample: StateFlow<SearchSampleModel> = _sample.asStateFlow()
 
     init {
@@ -59,6 +59,11 @@ class CatalogServiceImpl(
                 _catalog.update { newCatalogModel }
             }.right()
         }
+
+    override suspend fun clear() {
+        _catalog.update { CatalogModel() }
+        _sample.update { SearchSampleModel() }
+    }
 
     override suspend fun page(page: Int) {
         _catalog.update { it.copy(page = page, list = emptyList()) }

@@ -2,10 +2,13 @@ package ru.novolmob.user_mobile_app.utils
 
 import androidx.compose.ui.graphics.Color
 import arrow.core.Either
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
 
 data class ScreenNotification(
@@ -26,16 +29,18 @@ data class ScreenNotification(
         private fun AbstractBackendException.toScreenNotification() =
             ScreenNotification(backgroundColor = Color.Red, message = message)
 
-        suspend fun push(exception: AbstractBackendException, duration: Long = DEFAULT_DURATION) =
+        fun push(exception: AbstractBackendException, duration: Long = DEFAULT_DURATION) =
             push(notification = exception.toScreenNotification(), duration = duration)
 
-        suspend fun push(notification: ScreenNotification, duration: Long = DEFAULT_DURATION) {
-            _notification.update { notification }
-            delay(duration)
-            _notification.update { it?.copy(visible = false) }
+        fun push(notification: ScreenNotification, duration: Long = DEFAULT_DURATION) {
+            CoroutineScope(Dispatchers.Default).launch {
+                _notification.update { notification }
+                delay(duration)
+                _notification.update { it?.copy(visible = false) }
+            }
         }
 
-        suspend fun push(
+        fun push(
             message: String,
             color: Color = DEFAULT_COLOR,
             textColor: Color = DEFAULT_TEXT_COLOR,
@@ -47,7 +52,7 @@ data class ScreenNotification(
             duration = duration
         )
 
-        suspend fun <M> Either<AbstractBackendException, M>.notice(duration: Long = DEFAULT_DURATION): M? =
+        fun <M> Either<AbstractBackendException, M>.notice(duration: Long = DEFAULT_DURATION): M? =
             fold(
                 ifLeft = {
                     push(it, duration)

@@ -43,6 +43,10 @@ class PointServiceImpl(
             it.list.also { list -> _points.update { list } }.right()
         }
 
+    override suspend fun clear() {
+        _points.update { emptyList() }
+    }
+
     override suspend fun getAllByUserCity(): Either<AbstractBackendException, List<PointShortModel>> =
         pointRepository.getAllByUserCity()
 

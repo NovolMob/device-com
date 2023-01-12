@@ -47,7 +47,9 @@ fun MainScreen(
 ) {
     val destination by innerNavHostController.currentBackStackEntryAsState()
     val selected by remember(tabs, destination) {
-        derivedStateOf { tabs.find { destination?.destination?.route?.startsWith(it.route) == true } }
+        derivedStateOf { tabs.find {
+            destination?.destination?.route?.startsWith(it.route) == true }
+        }
     }
 
     Box(
@@ -140,7 +142,7 @@ private fun NavigationBarItem(
             Icon(
                 modifier = Modifier
                     .size(iconSize),
-                imageVector = navigationTab.imageVector,
+                imageVector = navigationTab.imageVector(),
                 contentDescription = null,
                 tint = iconColor
             )

@@ -1,11 +1,9 @@
-@file:OptIn(ExperimentalAnimationApi::class)
+@file:OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 
 package ru.novolmob.user_mobile_app.ui.order
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +11,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -47,6 +49,7 @@ fun OrdersScreen(
     navHostController: NavHostController = rememberAnimatedNavController()
 ) {
     val state by viewModel.state.collectAsState()
+    val pullRefreshState = rememberPullRefreshState(refreshing = state.loading, onRefresh = viewModel::update)
     var selectedOrderForCancellation by remember {
         mutableStateOf<OrderShortModel?>(null)
     }
@@ -56,6 +59,7 @@ fun OrdersScreen(
 
     Box(
         modifier = modifier
+            .pullRefresh(pullRefreshState)
             .fillMaxSize()
             .background(color = Color.White)
             .padding(vertical = 5.dp, horizontal = 15.dp),
@@ -66,8 +70,14 @@ fun OrdersScreen(
                 color = Color.LightGray
             )
         } else {
+            Column(
+                modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {}
             LazyColumn(
-                modifier = Modifier,
+                modifier = Modifier
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 65.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -98,6 +108,12 @@ fun OrdersScreen(
                 )
             }
         }
+        PullRefreshIndicator(
+            modifier = Modifier
+                .align(Alignment.TopCenter),
+            refreshing = state.loading,
+            state = pullRefreshState
+        )
     }
 }
 
@@ -134,7 +150,11 @@ private fun CancelAlertDialog(
                 Text(
                     modifier = Modifier
                         .weight(1f)
-                        .clickable(MutableInteractionSource(), indication = null, onClick = onDismiss),
+                        .clickable(
+                            MutableInteractionSource(),
+                            indication = null,
+                            onClick = onDismiss
+                        ),
                     text = stringResource(id = R.string.cancel),
                     color = Color.Red,
                     fontWeight = FontWeight.Bold,
@@ -144,7 +164,11 @@ private fun CancelAlertDialog(
                 Text(
                     modifier = Modifier
                         .weight(1f)
-                        .clickable(MutableInteractionSource(), indication = null, onClick = onConfirm),
+                        .clickable(
+                            MutableInteractionSource(),
+                            indication = null,
+                            onClick = onConfirm
+                        ),
                     text = stringResource(id = R.string.confirm),
                     color = Color.Green,
                     fontWeight = FontWeight.Bold,

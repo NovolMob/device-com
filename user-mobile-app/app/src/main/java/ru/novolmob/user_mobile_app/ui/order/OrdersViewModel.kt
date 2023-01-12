@@ -37,6 +37,14 @@ class OrdersViewModel(
         }
     }
 
+    fun update() {
+        viewModelScope.launch {
+            _state.update { it.copy(loading = true) }
+            orderService.update().notice()
+            _state.update { it.copy(loading = false) }
+        }
+    }
+
     fun selectOrder(orderId: OrderId) {
         viewModelScope.launch {
             orderService.selectOrder(orderId).notice()

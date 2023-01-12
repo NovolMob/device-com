@@ -42,6 +42,10 @@ class CityServiceImpl(
             it.list.also { list -> _cities.update { list } }.right()
         }
 
+    override suspend fun clear() {
+        _cities.update { emptyList() }
+    }
+
     override fun getOrNull(cityId: CityId): CityShortModel? = cities.value.find { it.id == cityId }
 
 }

@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.materialPath
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -19,7 +18,9 @@ import ru.novolmob.user_mobile_app.ui.device.DeviceScreen
 import ru.novolmob.user_mobile_app.ui.order.OrdersScreen
 import ru.novolmob.user_mobile_app.ui.profile.ProfileScreen
 
-sealed class NavigationRoute(val route: String) {
+sealed class NavigationRoute(route: String? = null) {
+    open val route: String = route ?: ""
+
     object Authorization: NavigationRoute("Authorization") {
         fun NavHostController.navigateToAuthorization() = navigate(route = route)
     }
@@ -28,7 +29,8 @@ sealed class NavigationRoute(val route: String) {
         fun NavHostController.navigateToRegistration() = navigate(route = route)
     }
 
-    sealed class Main(route: String): NavigationRoute("${Companion.route}/$route") {
+    sealed class Main(route: String? = null): NavigationRoute() {
+        override val route: String = Companion.route + (route?.let { "/$it" } ?: "")
         protected val badge = MutableStateFlow(0)
         abstract val navigationTab: NavigationTab?
 
@@ -40,7 +42,8 @@ sealed class NavigationRoute(val route: String) {
             fun NavHostController.navigateToMain() = navigate(route = route)
         }
 
-        sealed class Catalog(route: String): Main("${Companion.route}/$route") {
+        sealed class Catalog(route: String? = null): Main() {
+            override val route: String = Companion.route + (route?.let { "/$it" } ?: "")
 
             companion object: Main("Catalog") {
                 override val navigationTab: NavigationTab = NavigationTab(
@@ -126,6 +129,7 @@ sealed class NavigationRoute(val route: String) {
             object Device: Catalog("Device") {
                 override val navigationTab: NavigationTab  = NavigationTab(
                     route = route,
+                    arguments = listOf(position(1)),
                     displayName = R.string.device,
                 ) { modifier, navHostController, _ ->
                     DeviceScreen(
@@ -165,12 +169,13 @@ sealed class NavigationRoute(val route: String) {
             }
         }
 
-        sealed class Orders(route: String): Main("${Companion.route}/$route") {
+        sealed class Orders(route: String? = null): Main() {
+            override val route: String = Companion.route + (route?.let { "/$it" } ?: "")
             companion object: Main("Orders") {
                 override val navigationTab: NavigationTab = NavigationTab(
                     route = route,
                     displayName = R.string.orders,
-                    imageVector = Icons.Rounded.Delete,
+                    imageVectorId = R.drawable.all_inbox,
                     badgeFlow = badge.asStateFlow(),
                     navigate = {
                         navigateToOrders()
@@ -196,6 +201,7 @@ sealed class NavigationRoute(val route: String) {
                 override val navigationTab: NavigationTab  = NavigationTab(
                     route = route,
                     displayName = R.string.order,
+                    arguments = listOf(position(3))
                 ) { modifier, navHostController, _ ->
                     DeviceScreen(
                         modifier = modifier,
