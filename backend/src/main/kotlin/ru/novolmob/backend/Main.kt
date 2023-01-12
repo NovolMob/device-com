@@ -19,6 +19,9 @@ import ru.novolmob.backend.util.KtorUtil.respondException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
 import ru.novolmob.jdbcbackendapi.modules.jdbcBackendApiModule
 
+val HOST = System.getenv("HOST") ?: "0.0.0.0"
+val PORT = System.getenv("PORT")?.toInt() ?: 8080
+
 suspend fun main() {
     startKoin {
         modules(
@@ -28,7 +31,7 @@ suspend fun main() {
     }
     DatabaseService.connectWithJdbc()
         .onSuccess {
-            embeddedServer(Netty, host = "192.168.31.196", port = 8080, module = Application::backend).start(true)
+            embeddedServer(Netty, host = HOST, port = PORT, module = Application::backend).start(true)
         }
         .onFailure {
             it.printStackTrace()
