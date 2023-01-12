@@ -24,7 +24,7 @@ abstract class View(name: String? = null): DatabaseObject() {
     protected fun <T: Any> registerJoin(first: IParameter<T>, second: IParameter<T>): Pair<IParameter<T>, IParameter<T>> =
         (first to second).also { _joins.add(it) }
     protected fun <T : Any> registerParameter(name: String? = null, reference: IParameter<T>): ViewParameter<T> =
-        ViewParameter(name, reference, this).also { _parameters.add(it); println("${this.name}  ${it.name}  ${_parameters.size}") }
+        ViewParameter(name, reference, this).also { _parameters.add(it) }
 
     override suspend fun create() {
         val sql = DatabaseVocabulary.createViewSql(
