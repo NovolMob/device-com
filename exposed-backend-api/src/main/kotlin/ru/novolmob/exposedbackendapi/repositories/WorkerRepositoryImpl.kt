@@ -10,19 +10,20 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
+import ru.novolmob.backendapi.exceptions.badCredentialsException
+import ru.novolmob.backendapi.exceptions.pointByIdNotFound
+import ru.novolmob.backendapi.exceptions.workerByIdNotFound
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IWorkerCredentialRepository
 import ru.novolmob.backendapi.repositories.IWorkerRepository
 import ru.novolmob.core.models.*
 import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.WorkerId
-import ru.novolmob.exposedbackendapi.exceptions.pointByIdNotFound
-import ru.novolmob.exposedbackendapi.exceptions.workerByIdNotFound
-import ru.novolmob.exposedbackendapi.mappers.Mapper
+import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.Point
 import ru.novolmob.exposeddatabase.entities.Worker
-import ru.novolmob.exposeddatabase.entities.WorkerCredential
+import ru.novolmob.exposeddatabase.entities.credentials.WorkerCredential
 import ru.novolmob.exposeddatabase.tables.Workers
 import ru.novolmob.exposeddatabase.tables.credentials.WorkerCredentials
 
@@ -45,16 +46,16 @@ class WorkerRepositoryImpl(
         newSuspendedTransaction(Dispatchers.IO) {
             WorkerCredential.find { (WorkerCredentials.phoneNumber eq phoneNumber) and (WorkerCredentials.password eq password) }
                 .limit(1).firstOrNull()?.let {
-                    mapper(it.worker)
-                } ?: ru.novolmob.exposedbackendapi.exceptions.badCredentialsException().left()
+                    mapper(it.parent)
+                } ?: badCredentialsException().left()
         }
 
     override suspend fun login(email: Email, password: Password): Either<AbstractBackendException, WorkerModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             WorkerCredential.find { (WorkerCredentials.email eq email) and (WorkerCredentials.password eq password) }
                 .limit(1).firstOrNull()?.let {
-                    mapper(it.worker)
-                } ?: ru.novolmob.exposedbackendapi.exceptions.badCredentialsException().left()
+                    mapper(it.parent)
+                } ?: badCredentialsException().left()
         }
 
     override suspend fun get(id: WorkerId): Either<AbstractBackendException, WorkerModel> =
@@ -65,7 +66,7 @@ class WorkerRepositoryImpl(
     override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<WorkerModel>> =
         RepositoryUtil.generalGetAll(Workers, pagination, resultRowInfoMapper).flatMap { page ->
             page.list.parTraverseEither { infoModel ->
-                workerCredentialRepository.getByWorkerId(infoModel.id).flatMap { credential ->
+                workerCredentialRepository.getBy(infoModel.id).flatMap { credential ->
                     WorkerModel(
                         id = infoModel.id,
                         pointId = infoModel.pointId,
@@ -95,7 +96,7 @@ class WorkerRepositoryImpl(
                 this.language = createModel.language
             }.also {
                 workerCredentialRepository.post(
-                    WorkerCredentialCreateModel(
+                    WorkerCredentialModel(
                         workerId = it.id.value,
                         phoneNumber = createModel.phoneNumber,
                         email = createModel.email,
@@ -110,25 +111,16 @@ class WorkerRepositoryImpl(
             val point = createModel.pointId?.let {
                 Point.findById(it) ?: return@newSuspendedTransaction pointByIdNotFound(it).left()
             }
-            workerCredentialRepository.getByWorkerId(id).flatMap {
-                workerCredentialRepository.put(
-                    id = it.id,
-                    updateModel = WorkerCredentialUpdateModel(
-                        workerId = null,
-                        phoneNumber = createModel.phoneNumber,
-                        email = createModel.email,
-                        password = createModel.password
-                    )
-                ).flatMap {
-                    Worker.findById(id)?.apply {
-                        this.point = point
-                        this.firstname = createModel.firstname
-                        this.lastname = createModel.lastname
-                        this.patronymic = createModel.patronymic
-                        this.language = createModel.language
-                        this.updateDate = UpdateTime.now()
-                    }?.let(mapper::invoke) ?: workerByIdNotFound(id).left()
-                }
+            val worker = Worker.findById(id) ?: return@newSuspendedTransaction workerByIdNotFound(id).left()
+            workerCredentialRepository.put(id, createModel).flatMap {
+                worker.apply {
+                    this.point = point
+                    this.firstname = createModel.firstname
+                    this.lastname = createModel.lastname
+                    this.patronymic = createModel.patronymic
+                    this.language = createModel.language
+                    this.updateDate = UpdateTime.now()
+                }.let(mapper::invoke)
             }
         }
 
@@ -137,25 +129,16 @@ class WorkerRepositoryImpl(
             val point = updateModel.pointId?.let {
                 Point.findById(it) ?: return@newSuspendedTransaction pointByIdNotFound(it).left()
             }
-            workerCredentialRepository.getByWorkerId(id).flatMap {
-                workerCredentialRepository.put(
-                    id = it.id,
-                    updateModel = WorkerCredentialUpdateModel(
-                        workerId = null,
-                        phoneNumber = updateModel.phoneNumber,
-                        email = updateModel.email,
-                        password = updateModel.password
-                    )
-                ).flatMap {
-                    Worker.findById(id)?.apply {
-                        point?.let { this.point = it }
-                        updateModel.firstname?.let { this.firstname = it }
-                        updateModel.lastname?.let { this.lastname = it }
-                        updateModel.patronymic?.let { this.patronymic = it }
-                        updateModel.language?.let { this.language = it }
-                        this.updateDate = UpdateTime.now()
-                    }?.let(mapper::invoke) ?: workerByIdNotFound(id).left()
-                }
+            val worker = Worker.findById(id) ?: return@newSuspendedTransaction workerByIdNotFound(id).left()
+            workerCredentialRepository.put(id, updateModel).flatMap {
+                worker.apply {
+                    point?.let { this.point = it }
+                    updateModel.firstname?.let { this.firstname = it }
+                    updateModel.lastname?.let { this.lastname = it }
+                    updateModel.patronymic?.let { this.patronymic = it }
+                    updateModel.language?.let { this.language = it }
+                    this.updateDate = UpdateTime.now()
+                }.let(mapper::invoke)
             }
         }
 

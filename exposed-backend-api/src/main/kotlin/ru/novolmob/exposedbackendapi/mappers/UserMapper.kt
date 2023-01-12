@@ -4,8 +4,9 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
+import ru.novolmob.backendapi.exceptions.userCredentialByUserIdNotFoundException
+import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.backendapi.models.UserModel
-import ru.novolmob.exposedbackendapi.exceptions.userCredentialByUserIdNotFoundException
 import ru.novolmob.exposeddatabase.entities.User
 
 class UserMapper: Mapper<User, UserModel> {

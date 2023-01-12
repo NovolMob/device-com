@@ -11,6 +11,10 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
+import ru.novolmob.backendapi.exceptions.basketByIdNotFoundException
+import ru.novolmob.backendapi.exceptions.deviceByIdNotFound
+import ru.novolmob.backendapi.exceptions.userByIdNotFound
+import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.IBasketRepository
 import ru.novolmob.backendapi.repositories.IDeviceDetailRepository
@@ -21,19 +25,18 @@ import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.BasketId
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.UserId
-import ru.novolmob.exposedbackendapi.exceptions.userByIdNotFound
-import ru.novolmob.exposedbackendapi.mappers.Mapper
-import ru.novolmob.exposedbackendapi.util.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.Basket
 import ru.novolmob.exposeddatabase.entities.Device
 import ru.novolmob.exposeddatabase.entities.User
 import ru.novolmob.exposeddatabase.tables.Baskets
 
 class BasketRepositoryImpl(
-    val mapper: Mapper<Basket, BasketModel>,
-    val resultRowMapper: Mapper<ResultRow, BasketModel>,
+    mapper: Mapper<Basket, BasketModel>,
+    resultRowMapper: Mapper<ResultRow, BasketModel>,
     val deviceDetailRepository: IDeviceDetailRepository,
-): IBasketRepository {
+): IBasketRepository, AbstractCrudRepository<BasketId, Basket.Companion, Basket, BasketModel, BasketCreateModel, BasketUpdateModel>(
+    Basket.Companion, mapper, resultRowMapper, ::basketByIdNotFoundException
+) {
 
     private fun find(userId: UserId, deviceId: DeviceId): Basket? =
         Basket.find { (Baskets.user eq userId) and (Baskets.device eq deviceId) }.limit(1).firstOrNull()
@@ -108,67 +111,40 @@ class BasketRepositoryImpl(
             true.right()
         }
 
-    override suspend fun get(id: BasketId): Either<AbstractBackendException, BasketModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Basket.findById(id)?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.basketByIdNotFoundException(
-                id
-            ).left()
+    override fun Basket.Companion.new(createModel: BasketCreateModel): Either<AbstractBackendException, Basket> {
+        val user = User.findById(createModel.userId) ?: return userByIdNotFound(createModel.userId).left()
+        val device = Device.findById(createModel.deviceId) ?: return deviceByIdNotFound(createModel.deviceId).left()
+        return new {
+            this.user = user
+            this.device = device
+            this.amount = createModel.amount
+        }.right()
+    }
+
+    override fun Basket.applyC(createModel: BasketCreateModel): Either<AbstractBackendException, Basket> {
+        val user = User.findById(createModel.userId) ?: return userByIdNotFound(createModel.userId).left()
+        val device = Device.findById(createModel.deviceId) ?: return deviceByIdNotFound(createModel.deviceId).left()
+        return apply {
+            this.user = user
+            this.device = device
+            this.amount = createModel.amount
+            this.updateTime = UpdateTime.now()
+        }.right()
+    }
+
+    override fun Basket.applyU(updateModel: BasketUpdateModel): Either<AbstractBackendException, Basket> {
+        val user = updateModel.userId?.let {
+            User.findById(it) ?: return userByIdNotFound(it).left()
         }
-
-    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<BasketModel>> =
-        RepositoryUtil.generalGetAll(Baskets, pagination, resultRowMapper)
-
-    override suspend fun post(createModel: BasketCreateModel): Either<AbstractBackendException, BasketModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            val user = User.findById(createModel.userId) ?: return@newSuspendedTransaction userByIdNotFound(createModel.userId).left()
-            val device = Device.findById(createModel.deviceId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(
-                createModel.deviceId
-            ).left()
-            Basket.new {
-                this.user = user
-                this.device = device
-                this.amount = createModel.amount
-            }.let(mapper::invoke)
+        val device = updateModel.deviceId?.let {
+            Device.findById(it) ?: return deviceByIdNotFound(it).left()
         }
+        return apply {
+            user?.let { this.user = it }
+            device?.let { this.device = it }
+            updateModel.amount?.let { this.amount = it }
+            this.updateTime = UpdateTime.now()
+        }.right()
+    }
 
-    override suspend fun post(id: BasketId, createModel: BasketCreateModel): Either<AbstractBackendException, BasketModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            val user = User.findById(createModel.userId) ?: return@newSuspendedTransaction userByIdNotFound(createModel.userId).left()
-            val device = Device.findById(createModel.deviceId) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(
-                createModel.deviceId
-            ).left()
-            Basket.findById(id)?.apply {
-                this.user = user
-                this.device = device
-                this.amount = createModel.amount
-                this.updateTime = UpdateTime.now()
-            }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.basketByIdNotFoundException(id).left()
-        }
-
-    override suspend fun put(id: BasketId, updateModel: BasketUpdateModel): Either<AbstractBackendException, BasketModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-
-            val user = updateModel.userId?.let {
-                User.findById(it) ?: return@newSuspendedTransaction userByIdNotFound(it).left()
-            }
-            val device = updateModel.deviceId?.let {
-                Device.findById(it) ?: return@newSuspendedTransaction ru.novolmob.exposedbackendapi.exceptions.deviceByIdNotFound(
-                    it
-                ).left()
-            }
-            Basket.findById(id)?.apply {
-                user?.let { this.user = it }
-                device?.let { this.device = it }
-                updateModel.amount?.let { this.amount = it }
-                this.updateTime = UpdateTime.now()
-            }?.let(mapper::invoke) ?: ru.novolmob.exposedbackendapi.exceptions.basketByIdNotFoundException(id).left()
-        }
-
-    override suspend fun delete(id: BasketId): Either<AbstractBackendException, Boolean> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Basket.findById(id)?.run {
-                delete()
-                true.right()
-            } ?: false.right()
-        }
 }

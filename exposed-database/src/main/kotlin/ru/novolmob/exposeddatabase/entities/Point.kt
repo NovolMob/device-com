@@ -4,7 +4,8 @@ import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import ru.novolmob.core.models.ids.PointId
-import ru.novolmob.exposeddatabase.tables.PointDetails
+import ru.novolmob.exposeddatabase.entities.details.PointDetail
+import ru.novolmob.exposeddatabase.tables.details.PointDetails
 import ru.novolmob.exposeddatabase.tables.Points
 
 class Point(id: EntityID<PointId>) : Entity<PointId>(id) {
@@ -14,5 +15,5 @@ class Point(id: EntityID<PointId>) : Entity<PointId>(id) {
     var updateDate by Points.updateDate
     var creationDate by Points.creationDate
 
-    val details by PointDetail referrersOn PointDetails.point
+    val details by PointDetail referrersOn PointDetails.parent
 }

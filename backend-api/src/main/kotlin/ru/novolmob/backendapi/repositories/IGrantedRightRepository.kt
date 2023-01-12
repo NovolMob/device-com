@@ -9,8 +9,9 @@ import ru.novolmob.core.models.Code
 import ru.novolmob.core.models.ids.GrantedRightId
 import ru.novolmob.core.models.ids.WorkerId
 
-interface IGrantedRightRepository: ICrudRepository<GrantedRightId, GrantedRightModel, GrantedRightCreateModel, GrantedRightUpdateModel> {
+interface IGrantedRightRepository: IRepository {
     suspend fun getAllRightsFor(workerId: WorkerId): Either<AbstractBackendException, List<GrantedRightModel>>
     suspend fun contains(workerId: WorkerId, code: Code): Either<AbstractBackendException, Boolean>
     suspend fun removeFor(workerId: WorkerId, code: Code): Either<AbstractBackendException, Boolean>
+    suspend fun post(createModel: GrantedRightCreateModel): Either<AbstractBackendException, GrantedRightModel>
 }

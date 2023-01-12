@@ -18,7 +18,7 @@ object DevicesRouting: KoinComponent, IRouting {
     override fun Route.routingForUser() {
         get<Devices.Id> {
             val user = user()
-            val either = deviceRepository.getFull(deviceId = it.id, language = user.language)
+            val either = deviceRepository.getFull(id = it.id, language = user.language)
             call.respond(either = either)
         }
         get<Devices.Types> {
@@ -28,7 +28,7 @@ object DevicesRouting: KoinComponent, IRouting {
         }
         get<Devices.Types.Id> {
             val user = user()
-            val either = deviceTypeRepository.getFull(deviceTypeId = it.id, language = user.language)
+            val either = deviceTypeRepository.getFull(id = it.id, language = user.language)
             call.respond(either = either)
         }
     }

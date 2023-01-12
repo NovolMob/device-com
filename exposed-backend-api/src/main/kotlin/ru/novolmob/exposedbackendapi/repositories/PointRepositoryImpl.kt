@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
+import ru.novolmob.backendapi.exceptions.pointByIdNotFound
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.ICityRepository
 import ru.novolmob.backendapi.repositories.IPointDetailRepository
@@ -16,47 +17,49 @@ import ru.novolmob.backendapi.repositories.IPointRepository
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.CityId
 import ru.novolmob.core.models.ids.PointId
-import ru.novolmob.exposedbackendapi.exceptions.pointByIdNotFound
-import ru.novolmob.exposedbackendapi.mappers.Mapper
+import ru.novolmob.backendapi.mappers.Mapper
+import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.Point
 import ru.novolmob.exposeddatabase.tables.Points
 
 class PointRepositoryImpl(
-    val mapper: Mapper<Point, PointModel>,
-    val resultRowMapper: Mapper<ResultRow, PointModel>,
+    mapper: Mapper<Point, PointModel>,
+    resultRowMapper: Mapper<ResultRow, PointModel>,
     val cityRepository: ICityRepository,
     val pointDetailRepository: IPointDetailRepository
-): IPointRepository {
-    override suspend fun getFull(pointId: PointId, language: Language): Either<AbstractBackendException, PointFullModel> =
+): IPointRepository, AbstractCrudRepository<PointId, Point.Companion, Point, PointModel, PointCreateModel, PointUpdateModel>(
+    Point.Companion, mapper, resultRowMapper, ::pointByIdNotFound
+) {
+    override suspend fun getFull(id: PointId, language: Language): Either<AbstractBackendException, PointFullModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            Point.findById(pointId)?.let{
+            Point.findById(id)?.let{
                 cityRepository.getFull(it.city.id.value, language).flatMap { city ->
-                    pointDetailRepository.getDetailFor(pointId, language).flatMap { detail ->
+                    pointDetailRepository.getDetailFor(id, language).flatMap { detail ->
                         PointFullModel(
-                            id = pointId,
+                            id = id,
                             detail = detail,
                             city = city
                         ).right()
                     }
                 }
-            } ?: pointByIdNotFound(pointId).left()
+            } ?: pointByIdNotFound(id).left()
         }
 
-    override suspend fun getShort(pointId: PointId, language: Language): Either<AbstractBackendException, PointShortModel> =
+    override suspend fun getShort(id: PointId, language: Language): Either<AbstractBackendException, PointShortModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            Point.findById(pointId)?.let{
+            Point.findById(id)?.let{
                 cityRepository.getShort(it.city.id.value, language).flatMap { city ->
-                    pointDetailRepository.getDetailFor(pointId, language).flatMap { detail ->
+                    pointDetailRepository.getDetailFor(id, language).flatMap { detail ->
                         PointShortModel(
-                            id = pointId,
+                            id = id,
                             address = detail.address,
                             schedule = detail.schedule,
                             city = city
                         ).right()
                     }
                 }
-            } ?: pointByIdNotFound(pointId).left()
+            } ?: pointByIdNotFound(id).left()
         }
 
     override suspend fun getByCity(cityId: CityId, language: Language): Either<AbstractBackendException, List<PointShortModel>> =
@@ -106,40 +109,20 @@ class PointRepositoryImpl(
                 }
         }
 
-    override suspend fun get(id: PointId): Either<AbstractBackendException, PointModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Point.findById(id)?.let(mapper::invoke) ?: pointByIdNotFound(id).left()
-        }
+    override fun Point.Companion.new(createModel: PointCreateModel): Either<AbstractBackendException, Point> {
+        return new {  }.right()
+    }
 
-    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<PointModel>> =
-        RepositoryUtil.generalGetAll(Points, pagination, resultRowMapper)
+    override fun Point.applyC(createModel: PointCreateModel): Either<AbstractBackendException, Point> {
+        return apply {
+            updateDate = UpdateTime.now()
+        }.right()
+    }
 
-    override suspend fun post(createModel: PointCreateModel): Either<AbstractBackendException, PointModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Point.new {
+    override fun Point.applyU(updateModel: PointUpdateModel): Either<AbstractBackendException, Point> {
+        return apply {
+            updateDate = UpdateTime.now()
+        }.right()
+    }
 
-            }.let(mapper::invoke)
-        }
-
-    override suspend fun post(id: PointId, createModel: PointCreateModel): Either<AbstractBackendException, PointModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Point.findById(id)?.apply {
-
-            }?.let(mapper::invoke) ?: pointByIdNotFound(id).left()
-        }
-
-    override suspend fun put(id: PointId, updateModel: PointUpdateModel): Either<AbstractBackendException, PointModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Point.findById(id)?.apply {
-
-            }?.let(mapper::invoke) ?: pointByIdNotFound(id).left()
-        }
-
-    override suspend fun delete(id: PointId): Either<AbstractBackendException, Boolean> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Point.findById(id)?.let {
-                it.delete()
-                true.right()
-            } ?: false.right()
-        }
 }

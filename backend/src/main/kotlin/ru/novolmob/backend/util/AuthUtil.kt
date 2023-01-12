@@ -20,11 +20,13 @@ import ru.novolmob.backendapi.exceptions.notAuthorizedException
 import ru.novolmob.backendapi.models.UserModel
 import ru.novolmob.backendapi.models.WorkerModel
 import ru.novolmob.backendapi.repositories.IGrantedRightRepository
+import ru.novolmob.backendapi.repositories.IUserRepository
 import ru.novolmob.core.models.AccessToken
 import ru.novolmob.core.models.Code
 
 object AuthUtil: KoinComponent {
     private val grantedRightRepository: IGrantedRightRepository by inject()
+    private val userRepository: IUserRepository by inject()
 
     private object AuthorizationRouteSelector: RouteSelector() {
         override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation =
@@ -90,14 +92,14 @@ object AuthUtil: KoinComponent {
     fun PipelineContext<*, ApplicationCall>.worker(): WorkerModel = call.principal<WorkerPrincipal>()?.worker
         ?: throw Exception("The sender is not authorized as a worker.")
 
-    fun JWTCredential.user(): UserModel? =
-        getClaim("user", String::class)?.let { Json.decodeFromString<UserModel>(it) }
+    suspend fun JWTCredential.user(): UserModel? =
+        getClaim("userId", String::class)?.let { userRepository.get(Json.decodeFromString(it)).orNull() }
     fun JWTCreator.Builder.user(user: UserModel) =
-        withClaim("user", Json.encodeToString(user))
-    fun JWTCredential.worker(): WorkerModel? =
-        getClaim("worker", String::class)?.let { Json.decodeFromString<WorkerModel>(it) }
+        withClaim("userId", Json.encodeToString(user.id))
+    suspend fun JWTCredential.worker(): WorkerModel? =
+        getClaim("workerId", String::class)?.let { Json.decodeFromString<WorkerModel>(it) }
     fun JWTCreator.Builder.worker(worker: WorkerModel) =
-        withClaim("worker", Json.encodeToString(worker))
+        withClaim("workerId", Json.encodeToString(worker))
 
     fun Application.authentication() {
         authentication {

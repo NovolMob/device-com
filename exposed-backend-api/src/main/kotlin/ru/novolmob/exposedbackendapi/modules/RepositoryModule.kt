@@ -6,6 +6,9 @@ import org.koin.dsl.module
 import ru.novolmob.backendapi.repositories.*
 import ru.novolmob.exposedbackendapi.mappers.*
 import ru.novolmob.exposedbackendapi.repositories.*
+import ru.novolmob.exposedbackendapi.repositories.credentials.UserCredentialRepositoryImpl
+import ru.novolmob.exposedbackendapi.repositories.credentials.WorkerCredentialRepositoryImpl
+import ru.novolmob.exposedbackendapi.repositories.details.*
 
 val repositoryModule = module {
     //details
@@ -115,14 +118,12 @@ val repositoryModule = module {
     single<IUserCredentialRepository> {
         UserCredentialRepositoryImpl(
             mapper = get<UserCredentialMapper>(),
-            resultRowMapper = get<ResultRowUserCredentialMapper>()
         )
     }
 
     single<IWorkerCredentialRepository> {
         WorkerCredentialRepositoryImpl(
             mapper = get<WorkerCredentialMapper>(),
-            resultRowMapper = get<ResultRowWorkerCredentialMapper>()
         )
     }
 

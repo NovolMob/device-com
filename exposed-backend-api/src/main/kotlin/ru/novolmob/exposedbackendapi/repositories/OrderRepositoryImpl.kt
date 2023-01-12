@@ -10,10 +10,12 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import ru.novolmob.exposedbackendapi.mappers.Mapper
-import ru.novolmob.exposedbackendapi.util.RepositoryUtil
-import ru.novolmob.backendapi.exceptions.AbstractBackendException
-import ru.novolmob.backendapi.models.*
+import ru.novolmob.backendapi.exceptions.*
+import ru.novolmob.backendapi.mappers.Mapper
+import ru.novolmob.backendapi.models.OrderFullModel
+import ru.novolmob.backendapi.models.OrderItemShortModel
+import ru.novolmob.backendapi.models.OrderModel
+import ru.novolmob.backendapi.models.OrderShortModel
 import ru.novolmob.backendapi.repositories.*
 import ru.novolmob.core.models.Amount
 import ru.novolmob.core.models.Language
@@ -22,9 +24,11 @@ import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.OrderId
 import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.UserId
-import ru.novolmob.exposedbackendapi.exceptions.*
 import ru.novolmob.exposeddatabase.entities.*
-import ru.novolmob.exposeddatabase.tables.*
+import ru.novolmob.exposeddatabase.tables.Baskets
+import ru.novolmob.exposeddatabase.tables.OrderToDeviceTable
+import ru.novolmob.exposeddatabase.tables.OrderToStatusTable
+import ru.novolmob.exposeddatabase.tables.Orders
 
 class OrderRepositoryImpl(
     val mapper: Mapper<Order, OrderModel>,
@@ -175,59 +179,6 @@ class OrderRepositoryImpl(
                 }.flatMap {
                     it.sortedByDescending { it.creationTime }.right()
                 }
-        }
-
-    override suspend fun get(id: OrderId): Either<AbstractBackendException, OrderModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Order.findById(id)?.let(mapper::invoke) ?: orderByIdNotFound(id).left()
-        }
-
-    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<OrderModel>> =
-        RepositoryUtil.generalGetAll(Orders, pagination, resultRowMapper)
-
-    override suspend fun post(createModel: OrderCreateModel): Either<AbstractBackendException, OrderModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            val user = User.findById(createModel.userId) ?: return@newSuspendedTransaction userByIdNotFound(createModel.userId).left()
-            val point = Point.findById(createModel.pointId) ?: return@newSuspendedTransaction pointByIdNotFound(createModel.pointId).left()
-            Order.new {
-                this.user = user
-                this.point = point
-                this.totalCost = createModel.totalCost
-            }.let(mapper::invoke)
-        }
-
-    override suspend fun post(id: OrderId, createModel: OrderCreateModel): Either<AbstractBackendException, OrderModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            val user = User.findById(createModel.userId) ?: return@newSuspendedTransaction userByIdNotFound(createModel.userId).left()
-            val point = Point.findById(createModel.pointId) ?: return@newSuspendedTransaction pointByIdNotFound(createModel.pointId).left()
-            Order.findById(id)?.apply {
-                this.user = user
-                this.point = point
-                this.totalCost = createModel.totalCost
-            }?.let(mapper::invoke) ?: orderByIdNotFound(id).left()
-        }
-
-    override suspend fun put(id: OrderId, updateModel: OrderUpdateModel): Either<AbstractBackendException, OrderModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            val user = updateModel.userId?.let {
-                User.findById(it) ?: return@newSuspendedTransaction userByIdNotFound(it).left()
-            }
-            val point = updateModel.pointId?.let {
-                Point.findById(it) ?: return@newSuspendedTransaction pointByIdNotFound(it).left()
-            }
-            Order.findById(id)?.apply {
-                user?.let { this.user = it }
-                point?.let { this.point = it }
-                updateModel.totalCost?.let { this.totalCost = it }
-            }?.let(mapper::invoke) ?: orderByIdNotFound(id).left()
-        }
-
-    override suspend fun delete(id: OrderId): Either<AbstractBackendException, Boolean> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Order.findById(id)?.let {
-                it.delete()
-                true.right()
-            } ?: false.right()
         }
 
 }

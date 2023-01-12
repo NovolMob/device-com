@@ -7,6 +7,6 @@ import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.DeviceTypeId
 
 interface IDeviceTypeRepository: ICrudRepository<DeviceTypeId, DeviceTypeModel, DeviceTypeCreateModel, DeviceTypeUpdateModel> {
-    suspend fun getFull(deviceTypeId: DeviceTypeId, language: Language): Either<AbstractBackendException, DeviceTypeFullModel>
+    suspend fun getFull(id: DeviceTypeId, language: Language): Either<AbstractBackendException, DeviceTypeFullModel>
     suspend fun getAll(pagination: Pagination, language: Language): Either<AbstractBackendException, Page<DeviceTypeShortModel>>
 }

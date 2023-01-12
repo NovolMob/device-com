@@ -8,7 +8,7 @@ import ru.novolmob.core.models.ids.OrderId
 import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.UserId
 
-interface IOrderRepository: ICrudRepository<OrderId, OrderModel, OrderCreateModel, OrderUpdateModel> {
+interface IOrderRepository: IRepository {
     suspend fun confirmOrder(userId: UserId, pointId: PointId, language: Language): Either<AbstractBackendException, OrderShortModel>
     suspend fun cancelOrder(orderId: OrderId): Either<AbstractBackendException, Boolean>
     suspend fun getFull(orderId: OrderId, language: Language): Either<AbstractBackendException, OrderFullModel>

@@ -30,7 +30,7 @@ object PointRouting: KoinComponent, IRouting {
         }
         get<Points.Id> {
             val user = user()
-            val either = pointRepository.getFull(pointId = it.id, language = user.language)
+            val either = pointRepository.getFull(id = it.id, language = user.language)
             call.respond(either)
         }
     }

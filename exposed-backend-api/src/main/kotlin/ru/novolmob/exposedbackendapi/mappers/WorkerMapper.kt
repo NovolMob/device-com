@@ -4,8 +4,9 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
+import ru.novolmob.backendapi.exceptions.workerCredentialByWorkerIdNotFoundException
+import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.backendapi.models.WorkerModel
-import ru.novolmob.exposedbackendapi.exceptions.workerCredentialByWorkerIdNotFoundException
 import ru.novolmob.exposeddatabase.entities.Worker
 
 class WorkerMapper: Mapper<Worker, WorkerModel> {

@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.right
 import org.jetbrains.exposed.sql.ResultRow
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
+import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.backendapi.models.OrderModel
 import ru.novolmob.exposeddatabase.tables.Orders
 

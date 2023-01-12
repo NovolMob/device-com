@@ -8,20 +8,22 @@ import ru.novolmob.jdbcdatabase.databases.DatabaseVocabulary.isDecimal
 import ru.novolmob.jdbcdatabase.databases.DatabaseVocabulary.isNumeric
 import ru.novolmob.jdbcdatabase.databases.DatabaseVocabulary.isVarChar
 import ru.novolmob.jdbcdatabase.extensions.DateExtension.toSql
-import ru.novolmob.jdbcdatabase.tables.columns.IColumn
-import ru.novolmob.jdbcdatabase.tables.columns.values.ColumnValue
+import ru.novolmob.jdbcdatabase.tables.parameters.IParameter
+import ru.novolmob.jdbcdatabase.tables.parameters.values.ParameterValue
 import java.math.BigDecimal
 import java.sql.Date
 import java.sql.PreparedStatement
 import java.sql.ResultSet
+import java.sql.Types
 import java.time.ZoneId
 import java.util.*
 
 object PreparedStatementExtension {
-    fun PreparedStatement.set(index: Int, value: ColumnValue<*>) =
+    fun PreparedStatement.set(index: Int, value: ParameterValue<*>) =
         when (val db = value.dbValue) {
             is UUID -> setObject(index, db)
             is String -> setString(index, db)
+            is Boolean -> setBoolean(index, db)
             is Int -> setInt(index, db)
             is Short -> setShort(index, db)
             is Byte -> setByte(index, db)
@@ -34,42 +36,61 @@ object PreparedStatementExtension {
             is java.time.LocalDateTime -> setDate(index, Date.from(db.atZone(ZoneId.systemDefault()).toInstant()).toSql())
             is LocalDate -> setDate(index, Date.from(db.atStartOfDayIn(TimeZone.currentSystemDefault()).toJavaInstant()).toSql())
             is LocalDateTime -> setDate(index, Date.from(db.toInstant(TimeZone.currentSystemDefault()).toJavaInstant()).toSql())
-            else -> throw Exception("${db::class} is not a primitive type!")
+            else -> {
+                if (db == null) setNull(index, Types.OTHER)
+                else throw Exception("${value.type.databaseTypeId} ${value.parameterName} is not a primitive type!")
+            }
         }
 
-    infix fun ResultSet.update(value: ColumnValue<*>) =
+    inline fun <R> ResultSet.use(block: ResultSet.() -> R): R =
+        use { it: ResultSet ->
+            it.run { block() }
+        }
+
+    infix fun ResultSet.update(value: ParameterValue<*>) =
         when (val db = value.dbValue) {
-            is UUID -> updateString(value.columnName, db.toString())
-            is String -> updateString(value.columnName, db)
-            is Int -> updateInt(value.columnName, db)
-            is Short -> updateShort(value.columnName, db)
-            is Byte -> updateByte(value.columnName, db)
-            is Double -> updateDouble(value.columnName, db)
-            is Float -> updateFloat(value.columnName, db)
-            is Date -> updateDate(value.columnName, db)
-            is BigDecimal -> updateBigDecimal(value.columnName, db)
-            is java.util.Date -> updateDate(value.columnName, db.toSql())
-            is java.time.LocalDate -> updateDate(value.columnName, Date.from(db.atStartOfDay(ZoneId.systemDefault()).toInstant()).toSql())
-            is java.time.LocalDateTime -> updateDate(value.columnName, Date.from(db.atZone(ZoneId.systemDefault()).toInstant()).toSql())
-            is LocalDate -> updateDate(value.columnName, Date.from(db.atStartOfDayIn(TimeZone.currentSystemDefault()).toJavaInstant()).toSql())
-            is LocalDateTime -> updateDate(value.columnName, Date.from(db.toInstant(TimeZone.currentSystemDefault()).toJavaInstant()).toSql())
-            else -> throw Exception("${db::class} is not a primitive type!")
+            is UUID -> updateString(value.parameterName, db.toString())
+            is String -> updateString(value.parameterName, db as String?)
+            is Boolean -> updateBoolean(value.parameterName, db)
+            is Int -> updateInt(value.parameterName, db)
+            is Short -> updateShort(value.parameterName, db)
+            is Byte -> updateByte(value.parameterName, db)
+            is Double -> updateDouble(value.parameterName, db)
+            is Float -> updateFloat(value.parameterName, db)
+            is Date -> updateDate(value.parameterName, db)
+            is BigDecimal -> updateBigDecimal(value.parameterName, db)
+            is java.util.Date -> updateDate(value.parameterName, db.toSql())
+            is java.time.LocalDate -> updateDate(value.parameterName, Date.from(db.atStartOfDay(ZoneId.systemDefault()).toInstant()).toSql())
+            is java.time.LocalDateTime -> updateDate(value.parameterName, Date.from(db.atZone(ZoneId.systemDefault()).toInstant()).toSql())
+            is LocalDate -> updateDate(value.parameterName, Date.from(db.atStartOfDayIn(TimeZone.currentSystemDefault()).toJavaInstant()).toSql())
+            is LocalDateTime -> updateDate(value.parameterName, Date.from(db.toInstant(TimeZone.currentSystemDefault()).toJavaInstant()).toSql())
+            else -> {
+                if (db == null) updateNull(value.parameterName)
+                else throw Exception("${value.type.databaseTypeId} ${value.parameterName} is not a primitive type!")
+            }
         }
 
-    inline infix fun <reified T: Any> ResultSet.get(column: IColumn<T>): T =
-        column.type.databaseType.let {  type ->
+    inline infix fun <reified T: Any> ResultSet.get(parameter: IParameter<T>): T =
+        getOrNull(parameter) ?: throw Exception("${parameter.name} not found")
+
+    inline infix fun <reified T: Any> ResultSet.getOrNull(parameter: IParameter<T>): T? =
+        parameter.type.databaseType.let { type ->
             when {
-                type == DatabaseVocabulary.TEXT -> getString(column.name)
-                type.isVarChar() -> getString(column.name)
-                type.isChar() -> getString(column.name)
-                type.isDecimal() -> getBigDecimal(column.name)
-                type.isNumeric() -> getBigDecimal(column.name)
-                type == DatabaseVocabulary.INT -> getInt(column.name)
-                type == DatabaseVocabulary.UUID -> getObject(column.name)
-                type == DatabaseVocabulary.DATE -> getDate(column.name)
-                type == DatabaseVocabulary.TIMESTAMP -> getTimestamp(column.name)
+                type == DatabaseVocabulary.TEXT -> getString(parameter.name)
+                type.isVarChar() -> getString(parameter.name)
+                type.isChar() -> getString(parameter.name)
+                type.isDecimal() -> getBigDecimal(parameter.name)
+                type.isNumeric() -> getBigDecimal(parameter.name)
+                type == DatabaseVocabulary.BOOLEAN -> getBoolean(parameter.name)
+                type == DatabaseVocabulary.INT -> getInt(parameter.name)
+                type == DatabaseVocabulary.UUID -> getObject(parameter.name)
+                type == DatabaseVocabulary.DATE -> getDate(parameter.name)
+                type == DatabaseVocabulary.TIMESTAMP -> getTimestamp(parameter.name)
                 else -> throw Exception("$type not found!")
-            }.let(column.type::fromDbType)
+            }.let {
+                if (it == null) null
+                else  parameter.type.fromDbType(it)
+            }
         }
 
 }

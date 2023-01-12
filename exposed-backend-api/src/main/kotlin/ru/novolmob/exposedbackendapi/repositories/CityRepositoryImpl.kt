@@ -9,22 +9,24 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
+import ru.novolmob.backendapi.exceptions.cityByIdNotFound
+import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.backendapi.models.*
 import ru.novolmob.backendapi.repositories.ICityDetailRepository
 import ru.novolmob.backendapi.repositories.ICityRepository
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.CityId
-import ru.novolmob.exposedbackendapi.exceptions.cityByIdNotFound
-import ru.novolmob.exposedbackendapi.mappers.Mapper
 import ru.novolmob.exposedbackendapi.util.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.City
 import ru.novolmob.exposeddatabase.tables.Cities
 
 class CityRepositoryImpl(
-    val mapper: Mapper<City, CityModel>,
-    val resultRowMapper: Mapper<ResultRow, CityModel>,
+    mapper: Mapper<City, CityModel>,
+    resultRowMapper: Mapper<ResultRow, CityModel>,
     val cityDetailRepository: ICityDetailRepository
-): ICityRepository {
+): ICityRepository, AbstractCrudRepository<CityId, City.Companion, City, CityModel, CityCreateModel, CityUpdateModel>(
+    City.Companion, mapper, resultRowMapper, ::cityByIdNotFound
+) {
     override suspend fun getFull(cityId: CityId, language: Language): Either<AbstractBackendException, CityFullModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             City.findById(cityId)?.let { city ->
@@ -71,39 +73,20 @@ class CityRepositoryImpl(
                 }
         }
 
-    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<CityModel>> =
-        RepositoryUtil.generalGetAll(Cities, pagination, resultRowMapper)
+    override fun City.Companion.new(createModel: CityCreateModel): Either<AbstractBackendException, City> {
+        return new {  }.right()
+    }
 
-    override suspend fun get(id: CityId): Either<AbstractBackendException, CityModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            City.findById(id)?.let(mapper::invoke) ?: cityByIdNotFound(id).left()
-        }
+    override fun City.applyC(createModel: CityCreateModel): Either<AbstractBackendException, City> {
+        return apply {
 
-    override suspend fun post(createModel: CityCreateModel): Either<AbstractBackendException, CityModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            City.new { }.let(mapper::invoke)
-        }
+        }.right()
+    }
 
-    override suspend fun post(id: CityId, createModel: CityCreateModel): Either<AbstractBackendException, CityModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            City.findById(id)?.apply {
+    override fun City.applyU(updateModel: CityUpdateModel): Either<AbstractBackendException, City> {
+        return apply {
 
-            }?.let(mapper::invoke) ?: cityByIdNotFound(id).left()
-        }
-
-    override suspend fun put(id: CityId, updateModel: CityUpdateModel): Either<AbstractBackendException, CityModel> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            City.findById(id)?.apply {
-
-            }?.let(mapper::invoke) ?: cityByIdNotFound(id).left()
-        }
-
-    override suspend fun delete(id: CityId): Either<AbstractBackendException, Boolean> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            City.findById(id)?.let {
-                it.delete()
-                true.right()
-            } ?: false.right()
-        }
+        }.right()
+    }
 
 }

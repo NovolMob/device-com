@@ -10,5 +10,5 @@ import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.DeviceId
 
 interface IDeviceRepository: ICrudRepository<DeviceId, DeviceModel, DeviceCreateModel, DeviceUpdateModel> {
-    suspend fun getFull(deviceId: DeviceId, language: Language): Either<AbstractBackendException, DeviceFullModel>
+    suspend fun getFull(id: DeviceId, language: Language): Either<AbstractBackendException, DeviceFullModel>
 }

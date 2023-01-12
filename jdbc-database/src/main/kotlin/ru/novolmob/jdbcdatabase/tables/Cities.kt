@@ -3,27 +3,27 @@ package ru.novolmob.jdbcdatabase.tables
 import ru.novolmob.core.models.ids.CityId
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.creationTime
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.idColumn
-import ru.novolmob.jdbcdatabase.tables.columns.values.ColumnValue
 import ru.novolmob.jdbcdatabase.tables.expressions.Expression.Companion.eq
+import ru.novolmob.jdbcdatabase.tables.parameters.values.ParameterValue
 
-object Cities: Table() {
+object Cities: IdTable<CityId>() {
 
-    val id = idColumn(constructor = ::CityId)
+    override val id = idColumn(constructor = ::CityId).primaryKey()
     val creationTime = creationTime()
 
-    fun insert(
+    suspend fun insert(
         id: CityId? = null
     ) {
-        val list = mutableListOf<ColumnValue<*>>()
-        id?.let { this.id valueOf it }
+        val list = mutableListOf<ParameterValue<*>>()
+        id?.let { list.add(this.id valueOf it) }
 
         insert(values = list.toTypedArray())
     }
 
-    fun update(
+    suspend fun update(
         id: CityId
     ) {
-        val list = mutableListOf<ColumnValue<*>>()
+        val list = mutableListOf<ParameterValue<*>>()
 
         update(
             newValues = list.toTypedArray(),

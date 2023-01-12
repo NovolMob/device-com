@@ -30,11 +30,14 @@ repositories {
 dependencies {
     implementation(project(":core"))
     implementation(project(":backend-api"))
+    implementation(project(":jdbc-database"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("io.arrow-kt:arrow-core:1.0.1")
     implementation("io.arrow-kt:arrow-fx-coroutines:1.0.1")
+
+    implementation("io.insert-koin:koin-ktor:$koin_version")
 
     testImplementation(kotlin("test"))
 }

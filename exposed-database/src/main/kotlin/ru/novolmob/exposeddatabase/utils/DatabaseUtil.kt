@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import ru.novolmob.exposeddatabase.tables.*
 import ru.novolmob.exposeddatabase.tables.credentials.UserCredentials
 import ru.novolmob.exposeddatabase.tables.credentials.WorkerCredentials
+import ru.novolmob.exposeddatabase.tables.details.*
 import java.sql.Connection
 
 object DatabaseUtil {

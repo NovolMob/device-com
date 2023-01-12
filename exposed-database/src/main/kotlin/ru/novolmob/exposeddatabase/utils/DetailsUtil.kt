@@ -2,7 +2,7 @@ package ru.novolmob.exposeddatabase.utils
 
 import org.jetbrains.exposed.sql.SizedIterable
 import ru.novolmob.core.models.Language
-import ru.novolmob.exposeddatabase.entities.*
+import ru.novolmob.exposeddatabase.entities.details.*
 
 object DetailsUtil {
 

@@ -19,4 +19,12 @@ object DatabaseObjectUtil {
                 else "$c"
             }.joinToString("")
 
+    fun <T> Class<T>.procedureName(): String =
+        simpleName
+            .mapIndexed { index, c ->
+                if (c.isUpperCase())
+                    if (index == 0) c.lowercase() else "_${c.lowercase()}"
+                else "$c"
+            }.joinToString("")
+
 }

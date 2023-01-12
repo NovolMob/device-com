@@ -3,6 +3,7 @@ package ru.novolmob.exposedbackendapi.mappers
 import arrow.core.Either
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
+import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.backendapi.models.DeviceModel
 import ru.novolmob.exposeddatabase.entities.Device
 

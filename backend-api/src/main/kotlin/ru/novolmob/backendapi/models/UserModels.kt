@@ -37,10 +37,10 @@ data class UserCreateModel(
     val birthday: Birthday? = null,
     val cityId: CityId? = null,
     val language: Language,
-    val password: Password,
-    val phoneNumber: PhoneNumber,
-    val email: Email? = null
-)
+    override val password: Password,
+    override val phoneNumber: PhoneNumber,
+    override val email: Email? = null
+): UserCredentialUpdate
 
 @Serializable
 data class UserUpdateModel(
@@ -50,7 +50,7 @@ data class UserUpdateModel(
     val birthday: Birthday? = null,
     val cityId: CityId? = null,
     val language: Language? = null,
-    val password: Password? = null,
-    val phoneNumber: PhoneNumber? = null,
-    val email: Email? = null
-)
+    override val password: Password? = null,
+    override val phoneNumber: PhoneNumber? = null,
+    override val email: Email? = null
+): UserCredentialUpdate

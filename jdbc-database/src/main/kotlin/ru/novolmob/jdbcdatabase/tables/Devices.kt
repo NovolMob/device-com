@@ -11,20 +11,20 @@ import ru.novolmob.jdbcdatabase.extensions.TableExtension.creationTime
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.idColumn
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.price
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.updateTime
-import ru.novolmob.jdbcdatabase.tables.columns.values.ColumnValue
+import ru.novolmob.jdbcdatabase.tables.parameters.values.ParameterValue
 import ru.novolmob.jdbcdatabase.tables.expressions.Expression.Companion.eq
 
-object Devices: Table() {
+object Devices: IdTable<DeviceId>() {
 
-    val id = idColumn(constructor = ::DeviceId)
+    override val id = idColumn(constructor = ::DeviceId).primaryKey()
     val code = code()
-    val typeId = reference("type_id", DeviceTypes.id)
+    val typeId = reference("type_id", DeviceTypes.id).onDeleteCascade()
     val amount = amount()
     val price = price(precision = 10, scale = 2)
     val updateTime = updateTime()
     val creationTime = creationTime()
 
-    fun insert(
+    suspend fun insert(
         id: DeviceId? = null,
         code: Code,
         typeId: DeviceTypeId,
@@ -37,24 +37,24 @@ object Devices: Table() {
             this.amount valueOf amount,
             this.price valueOf price
         )
-        id?.let { this.id valueOf it }
+        id?.let { list.add(this.id valueOf it) }
 
         insert(values = list.toTypedArray())
     }
 
-    fun update(
+    suspend fun update(
         id: DeviceId,
         code: Code? = null,
         typeId: DeviceTypeId? = null,
         amount: Amount? = null,
         price: Price? = null
     ) {
-        val list = mutableListOf<ColumnValue<*>>()
+        val list = mutableListOf<ParameterValue<*>>()
 
-        code?.let { this.code valueOf it }
-        typeId?.let { this.typeId valueOf it }
-        amount?.let { this.amount valueOf it }
-        price?.let { this.price valueOf it }
+        code?.let { list.add(this.code valueOf it) }
+        typeId?.let { list.add(this.typeId valueOf it) }
+        amount?.let { list.add(this.amount valueOf it) }
+        price?.let { list.add(this.price valueOf it) }
 
         update(
             newValues = list.toTypedArray(),

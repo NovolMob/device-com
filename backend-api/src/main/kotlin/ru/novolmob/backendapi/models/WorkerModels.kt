@@ -34,10 +34,10 @@ data class WorkerCreateModel(
     val lastname: Lastname,
     val patronymic: Patronymic? = null,
     val language: Language,
-    val password: Password,
-    val phoneNumber: PhoneNumber,
-    val email: Email? = null
-)
+    override val password: Password,
+    override val phoneNumber: PhoneNumber,
+    override val email: Email? = null
+): WorkerCredentialUpdate
 
 @Serializable
 data class WorkerUpdateModel(
@@ -46,7 +46,7 @@ data class WorkerUpdateModel(
     val lastname: Lastname? = null,
     val patronymic: Patronymic? = null,
     val language: Language? = null,
-    val password: Password? = null,
-    val phoneNumber: PhoneNumber? = null,
-    val email: Email? = null
-)
+    override val password: Password? = null,
+    override val phoneNumber: PhoneNumber? = null,
+    override val email: Email? = null
+): WorkerCredentialUpdate

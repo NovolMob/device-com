@@ -12,11 +12,11 @@ import ru.novolmob.jdbcdatabase.extensions.TableExtension.lastname
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.patronymic
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.updateTime
 import ru.novolmob.jdbcdatabase.tables.expressions.Expression.Companion.eq
-import ru.novolmob.jdbcdatabase.tables.columns.values.ColumnValue
+import ru.novolmob.jdbcdatabase.tables.parameters.values.ParameterValue
 
-object Users: Table() {
+object Users: IdTable<UserId>() {
 
-    val id = idColumn(constructor = ::UserId)
+    override val id = idColumn(constructor = ::UserId).primaryKey()
     val firstname = firstname()
     val lastname = lastname()
     val patronymic = patronymic().nullable()
@@ -26,7 +26,7 @@ object Users: Table() {
     val updateTime = updateTime()
     val creationTime = creationTime()
 
-    fun insert(
+    suspend fun insert(
         id: UserId? = null,
         firstname: Firstname,
         lastname: Lastname,
@@ -48,7 +48,28 @@ object Users: Table() {
         insert(values = list.toTypedArray())
     }
 
-    fun update(
+    suspend fun update(
+        id: UserId,
+        firstname: Firstname,
+        lastname: Lastname,
+        patronymic: Patronymic? = null,
+        birthday: Birthday? = null,
+        cityId: CityId? = null,
+        language: Language
+    ) {
+        update(
+            newValues = arrayOf(
+                this.firstname valueOf firstname,
+                this.lastname valueOf lastname,
+                this.patronymic valueOf patronymic,
+                this.birthday valueOf birthday,
+                this.cityId valueOf cityId,
+                this.language valueOf language
+            ), expression = this.id eq id
+        )
+    }
+
+    suspend fun update(
         id: UserId,
         firstname: Firstname? = null,
         lastname: Lastname? = null,
@@ -57,7 +78,7 @@ object Users: Table() {
         cityId: CityId? = null,
         language: Language? = null
     ) {
-        val list = mutableListOf<ColumnValue<*>>()
+        val list = mutableListOf<ParameterValue<*>>()
         firstname?.let { list.add(this.firstname valueOf it) }
         lastname?.let { list.add(this.lastname valueOf it) }
         patronymic?.let { list.add(this.patronymic valueOf it) }
