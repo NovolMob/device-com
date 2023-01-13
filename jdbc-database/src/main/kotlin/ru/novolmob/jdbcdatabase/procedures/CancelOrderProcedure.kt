@@ -15,7 +15,7 @@ object CancelOrderProcedure: Procedure(
                 "        rec record;\n" +
                 "    BEGIN\n" +
                 "        SELECT ${OrderStatuses.active}, max(${OrderToStatusTable.creationTime}) FROM $OrderStatuses JOIN $OrderToStatusTable on ${OrderStatuses.id} = ${OrderToStatusTable.orderStatusId} WHERE ${OrderToStatusTable.orderId} = $orderId GROUP BY ${OrderStatuses.id} INTO rec;\n" +
-                "        IF (rec.${OrderStatuses.active.name} = true) THEN\n" +
+                "        IF (rec.${OrderStatuses.active.name} = false) THEN\n" +
                 "            raise exception 'Can''t cancel order';\n" +
                 "        END IF;\n" +
                 "        FOR rec IN SELECT * FROM $OrderToDeviceTable WHERE ${OrderToDeviceTable.orderId} = $orderId LOOP\n" +

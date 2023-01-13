@@ -43,24 +43,24 @@ class OrderRepositoryImpl(
         either {
             pointRepository.get(pointId).bind()
             Either.catch( { notEnoughDevices(emptyList()) }) {
-                ConfirmOrderFunction.call(userId, pointId, language) {
+                val order = ConfirmOrderFunction.call(userId, pointId, language) {
                     next()
-                    val order = blankShortModelMapper(this).bind()
-                    val lastStatus = orderToStatusRepository.getLastStatus(order.id, language).orNull()
-                    val devices = orderToDeviceRepository.getDevices(order.id, language).orNull() ?: emptyList()
-                    order.copy(
-                        list = devices.parTraverse {
-                            OrderItemShortModel(
-                                deviceId = it.deviceId,
-                                title = it.title,
-                                amount = it.amount,
-                                priceForOne = it.priceForOne
-                            )
-                        },
-                        status = lastStatus?.title,
-                        active = lastStatus?.active ?: true
-                    ).right()
+                    blankShortModelMapper(this)
                 }.bind()
+                val lastStatus = orderToStatusRepository.getLastStatus(order.id, language).orNull()
+                val devices = orderToDeviceRepository.getDevices(order.id, language).orNull() ?: emptyList()
+                order.copy(
+                    list = devices.parTraverse {
+                        OrderItemShortModel(
+                            deviceId = it.deviceId,
+                            title = it.title,
+                            amount = it.amount,
+                            priceForOne = it.priceForOne
+                        )
+                    },
+                    status = lastStatus?.title,
+                    active = lastStatus?.active ?: true
+                )
             }.bind()
         }
 
