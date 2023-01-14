@@ -5,10 +5,9 @@ plugins {
     application
     java
     `java-library`
-    kotlin("jvm") version "1.7.22"
+    kotlin("multiplatform") version "1.8.0"
     id("maven-publish")
-    id("io.ktor.plugin") version "2.1.3"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
+    kotlin("plugin.serialization") version "1.8.0"
 }
 
 group = "ru.novolmob.bd-practice"
@@ -21,14 +20,25 @@ application {
 }
 
 repositories {
+    google()
     mavenCentral()
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-
-    testImplementation(kotlin("test"))
+kotlin {
+    jvm()
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+    }
 }
 
 publishing {

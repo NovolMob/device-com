@@ -8,9 +8,8 @@ plugins {
     application
     java
     `java-library`
-    kotlin("jvm") version "1.7.22"
-    id("io.ktor.plugin") version "2.1.3"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
+    kotlin("multiplatform") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.0"
 }
 
 group = "ru.novolmob.bd-practice"
@@ -26,15 +25,25 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation(project(":core"))
+kotlin {
+    jvm()
+    sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                implementation(project(":core"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-    implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("org.postgresql:postgresql:$postgresql_version")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+                implementation("com.zaxxer:HikariCP:5.0.1")
+                implementation("org.postgresql:postgresql:$postgresql_version")
 
-    implementation("io.insert-koin:koin-ktor:$koin_version")
-
-    testImplementation(kotlin("test"))
+                implementation("io.insert-koin:koin-ktor:$koin_version")
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+    }
 }

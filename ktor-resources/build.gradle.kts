@@ -8,9 +8,8 @@ plugins {
     java
     `java-library`
     id("maven-publish")
-    kotlin("jvm") version "1.7.22"
-    id("io.ktor.plugin") version "2.1.3"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
+    kotlin("multiplatform") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.0"
 }
 
 group = "ru.novolmob.bd-practice"
@@ -26,15 +25,25 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation(project(":core"))
-    implementation(project(":backend-api"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
+kotlin {
+    jvm()
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(project(":core"))
+                implementation(project(":backend-api"))
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 
-    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-resources:$ktor_version")
-
-    testImplementation(kotlin("test"))
+                implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
+                implementation("io.ktor:ktor-server-resources:$ktor_version")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+    }
 }
 
 publishing {
