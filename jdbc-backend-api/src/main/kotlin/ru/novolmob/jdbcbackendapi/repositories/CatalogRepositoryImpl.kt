@@ -29,11 +29,12 @@ class CatalogRepositoryImpl(
             withContext(Dispatchers.Default) {
                 val page = sample.page ?: 0
                 val pageSize = sample.pageSize ?: 1
+                val searchString = sample.searchString ?: ""
                 val amountOfPages = async {
                     Either.backend {
                         GetAmountOfPagesProcedure.call(
                             pageSize = pageSize,
-                            searchString = "",
+                            searchString = searchString,
                             deviceTypeId = sample.deviceTypeId,
                             language = language
                         )
@@ -42,7 +43,8 @@ class CatalogRepositoryImpl(
                 val devices = async {
                     GettingCatalogFunction.call(
                         page = page, pageSize = pageSize,
-                        searchString = "", deviceTypeId = sample.deviceTypeId,
+                        searchString = searchString,
+                        deviceTypeId = sample.deviceTypeId,
                         language = language
                     ) { list(mapper) }
                 }
