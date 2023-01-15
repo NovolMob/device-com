@@ -3,6 +3,7 @@ package ru.novolmob.core.models
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable

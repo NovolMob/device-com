@@ -34,6 +34,7 @@ class BasketRepositoryImpl(
         GettingBasketFunction.call(userId, language) { list(itemMapper) }
             .flatMap { list ->
                 Either.backend {
+                    "dasdasdas".toBigDecimalOrNull()
                     BasketFullModel(list = list, totalPrice = TotalCostProcedure.call(userId))
                 }
             }

@@ -21,6 +21,7 @@ import ru.novolmob.backendapi.repositories.IDeviceDetailRepository
 import ru.novolmob.core.models.Amount
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.Price
+import ru.novolmob.core.models.Price.Companion.sumOf
 import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.BasketId
 import ru.novolmob.core.models.ids.DeviceId
@@ -61,7 +62,7 @@ class BasketRepositoryImpl(
                     }.flatMap { list ->
                         BasketFullModel(
                             list = list,
-                            totalPrice = Price(list.sumOf { product -> product.amount.int.toBigDecimal() * product.device.price.bigDecimal })
+                            totalPrice = list.sumOf { product -> product.device.price * product.amount.int }
                         ).right()
                     }
                 }
@@ -84,8 +85,7 @@ class BasketRepositoryImpl(
             }
             Basket.find { Baskets.user eq userId }
                 .sortedByDescending { it.creationTime }
-                .sumOf { product -> product.amount.int.toBigDecimal() * product.device.price.bigDecimal }
-                .let(::Price).right()
+                .sumOf { product -> product.device.price * product.amount.int }.right()
         }
 
     override suspend fun removeFromBasket(userId: UserId, deviceId: DeviceId): Either<AbstractBackendException, Price> =
@@ -93,8 +93,7 @@ class BasketRepositoryImpl(
             find(userId, deviceId)?.delete()
             Basket.find { Baskets.user eq userId }
                 .sortedByDescending { it.creationTime }
-                .sumOf { product -> product.amount.int.toBigDecimal() * product.device.price.bigDecimal }
-                .let(::Price).right()
+                .sumOf { product -> product.device.price * product.amount.int }.right()
         }
 
     override suspend fun getAmount(userId: UserId, deviceId: DeviceId): Either<AbstractBackendException, Amount> =

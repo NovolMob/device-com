@@ -1,6 +1,7 @@
 package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable
@@ -32,5 +33,12 @@ value class Amount(
 
         fun Int.amount(): Amount = Amount(this)
         fun Double.amount(): Amount = Amount(this.toInt())
+        inline fun <T> Iterable<T>.sumOf(selector: (T) -> Amount): Amount {
+            var sum = ZERO
+            for (element in this) {
+                sum += selector(element)
+            }
+            return sum
+        }
     }
 }

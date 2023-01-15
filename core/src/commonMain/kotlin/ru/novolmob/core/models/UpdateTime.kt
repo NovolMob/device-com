@@ -6,6 +6,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 import kotlinx.serialization.Serializable
 import ru.novolmob.core.extensions.LocalDateTimeExtension.now
+import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable

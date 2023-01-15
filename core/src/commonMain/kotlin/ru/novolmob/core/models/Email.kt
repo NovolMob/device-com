@@ -2,6 +2,7 @@ package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
 import ru.novolmob.core.utils.StringChecking
+import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable

@@ -22,6 +22,7 @@ object PreparedStatementExtension {
     fun PreparedStatement.set(index: Int, value: ParameterValue<*>) =
         when (val db = value.dbValue) {
             is UUID -> setObject(index, db)
+            is ru.novolmob.core.models.ids.UUID -> setObject(index, db.javaUUID)
             is String -> setString(index, db)
             is Boolean -> setBoolean(index, db)
             is Int -> setInt(index, db)
@@ -30,6 +31,7 @@ object PreparedStatementExtension {
             is Double -> setDouble(index, db)
             is Float -> setFloat(index, db)
             is BigDecimal -> setBigDecimal(index, db)
+            is ru.novolmob.core.models.BigDecimal -> setBigDecimal(index, db.javaBigDecimal)
             is Date -> setDate(index, db)
             is java.util.Date -> setDate(index, db.toSql())
             is java.time.LocalDate -> setDate(index, Date.from(db.atStartOfDay(ZoneId.systemDefault()).toInstant()).toSql())
@@ -50,6 +52,7 @@ object PreparedStatementExtension {
     infix fun ResultSet.update(value: ParameterValue<*>) =
         when (val db = value.dbValue) {
             is UUID -> updateString(value.parameterName, db.toString())
+            is ru.novolmob.core.models.ids.UUID -> updateString(value.parameterName, db.toString())
             is String -> updateString(value.parameterName, db as String?)
             is Boolean -> updateBoolean(value.parameterName, db)
             is Int -> updateInt(value.parameterName, db)
@@ -59,6 +62,7 @@ object PreparedStatementExtension {
             is Float -> updateFloat(value.parameterName, db)
             is Date -> updateDate(value.parameterName, db)
             is BigDecimal -> updateBigDecimal(value.parameterName, db)
+            is ru.novolmob.core.models.BigDecimal -> updateBigDecimal(value.parameterName, db.javaBigDecimal)
             is java.util.Date -> updateDate(value.parameterName, db.toSql())
             is java.time.LocalDate -> updateDate(value.parameterName, Date.from(db.atStartOfDay(ZoneId.systemDefault()).toInstant()).toSql())
             is java.time.LocalDateTime -> updateDate(value.parameterName, Date.from(db.atZone(ZoneId.systemDefault()).toInstant()).toSql())

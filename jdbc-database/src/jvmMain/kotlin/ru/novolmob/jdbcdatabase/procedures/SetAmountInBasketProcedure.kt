@@ -39,6 +39,6 @@ object SetAmountInBasketProcedure: Procedure(procedureLanguage = DatabaseVocabul
         this.deviceId valueOf deviceId,
         this.newAmount valueOf newAmount,
         this.totalPrice valueOf null
-    ).first() as? Price ?: Price(0.0.toBigDecimal())
+    ).first() as? Price ?: Price.ZERO
 
 }

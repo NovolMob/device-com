@@ -1,6 +1,7 @@
 package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable

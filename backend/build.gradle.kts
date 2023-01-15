@@ -9,8 +9,8 @@ plugins {
     application
     java
     `java-library`
-    kotlin("multiplatform") version "1.8.0"
-    kotlin("plugin.serialization") version "1.8.0"
+    kotlin("multiplatform")
+    kotlin("plugin.serialization")
 }
 
 group = "ru.novolmob.bd-practice"

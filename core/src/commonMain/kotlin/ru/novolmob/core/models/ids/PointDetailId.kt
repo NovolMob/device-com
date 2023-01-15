@@ -2,7 +2,7 @@ package ru.novolmob.core.models.ids
 
 import kotlinx.serialization.Serializable
 import ru.novolmob.core.serializers.UUIDSerializer
-import java.util.UUID
+import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable

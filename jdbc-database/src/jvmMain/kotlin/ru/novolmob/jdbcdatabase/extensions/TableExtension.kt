@@ -1,11 +1,11 @@
 package ru.novolmob.jdbcdatabase.extensions
 
 import ru.novolmob.core.models.*
+import ru.novolmob.core.models.ids.UUID
 import ru.novolmob.core.models.ids.UUIDable
 import ru.novolmob.jdbcdatabase.databases.DatabaseVocabulary
 import ru.novolmob.jdbcdatabase.tables.Table
 import ru.novolmob.jdbcdatabase.tables.parameters.types.*
-import java.util.*
 
 object TableExtension {
 

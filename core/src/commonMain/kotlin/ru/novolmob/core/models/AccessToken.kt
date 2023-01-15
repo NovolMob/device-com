@@ -1,9 +1,10 @@
 package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
 
-@Serializable
 @JvmInline
+@Serializable
 value class AccessToken(
     val string: String
 ) {

@@ -12,12 +12,12 @@ import ru.novolmob.backendapi.repositories.ICityRepository
 import ru.novolmob.backendapi.utils.EitherUtil.backend
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.CityId
+import ru.novolmob.core.models.ids.UUID
 import ru.novolmob.jdbcbackendapi.utils.RepositoryUtil
 import ru.novolmob.jdbcbackendapi.utils.ResultSetUtil.fold
 import ru.novolmob.jdbcdatabase.tables.Cities
 import ru.novolmob.jdbcdatabase.views.DetailView
 import java.sql.ResultSet
-import java.util.UUID
 
 class CityRepositoryImpl(
     val mapper: Mapper<ResultSet, CityModel>,

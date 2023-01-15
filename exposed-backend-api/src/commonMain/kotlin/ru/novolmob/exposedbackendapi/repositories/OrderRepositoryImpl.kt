@@ -19,7 +19,7 @@ import ru.novolmob.backendapi.models.OrderShortModel
 import ru.novolmob.backendapi.repositories.*
 import ru.novolmob.core.models.Amount
 import ru.novolmob.core.models.Language
-import ru.novolmob.core.models.Price
+import ru.novolmob.core.models.Price.Companion.sumOf
 import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.OrderId
 import ru.novolmob.core.models.ids.PointId
@@ -48,8 +48,8 @@ class OrderRepositoryImpl(
                 .let { baskets ->
                     val user = User.findById(userId) ?: return@newSuspendedTransaction userByIdNotFound(userId).left()
                     val point = Point.findById(pointId) ?: return@newSuspendedTransaction pointByIdNotFound(pointId).left()
-                    baskets.filter { it.amount.int > it.device.amount.int }.takeIf { it.isNotEmpty() }?.let {
-                        return@newSuspendedTransaction notEnoughDevices(it.map { it.device.id.value }).left()
+                    baskets.filter { it.amount.int > it.device.amount.int }.takeIf { it.isNotEmpty() }?.let { list ->
+                        return@newSuspendedTransaction notEnoughDevices(list.map { it.device.id.value }).left()
                     }
                     baskets.parTraverseEither {
                         it.device.apply {
@@ -57,7 +57,7 @@ class OrderRepositoryImpl(
                             this.updateDate = UpdateTime.now()
                         }.right()
                     }.flatMap {
-                        val totalPrice = baskets.sumOf { it.amount.int.toBigDecimal() * it.device.price.bigDecimal }.let(::Price)
+                        val totalPrice = baskets.sumOf { it.device.price * it.amount.int}
                         Order.new {
                             this.user = user
                             this.point = point
@@ -72,10 +72,10 @@ class OrderRepositoryImpl(
                                 }.right()
                             }.flatMap {
                                 it.parTraverseEither { orderToDeviceEntity ->
-                                    deviceDetailRepository.getDetailFor(orderToDeviceEntity.device.id.value, language).flatMap {
+                                    deviceDetailRepository.getDetailFor(orderToDeviceEntity.device.id.value, language).flatMap { deviceDetailModel ->
                                         OrderItemShortModel(
-                                            deviceId = it.deviceId,
-                                            title = it.title,
+                                            deviceId = deviceDetailModel.deviceId,
+                                            title = deviceDetailModel.title,
                                             amount = orderToDeviceEntity.amount,
                                             priceForOne = orderToDeviceEntity.priceForOne
                                         ).right()
@@ -93,9 +93,9 @@ class OrderRepositoryImpl(
                                         ).right()
                                     }
                                 }
-                            }.flatMap {
+                            }.flatMap { orderShortModel ->
                                 baskets.parTraverse { it.delete() }
-                                it.right()
+                                orderShortModel.right()
                             }
                         }
                     }
@@ -176,8 +176,8 @@ class OrderRepositoryImpl(
                             ).right()
                         }
                     }
-                }.flatMap {
-                    it.sortedByDescending { it.creationTime }.right()
+                }.flatMap { list ->
+                    list.sortedByDescending { it.creationTime }.right()
                 }
         }
 

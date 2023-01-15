@@ -29,7 +29,7 @@ suspend fun main() {
 //            exposedBackendApiModule
         )
     }
-    DatabaseService.connectWithJdbc()
+    DatabaseService.connectWithJdbcTest()
         .onSuccess {
             embeddedServer(Netty, host = HOST, port = PORT, module = Application::backend).start(true)
         }

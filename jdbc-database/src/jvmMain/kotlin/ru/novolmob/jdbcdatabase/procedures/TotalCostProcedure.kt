@@ -22,6 +22,6 @@ object TotalCostProcedure: Procedure(procedureLanguage = DatabaseVocabulary.Lang
     ): Price = call(
         this.userId valueOf userId,
         this.totalPrice valueOf null
-    ).first() as? Price ?: Price(0.0.toBigDecimal())
+    ).first() as? Price ?: Price.ZERO
 
 }

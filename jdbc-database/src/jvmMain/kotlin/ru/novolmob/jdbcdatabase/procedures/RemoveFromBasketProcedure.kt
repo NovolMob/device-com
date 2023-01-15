@@ -25,6 +25,6 @@ object RemoveFromBasketProcedure: Procedure(procedureLanguage = DatabaseVocabula
         this.userId valueOf userId,
         this.deviceId valueOf deviceId,
         this.totalPrice valueOf null
-    ).first() as? Price ?: Price(0.0.toBigDecimal())
+    ).first() as? Price ?: Price.ZERO
 
 }

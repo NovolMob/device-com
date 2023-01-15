@@ -1,8 +1,9 @@
 package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
+import ru.novolmob.core.models.BigDecimal.Companion.toBigDecimal
 import ru.novolmob.core.serializers.BigDecimalSerializer
-import java.math.BigDecimal
+import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable
@@ -37,5 +38,12 @@ value class Price(
         fun BigDecimal.price(): Price = Price(this)
         fun Int.price(): Price = Price(this.toBigDecimal())
         fun Double.price(): Price = Price(this.toBigDecimal())
+        inline fun <T> Iterable<T>.sumOf(selector: (T) -> Price): Price {
+            var sum = ZERO
+            for (element in this) {
+                sum += selector(element)
+            }
+            return sum
+        }
     }
 }

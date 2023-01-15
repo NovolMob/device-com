@@ -12,12 +12,12 @@ import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
 import ru.novolmob.backendapi.utils.EitherUtil.backend
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.DeviceTypeId
+import ru.novolmob.core.models.ids.UUID
 import ru.novolmob.jdbcbackendapi.utils.RepositoryUtil
 import ru.novolmob.jdbcbackendapi.utils.ResultSetUtil.fold
 import ru.novolmob.jdbcdatabase.tables.DeviceTypes
 import ru.novolmob.jdbcdatabase.views.DetailView
 import java.sql.ResultSet
-import java.util.*
 
 class DeviceTypeRepositoryImpl(
     val mapper: Mapper<ResultSet, DeviceTypeModel>,

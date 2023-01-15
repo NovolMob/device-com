@@ -5,9 +5,9 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 import ru.novolmob.exposeddatabase.columntypes.*
 import ru.novolmob.core.models.*
+import ru.novolmob.core.models.ids.UUID
 import ru.novolmob.core.models.ids.UUIDable
 import ru.novolmob.exposeddatabase.tables.Baskets.clientDefault
-import java.util.*
 
 object TableUtil {
     fun Table.phoneNumber(name: String = "phone_number", json: Json = Json, collate: String? = null, eagerLoading: Boolean = false): Column<PhoneNumber> =

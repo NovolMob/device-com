@@ -1,8 +1,9 @@
 package ru.novolmob.jdbcdatabase.tables.parameters.types
 
+import ru.novolmob.core.models.BigDecimal
+import ru.novolmob.core.models.BigDecimal.Companion.toBigDecimal
 import ru.novolmob.core.models.Numerical
 import ru.novolmob.jdbcdatabase.databases.DatabaseVocabulary
-import java.math.BigDecimal
 import java.sql.Types
 
 class CustomDecimalParameterType<T: Numerical>(
@@ -17,6 +18,7 @@ class CustomDecimalParameterType<T: Numerical>(
     override fun fromDbType(db: Any): T =
         when (db) {
             is BigDecimal -> constructor(db)
+            is java.math.BigDecimal -> constructor(db.toBigDecimal())
             is Double -> constructor(db.toBigDecimal())
             is Float -> constructor(db.toBigDecimal())
             is Int -> constructor(db.toBigDecimal())

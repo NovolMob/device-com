@@ -1,9 +1,9 @@
 package ru.novolmob.jdbcdatabase.tables.parameters
 
 import ru.novolmob.core.models.*
+import ru.novolmob.core.models.ids.UUID
 import ru.novolmob.core.models.ids.UUIDable
 import ru.novolmob.jdbcdatabase.tables.parameters.types.*
-import java.util.*
 
 interface Parameterable {
     fun <T: UUIDable> idColumn(name: String = "id", constructor: (UUID) -> T) = registerParameter(name, CustomUuidParameterType(constructor))

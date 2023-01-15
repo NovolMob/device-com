@@ -3,22 +3,15 @@ val kotlin_version: String by project
 val logback_version: String by project
 
 plugins {
-    application
     java
     `java-library`
-    kotlin("multiplatform") version "1.8.0"
+    kotlin("multiplatform")
     id("maven-publish")
-    kotlin("plugin.serialization") version "1.8.0"
+    kotlin("plugin.serialization")
 }
 
 group = "ru.novolmob.bd-practice"
 version = "0.0.8"
-application {
-    mainClass.set("MainKt")
-
-    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
-}
 
 repositories {
     mavenCentral()

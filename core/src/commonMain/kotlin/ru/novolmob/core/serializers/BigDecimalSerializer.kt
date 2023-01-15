@@ -6,7 +6,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import java.math.BigDecimal
+import ru.novolmob.core.models.BigDecimal
+import ru.novolmob.core.models.BigDecimal.Companion.toBigDecimal
 
 object BigDecimalSerializer: KSerializer<BigDecimal> {
     override fun deserialize(decoder: Decoder): BigDecimal =

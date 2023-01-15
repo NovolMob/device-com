@@ -4,7 +4,6 @@ import ru.novolmob.core.models.PhoneNumber
 
 object PhoneNumberUtil {
     val nonNumberRegex = Regex("[^0-9]")
-    const val PHONE_NUMBER_PATTERN = "+%s (%s) %s"
 
     fun stringClientNumber(number: ULong): String {
         return Regex("\\d{1,3}")
@@ -13,11 +12,7 @@ object PhoneNumberUtil {
     }
 
     fun stringPhoneNumber(countryCode: ULong, innerCode: ULong, clientNumber: ULong): String =
-        PHONE_NUMBER_PATTERN.format(
-            countryCode.toString(),
-            innerCode.toString(),
-            stringClientNumber(clientNumber)
-        )
+        "+${countryCode} ($innerCode) ${stringClientNumber(clientNumber)}"
 
     fun deserializePhoneNumber(string: String): PhoneNumber? {
         val split = string
@@ -30,5 +25,4 @@ object PhoneNumberUtil {
             clientNumber = split[2].toULong()
         )
     }
-
 }
