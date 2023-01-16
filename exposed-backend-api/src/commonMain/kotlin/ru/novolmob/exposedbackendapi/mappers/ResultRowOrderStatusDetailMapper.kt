@@ -12,7 +12,7 @@ class ResultRowOrderStatusDetailMapper: Mapper<ResultRow, OrderStatusDetailModel
     override fun invoke(input: ResultRow): Either<AbstractBackendException, OrderStatusDetailModel> =
         OrderStatusDetailModel(
             id = input[OrderStatusDetails.id].value,
-            orderStatusId = input[OrderStatusDetails.parent].value,
+            parentId = input[OrderStatusDetails.parent].value,
             title = input[OrderStatusDetails.title],
             description = input[OrderStatusDetails.description],
             language = input[OrderStatusDetails.language]

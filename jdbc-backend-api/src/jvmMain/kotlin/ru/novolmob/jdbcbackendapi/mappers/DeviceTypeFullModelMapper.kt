@@ -17,7 +17,7 @@ class DeviceTypeFullModelMapper: Mapper<ResultSet, DeviceTypeFullModel> {
                 id = input get DetailView.DeviceTypeDetailView.id,
                 detail = DeviceTypeDetailModel(
                     id = input get DetailView.DeviceTypeDetailView.detailId,
-                    deviceTypeId = input get DetailView.DeviceTypeDetailView.id,
+                    parentId = input get DetailView.DeviceTypeDetailView.id,
                     title = input get DetailView.DeviceTypeDetailView.title,
                     description = input get DetailView.DeviceTypeDetailView.description,
                     language = input get DetailView.DeviceTypeDetailView.language,

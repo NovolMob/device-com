@@ -22,7 +22,7 @@ class DeviceFullModelMapper: Mapper<ResultSet, DeviceFullModel> {
                     id = input get DetailView.DeviceDetailView.typeId,
                     detail = DeviceTypeDetailModel(
                         id = input get DetailView.DeviceDetailView.typeDetailId,
-                        deviceTypeId = input get DetailView.DeviceDetailView.typeId,
+                        parentId = input get DetailView.DeviceDetailView.typeId,
                         title = input get DetailView.DeviceDetailView.typeTitle,
                         description = input get DetailView.DeviceDetailView.typeDescription,
                         language = input get DetailView.DeviceDetailView.typeLanguage,
@@ -30,7 +30,7 @@ class DeviceFullModelMapper: Mapper<ResultSet, DeviceFullModel> {
                 ),
                 detailModel = DeviceDetailModel(
                     id = input get DetailView.DeviceDetailView.detailId,
-                    deviceId = input get DetailView.DeviceDetailView.id,
+                    parentId = input get DetailView.DeviceDetailView.id,
                     title = input get DetailView.DeviceDetailView.title,
                     description = input get DetailView.DeviceDetailView.description,
                     features = input get DetailView.DeviceDetailView.features,

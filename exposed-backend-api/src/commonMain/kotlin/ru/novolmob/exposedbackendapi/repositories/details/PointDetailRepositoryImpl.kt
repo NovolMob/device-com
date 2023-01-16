@@ -31,7 +31,7 @@ class PointDetailRepositoryImpl(
 
     override suspend fun post(createModel: PointDetailCreateModel): Either<AbstractBackendException, PointDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val point = Point.findById(createModel.pointId) ?: return@newSuspendedTransaction pointByIdNotFound(createModel.pointId).left()
+            val point = Point.findById(createModel.parentId) ?: return@newSuspendedTransaction pointByIdNotFound(createModel.parentId).left()
             PointDetail.new {
                 this.parent = point
                 this.address = createModel.address
@@ -46,7 +46,7 @@ class PointDetailRepositoryImpl(
         createModel: PointDetailCreateModel
     ): Either<AbstractBackendException, PointDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val point = Point.findById(createModel.pointId) ?: return@newSuspendedTransaction pointByIdNotFound(createModel.pointId).left()
+            val point = Point.findById(createModel.parentId) ?: return@newSuspendedTransaction pointByIdNotFound(createModel.parentId).left()
             PointDetail.findById(id)?.apply {
                 this.parent = point
                 this.address = createModel.address
@@ -62,7 +62,7 @@ class PointDetailRepositoryImpl(
         updateModel: PointDetailUpdateModel
     ): Either<AbstractBackendException, PointDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val point = updateModel.pointId?.let {
+            val point = updateModel.parentId?.let {
                 Point.findById(it) ?: return@newSuspendedTransaction pointByIdNotFound(it).left()
             }
             PointDetail.findById(id)?.apply {
@@ -76,7 +76,7 @@ class PointDetailRepositoryImpl(
         }
 
     override fun PointDetail.Companion.new(createModel: PointDetailCreateModel): Either<AbstractBackendException, PointDetail> {
-        val point = Point.findById(createModel.pointId) ?: return pointByIdNotFound(createModel.pointId).left()
+        val point = Point.findById(createModel.parentId) ?: return pointByIdNotFound(createModel.parentId).left()
         return new {
             this.parent = point
             this.address = createModel.address
@@ -87,7 +87,7 @@ class PointDetailRepositoryImpl(
     }
 
     override fun PointDetail.applyC(createModel: PointDetailCreateModel): Either<AbstractBackendException, PointDetail> {
-        val point = Point.findById(createModel.pointId) ?: return pointByIdNotFound(createModel.pointId).left()
+        val point = Point.findById(createModel.parentId) ?: return pointByIdNotFound(createModel.parentId).left()
         return apply {
             this.parent = point
             this.address = createModel.address
@@ -99,7 +99,7 @@ class PointDetailRepositoryImpl(
     }
 
     override fun PointDetail.applyU(updateModel: PointDetailUpdateModel): Either<AbstractBackendException, PointDetail> {
-        val point = updateModel.pointId?.let {
+        val point = updateModel.parentId?.let {
             Point.findById(it) ?: return pointByIdNotFound(it).left()
         }
         return apply {

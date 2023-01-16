@@ -31,8 +31,8 @@ class DeviceTypeDetailRepositoryImpl(
 
     override suspend fun post(createModel: DeviceTypeDetailCreateModel): Either<AbstractBackendException, DeviceTypeDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val deviceType = DeviceType.findById(createModel.deviceTypeId)
-                ?: return@newSuspendedTransaction deviceTypeByIdNotFound(createModel.deviceTypeId).left()
+            val deviceType = DeviceType.findById(createModel.parentId)
+                ?: return@newSuspendedTransaction deviceTypeByIdNotFound(createModel.parentId).left()
             DeviceTypeDetail.new {
                 this.parent = deviceType
                 this.title = createModel.title
@@ -46,8 +46,8 @@ class DeviceTypeDetailRepositoryImpl(
         createModel: DeviceTypeDetailCreateModel
     ): Either<AbstractBackendException, DeviceTypeDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val deviceType = DeviceType.findById(createModel.deviceTypeId)
-                ?: return@newSuspendedTransaction deviceTypeByIdNotFound(createModel.deviceTypeId).left()
+            val deviceType = DeviceType.findById(createModel.parentId)
+                ?: return@newSuspendedTransaction deviceTypeByIdNotFound(createModel.parentId).left()
             DeviceTypeDetail.findById(id)?.apply {
                 this.parent = deviceType
                 this.title = createModel.title
@@ -62,7 +62,7 @@ class DeviceTypeDetailRepositoryImpl(
         updateModel: DeviceTypeDetailUpdateModel
     ): Either<AbstractBackendException, DeviceTypeDetailModel> =
         newSuspendedTransaction(Dispatchers.IO) {
-            val deviceType = updateModel.deviceTypeId?.let {
+            val deviceType = updateModel.parentId?.let {
                 DeviceType.findById(it) ?: return@newSuspendedTransaction deviceTypeByIdNotFound(it).left()
             }
             DeviceTypeDetail.findById(id)?.apply {
@@ -76,8 +76,8 @@ class DeviceTypeDetailRepositoryImpl(
         }
 
     override fun DeviceTypeDetail.Companion.new(createModel: DeviceTypeDetailCreateModel): Either<AbstractBackendException, DeviceTypeDetail> {
-        val deviceType = DeviceType.findById(createModel.deviceTypeId)
-            ?: return deviceTypeByIdNotFound(createModel.deviceTypeId).left()
+        val deviceType = DeviceType.findById(createModel.parentId)
+            ?: return deviceTypeByIdNotFound(createModel.parentId).left()
         return new {
             this.parent = deviceType
             this.title = createModel.title
@@ -87,8 +87,8 @@ class DeviceTypeDetailRepositoryImpl(
     }
 
     override fun DeviceTypeDetail.applyC(createModel: DeviceTypeDetailCreateModel): Either<AbstractBackendException, DeviceTypeDetail> {
-        val deviceType = DeviceType.findById(createModel.deviceTypeId)
-            ?: return deviceTypeByIdNotFound(createModel.deviceTypeId).left()
+        val deviceType = DeviceType.findById(createModel.parentId)
+            ?: return deviceTypeByIdNotFound(createModel.parentId).left()
         return apply {
             this.parent = deviceType
             this.title = createModel.title
@@ -99,7 +99,7 @@ class DeviceTypeDetailRepositoryImpl(
     }
 
     override fun DeviceTypeDetail.applyU(updateModel: DeviceTypeDetailUpdateModel): Either<AbstractBackendException, DeviceTypeDetail> {
-        val deviceType = updateModel.deviceTypeId?.let {
+        val deviceType = updateModel.parentId?.let {
             DeviceType.findById(it) ?: return deviceTypeByIdNotFound(it).left()
         }
         return apply {

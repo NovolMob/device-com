@@ -12,7 +12,7 @@ class ResultRowPointDetailMapper: Mapper<ResultRow, PointDetailModel> {
     override fun invoke(input: ResultRow): Either<AbstractBackendException, PointDetailModel> =
         PointDetailModel(
             id = input[PointDetails.id].value,
-            pointId = input[PointDetails.parent].value,
+            parentId = input[PointDetails.parent].value,
             address = input[PointDetails.address],
             schedule = input[PointDetails.schedule],
             description = input[PointDetails.description],

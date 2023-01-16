@@ -11,7 +11,7 @@ class CityDetailMapper: Mapper<CityDetail, CityDetailModel> {
     override fun invoke(input: CityDetail): Either<AbstractBackendException, CityDetailModel> =
         CityDetailModel(
             id = input.id.value,
-            cityId = input.parent.id.value,
+            parentId = input.parent.id.value,
             title = input.title,
             language = input.language
         ).right()

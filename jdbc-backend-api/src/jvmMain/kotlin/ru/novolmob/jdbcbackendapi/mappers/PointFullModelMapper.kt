@@ -21,14 +21,14 @@ class PointFullModelMapper: Mapper<ResultSet, PointFullModel> {
                     id = input get DetailView.PointDetailView.cityId,
                     detail = CityDetailModel(
                         id = input get DetailView.PointDetailView.cityDetailId,
-                        cityId = input get DetailView.PointDetailView.cityId,
+                        parentId = input get DetailView.PointDetailView.cityId,
                         title = input get DetailView.PointDetailView.cityTitle,
                         language = input get DetailView.PointDetailView.cityLanguage,
                     ),
                 ),
                 detail = PointDetailModel(
                     id = input get DetailView.PointDetailView.detailId,
-                    pointId = input get DetailView.PointDetailView.id,
+                    parentId = input get DetailView.PointDetailView.id,
                     address = input get DetailView.PointDetailView.address,
                     schedule = input get DetailView.PointDetailView.schedule,
                     description = input get DetailView.PointDetailView.description,

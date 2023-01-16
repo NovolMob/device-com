@@ -17,7 +17,7 @@ class CityFullModelMapper: Mapper<ResultSet, CityFullModel> {
                 id = input get DetailView.CityDetailView.id,
                 detail = CityDetailModel(
                     id = input get DetailView.CityDetailView.detailId,
-                    cityId = input get DetailView.CityDetailView.id,
+                    parentId = input get DetailView.CityDetailView.id,
                     title = input get DetailView.CityDetailView.title,
                     language = input get DetailView.CityDetailView.language
                 )

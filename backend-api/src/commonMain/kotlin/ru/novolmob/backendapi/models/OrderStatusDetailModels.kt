@@ -10,7 +10,7 @@ import ru.novolmob.core.models.ids.OrderStatusId
 @Serializable
 data class OrderStatusDetailModel(
     val id: OrderStatusDetailId,
-    val orderStatusId: OrderStatusId,
+    val parentId: OrderStatusId,
     val title: Title,
     val description: Description,
     val language: Language
@@ -18,16 +18,16 @@ data class OrderStatusDetailModel(
 
 @Serializable
 data class OrderStatusDetailCreateModel(
-    val orderStatusId: OrderStatusId,
+    override val parentId: OrderStatusId,
     val title: Title,
     val description: Description,
-    val language: Language
-)
+    override val language: Language
+): DetailCreate<OrderStatusId>
 
 @Serializable
 data class OrderStatusDetailUpdateModel(
-    val orderStatusId: OrderStatusId? = null,
+    override val parentId: OrderStatusId? = null,
     val title: Title? = null,
     val description: Description? = null,
-    val language: Language? = null
-)
+    override val language: Language? = null
+): DetailUpdate<OrderStatusId>

@@ -11,7 +11,7 @@ class PointDetailMapper: Mapper<PointDetail, PointDetailModel> {
     override fun invoke(input: PointDetail): Either<AbstractBackendException, PointDetailModel> =
         PointDetailModel(
             id = input.id.value,
-            pointId = input.parent.id.value,
+            parentId = input.parent.id.value,
             address = input.address,
             schedule = input.schedule,
             description = input.description,

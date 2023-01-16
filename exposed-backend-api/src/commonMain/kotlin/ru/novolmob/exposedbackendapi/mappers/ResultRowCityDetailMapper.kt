@@ -12,7 +12,7 @@ class ResultRowCityDetailMapper: Mapper<ResultRow, CityDetailModel> {
     override fun invoke(input: ResultRow): Either<AbstractBackendException, CityDetailModel> =
         CityDetailModel(
             id = input[CityDetails.id].value,
-            cityId = input[CityDetails.parent].value,
+            parentId = input[CityDetails.parent].value,
             title = input[CityDetails.title],
             language = input[CityDetails.language]
         ).right()

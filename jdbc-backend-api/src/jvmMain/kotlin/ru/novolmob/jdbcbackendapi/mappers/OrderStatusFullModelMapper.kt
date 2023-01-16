@@ -19,7 +19,7 @@ class OrderStatusFullModelMapper: Mapper<ResultSet, OrderStatusFullModel> {
                 dateTime = input get OrderToStatusView.creationTime,
                 detail = OrderStatusDetailModel(
                     id = input get OrderToStatusView.orderStatusDetailId,
-                    orderStatusId = input get OrderToStatusView.orderStatusId,
+                    parentId = input get OrderToStatusView.orderStatusId,
                     title = input get OrderToStatusView.orderStatusTitle,
                     description = input get OrderToStatusView.orderStatusDescription,
                     language = input get OrderToStatusView.orderStatusLanguage,

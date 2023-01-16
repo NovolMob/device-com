@@ -12,7 +12,7 @@ class ResultRowDeviceDetailMapper: Mapper<ResultRow, DeviceDetailModel> {
     override fun invoke(input: ResultRow): Either<AbstractBackendException, DeviceDetailModel> =
         DeviceDetailModel(
             id = input[DeviceDetails.id].value,
-            deviceId = input[DeviceDetails.parent].value,
+            parentId = input[DeviceDetails.parent].value,
             title = input[DeviceDetails.title],
             description = input[DeviceDetails.description],
             features = input[DeviceDetails.features],

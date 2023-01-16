@@ -74,7 +74,7 @@ class OrderRepositoryImpl(
                                 it.parTraverseEither { orderToDeviceEntity ->
                                     deviceDetailRepository.getDetailFor(orderToDeviceEntity.device.id.value, language).flatMap { deviceDetailModel ->
                                         OrderItemShortModel(
-                                            deviceId = deviceDetailModel.deviceId,
+                                            deviceId = deviceDetailModel.parentId,
                                             title = deviceDetailModel.title,
                                             amount = orderToDeviceEntity.amount,
                                             priceForOne = orderToDeviceEntity.priceForOne

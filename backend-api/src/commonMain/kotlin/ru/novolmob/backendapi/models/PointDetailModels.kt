@@ -11,7 +11,7 @@ import ru.novolmob.core.models.ids.PointId
 @Serializable
 data class PointDetailModel(
     val id: PointDetailId,
-    val pointId: PointId,
+    val parentId: PointId,
     val address: Address,
     val schedule: Schedule,
     val description: Description,
@@ -20,18 +20,18 @@ data class PointDetailModel(
 
 @Serializable
 data class PointDetailCreateModel(
-    val pointId: PointId,
+    override val parentId: PointId,
     val address: Address,
     val schedule: Schedule,
     val description: Description,
-    val language: Language
-)
+    override val language: Language
+): DetailCreate<PointId>
 
 @Serializable
 data class PointDetailUpdateModel(
-    val pointId: PointId? = null,
+    override val parentId: PointId? = null,
     val address: Address? = null,
     val schedule: Schedule? = null,
     val description: Description? = null,
-    val language: Language? = null
-)
+    override val language: Language? = null
+): DetailUpdate<PointId>

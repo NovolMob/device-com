@@ -13,7 +13,6 @@ import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.WorkerId
 
 interface IWorkerRepository: ICrudRepository<WorkerId, WorkerModel, WorkerCreateModel, WorkerUpdateModel> {
-    suspend fun getLanguage(workerId: WorkerId): Either<AbstractBackendException, Language>
     suspend fun getAllByPointId(pointId: PointId): Either<AbstractBackendException, List<WorkerModel>>
     suspend fun login(phoneNumber: PhoneNumber, password: Password): Either<AbstractBackendException, WorkerModel>
     suspend fun login(email: Email, password: Password): Either<AbstractBackendException, WorkerModel>

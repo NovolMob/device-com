@@ -32,10 +32,6 @@ class WorkerRepositoryImpl(
     val resultRowInfoMapper: Mapper<ResultRow, WorkerInfoModel>,
     val workerCredentialRepository: IWorkerCredentialRepository
 ): IWorkerRepository {
-    override suspend fun getLanguage(workerId: WorkerId): Either<AbstractBackendException, Language> =
-        newSuspendedTransaction(Dispatchers.IO) {
-            Worker.findById(workerId)?.language?.right() ?: workerByIdNotFound(workerId).left()
-        }
 
     override suspend fun getAllByPointId(pointId: PointId): Either<AbstractBackendException, List<WorkerModel>> =
         newSuspendedTransaction(Dispatchers.IO) {

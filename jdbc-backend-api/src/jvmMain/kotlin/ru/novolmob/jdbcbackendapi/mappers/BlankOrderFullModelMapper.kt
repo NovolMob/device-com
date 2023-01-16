@@ -21,14 +21,14 @@ class BlankOrderFullModelMapper: Mapper<ResultSet, OrderFullModel> {
                         id = input get OrderView.cityId,
                         detail = CityDetailModel(
                             id = input get OrderView.cityDetailId,
-                            cityId = input get OrderView.cityId,
+                            parentId = input get OrderView.cityId,
                             title = input get OrderView.cityTitle,
                             language = input get OrderView.cityLanguage
                         )
                     ),
                     detail = PointDetailModel(
                         id = input get OrderView.pointDetailId,
-                        pointId = input get OrderView.pointId,
+                        parentId = input get OrderView.pointId,
                         address = input get OrderView.pointAddress,
                         schedule = input get OrderView.pointSchedule,
                         description = input get OrderView.pointDescription,

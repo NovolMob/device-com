@@ -28,8 +28,8 @@ class OrderStatusDetailRepositoryImpl(
     ) {
 
     override fun OrderStatusDetail.Companion.new(createModel: OrderStatusDetailCreateModel): Either<AbstractBackendException, OrderStatusDetail> {
-        val orderStatus = OrderStatus.findById(createModel.orderStatusId)
-            ?: return orderStatusByIdNotFound(createModel.orderStatusId).left()
+        val orderStatus = OrderStatus.findById(createModel.parentId)
+            ?: return orderStatusByIdNotFound(createModel.parentId).left()
         return new {
             this.parent = orderStatus
             this.title = createModel.title
@@ -39,8 +39,8 @@ class OrderStatusDetailRepositoryImpl(
     }
 
     override fun OrderStatusDetail.applyC(createModel: OrderStatusDetailCreateModel): Either<AbstractBackendException, OrderStatusDetail> {
-        val orderStatus = OrderStatus.findById(createModel.orderStatusId)
-            ?: return orderStatusByIdNotFound(createModel.orderStatusId).left()
+        val orderStatus = OrderStatus.findById(createModel.parentId)
+            ?: return orderStatusByIdNotFound(createModel.parentId).left()
         return apply {
             this.parent = orderStatus
             this.title = createModel.title
@@ -51,7 +51,7 @@ class OrderStatusDetailRepositoryImpl(
     }
 
     override fun OrderStatusDetail.applyU(updateModel: OrderStatusDetailUpdateModel): Either<AbstractBackendException, OrderStatusDetail> {
-        val orderStatus = updateModel.orderStatusId?.let {
+        val orderStatus = updateModel.parentId?.let {
             OrderStatus.findById(it) ?: return orderStatusByIdNotFound(it).left()
         }
         return apply {

@@ -9,21 +9,21 @@ import ru.novolmob.core.models.ids.CityId
 @Serializable
 data class CityDetailModel(
     val id: CityDetailId,
-    val cityId: CityId,
+    val parentId: CityId,
     val title: Title,
     val language: Language
 )
 
 @Serializable
 data class CityDetailCreateModel(
-    val cityId: CityId,
+    override val parentId: CityId,
     val title: Title,
-    val language: Language
-)
+    override val language: Language
+): DetailCreate<CityId>
 
 @Serializable
 data class CityDetailUpdateModel(
-    val cityId: CityId? = null,
+    override val parentId: CityId? = null,
     val title: Title? = null,
-    val language: Language? = null
-)
+    override val language: Language? = null
+): DetailUpdate<CityId>

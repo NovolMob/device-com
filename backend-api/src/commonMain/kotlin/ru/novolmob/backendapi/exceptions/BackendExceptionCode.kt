@@ -7,5 +7,6 @@ enum class BackendExceptionCode(val httpCode: Int, val description: String) {
     FORBIDDEN(403, ""),
     NOT_AUTHORIZED(403, ""),
     DONT_HAVE_RIGHT(403, ""),
+    DETAIL_IS_EXISTS(400, ""),
     NOT_FOUND(404, "");
 }

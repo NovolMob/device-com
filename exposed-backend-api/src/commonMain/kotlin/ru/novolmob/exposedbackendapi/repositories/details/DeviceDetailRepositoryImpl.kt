@@ -28,8 +28,8 @@ class DeviceDetailRepositoryImpl(
     ) {
 
     override fun DeviceDetail.Companion.new(createModel: DeviceDetailCreateModel): Either<AbstractBackendException, DeviceDetail> {
-        val device = Device.findById(createModel.deviceId)
-            ?: return deviceByIdNotFound(createModel.deviceId).left()
+        val device = Device.findById(createModel.parentId)
+            ?: return deviceByIdNotFound(createModel.parentId).left()
         return new {
             this.parent = device
             this.title = createModel.title
@@ -40,8 +40,8 @@ class DeviceDetailRepositoryImpl(
     }
 
     override fun DeviceDetail.applyC(createModel: DeviceDetailCreateModel): Either<AbstractBackendException, DeviceDetail> {
-        val device = Device.findById(createModel.deviceId)
-            ?: return deviceByIdNotFound(createModel.deviceId).left()
+        val device = Device.findById(createModel.parentId)
+            ?: return deviceByIdNotFound(createModel.parentId).left()
         return apply {
             this.parent = device
             this.title = createModel.title
@@ -53,7 +53,7 @@ class DeviceDetailRepositoryImpl(
     }
 
     override fun DeviceDetail.applyU(updateModel: DeviceDetailUpdateModel): Either<AbstractBackendException, DeviceDetail> {
-        val device = updateModel.deviceId?.let {
+        val device = updateModel.parentId?.let {
             Device.findById(it) ?: return deviceByIdNotFound(it).left()
         }
         return apply {

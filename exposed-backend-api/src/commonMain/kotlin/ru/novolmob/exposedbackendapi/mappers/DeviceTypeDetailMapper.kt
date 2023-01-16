@@ -11,7 +11,7 @@ class DeviceTypeDetailMapper: Mapper<DeviceTypeDetail, DeviceTypeDetailModel> {
     override fun invoke(input: DeviceTypeDetail): Either<AbstractBackendException, DeviceTypeDetailModel> =
         DeviceTypeDetailModel(
             id = input.id.value,
-            deviceTypeId = input.parent.id.value,
+            parentId = input.parent.id.value,
             title = input.title,
             description = input.description,
             language = input.language

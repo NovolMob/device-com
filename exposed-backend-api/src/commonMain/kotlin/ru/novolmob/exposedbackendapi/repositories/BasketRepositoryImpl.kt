@@ -50,7 +50,7 @@ class BasketRepositoryImpl(
                         deviceDetailRepository.getDetailFor(basket.device.id.value, language).flatMap {
                             BasketItemModel(
                                 device = DeviceShortModel(
-                                    id = it.deviceId,
+                                    id = it.parentId,
                                     title = it.title,
                                     description = it.description,
                                     amount = basket.device.amount,

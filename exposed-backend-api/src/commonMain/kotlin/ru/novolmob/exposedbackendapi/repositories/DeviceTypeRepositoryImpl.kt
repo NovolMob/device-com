@@ -51,7 +51,7 @@ class DeviceTypeRepositoryImpl(
             page.list.parTraverseEither {
                 deviceTypeDetailRepository.getDetailFor(it.id, language).flatMap { typeDetail ->
                     DeviceTypeShortModel(
-                        id = typeDetail.deviceTypeId,
+                        id = typeDetail.parentId,
                         title = typeDetail.title
                     ).right()
                 }

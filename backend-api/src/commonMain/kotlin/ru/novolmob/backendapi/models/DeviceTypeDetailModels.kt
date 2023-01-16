@@ -10,7 +10,7 @@ import ru.novolmob.core.models.ids.DeviceTypeId
 @Serializable
 data class DeviceTypeDetailModel(
     val id: DeviceTypeDetailId,
-    val deviceTypeId: DeviceTypeId,
+    val parentId: DeviceTypeId,
     val title: Title,
     val description: Description,
     val language: Language
@@ -18,15 +18,16 @@ data class DeviceTypeDetailModel(
 
 @Serializable
 data class DeviceTypeDetailCreateModel(
-    val deviceTypeId: DeviceTypeId,
+    override val parentId: DeviceTypeId,
     val title: Title,
     val description: Description,
-    val language: Language
-)
+    override val language: Language
+): DetailCreate<DeviceTypeId>
+
 @Serializable
 data class DeviceTypeDetailUpdateModel(
-    val deviceTypeId: DeviceTypeId? = null,
+    override val parentId: DeviceTypeId? = null,
     val title: Title? = null,
     val description: Description? = null,
-    val language: Language? = null
-)
+    override val language: Language? = null
+): DetailUpdate<DeviceTypeId>

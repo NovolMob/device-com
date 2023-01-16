@@ -28,7 +28,7 @@ class CityDetailRepositoryImpl(
     ) {
 
     override fun CityDetail.Companion.new(createModel: CityDetailCreateModel): Either<AbstractBackendException, CityDetail> {
-        val city = City.findById(createModel.cityId) ?: return cityByIdNotFound(createModel.cityId).left()
+        val city = City.findById(createModel.parentId) ?: return cityByIdNotFound(createModel.parentId).left()
         return new {
             this.parent = city
             this.title = createModel.title
@@ -37,7 +37,7 @@ class CityDetailRepositoryImpl(
     }
 
     override fun CityDetail.applyC(createModel: CityDetailCreateModel): Either<AbstractBackendException, CityDetail> {
-        val city = City.findById(createModel.cityId) ?: return cityByIdNotFound(createModel.cityId).left()
+        val city = City.findById(createModel.parentId) ?: return cityByIdNotFound(createModel.parentId).left()
         return CityDetail.new {
             this.parent = city
             this.title = createModel.title
@@ -47,7 +47,7 @@ class CityDetailRepositoryImpl(
     }
 
     override fun CityDetail.applyU(updateModel: CityDetailUpdateModel): Either<AbstractBackendException, CityDetail> {
-        val city = updateModel.cityId?.let {
+        val city = updateModel.parentId?.let {
             City.findById(it) ?: return cityByIdNotFound(it).left()
         }
         return apply {

@@ -11,7 +11,7 @@ class OrderStatusDetailMapper: Mapper<OrderStatusDetail, OrderStatusDetailModel>
     override fun invoke(input: OrderStatusDetail): Either<AbstractBackendException, OrderStatusDetailModel> =
         OrderStatusDetailModel(
             id = input.id.value,
-            orderStatusId = input.parent.id.value,
+            parentId = input.parent.id.value,
             title = input.title,
             description = input.description,
             language = input.language

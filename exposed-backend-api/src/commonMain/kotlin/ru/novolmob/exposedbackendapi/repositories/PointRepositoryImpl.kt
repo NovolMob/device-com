@@ -69,7 +69,7 @@ class PointRepositoryImpl(
                     .parTraverseEither {
                         pointDetailRepository.getDetailFor(it.id.value, language).flatMap { detail ->
                             PointShortModel(
-                                id = detail.pointId,
+                                id = detail.parentId,
                                 address = detail.address,
                                 schedule = detail.schedule,
                                 city = city
@@ -89,7 +89,7 @@ class PointRepositoryImpl(
                             list.parTraverseEither { point ->
                                 pointDetailRepository.getDetailFor(point.id, language).flatMap { detail ->
                                     PointShortModel(
-                                        id = detail.pointId,
+                                        id = detail.parentId,
                                         address = detail.address,
                                         schedule = detail.schedule,
                                         city = city
