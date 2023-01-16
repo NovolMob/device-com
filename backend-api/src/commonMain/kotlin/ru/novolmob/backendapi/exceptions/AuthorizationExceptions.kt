@@ -7,12 +7,12 @@ fun badLoginModelException(): AbstractBackendException =
 
 fun notAuthorizedException(): AbstractBackendException =
     AbstractBackendException.BackendException(
-        code = BackendExceptionCode.FORBIDDEN,
+        code = BackendExceptionCode.NOT_AUTHORIZED,
         message = "You are not authorized."
     )
 
 fun dontHaveRightsException(): AbstractBackendException =
     AbstractBackendException.BackendException(
-        code = BackendExceptionCode.FORBIDDEN,
+        code = BackendExceptionCode.DONT_HAVE_RIGHT,
         message = "You don't have enough rights."
     )

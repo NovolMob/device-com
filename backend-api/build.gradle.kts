@@ -19,6 +19,10 @@ repositories {
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+        binaries.executable()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -29,6 +33,16 @@ kotlin {
             }
         }
         val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation(npm("js-sha512", "0.8.0"))
+            }
+        }
+        val jsTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
