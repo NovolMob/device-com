@@ -1,7 +1,7 @@
 package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.core.utils.StringChecking
+import ru.novolmob.core.utils.IStringChecking
 import kotlin.jvm.JvmInline
 
 @JvmInline
@@ -13,9 +13,9 @@ value class Password(
 
     operator fun plus(any: Any?): Password = Password(string.plus(any))
 
-    companion object: StringChecking() {
-        override val regex = Regex("\\w+\\d+")
-
+    companion object {
         fun String.password(): Password = Password(this)
     }
 }
+
+expect object PasswordChecking: IStringChecking

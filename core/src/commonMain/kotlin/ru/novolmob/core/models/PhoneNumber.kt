@@ -2,8 +2,8 @@ package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
 import ru.novolmob.core.serializers.PhoneNumberSerializer
+import ru.novolmob.core.utils.IStringChecking
 import ru.novolmob.core.utils.PhoneNumberUtil
-import ru.novolmob.core.utils.StringChecking
 
 @Serializable(with = PhoneNumberSerializer::class)
 data class PhoneNumber(
@@ -14,9 +14,9 @@ data class PhoneNumber(
     override fun toString(): String =
         PhoneNumberUtil.stringPhoneNumber(countryCode, innerCode, clientNumber)
 
-    companion object: StringChecking() {
-        override val regex = Regex("\\d{11}")
-
+    companion object {
         fun String.phoneNumber(): PhoneNumber? = PhoneNumberUtil.deserializePhoneNumber(this)
     }
 }
+
+expect object PhoneNumberChecking: IStringChecking

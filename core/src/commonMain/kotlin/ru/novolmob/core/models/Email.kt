@@ -1,7 +1,7 @@
 package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.core.utils.StringChecking
+import ru.novolmob.core.utils.IStringChecking
 import kotlin.jvm.JvmInline
 
 @JvmInline
@@ -13,9 +13,9 @@ value class Email(
 
     operator fun plus(any: Any?): Email = Email(string.plus(any))
 
-    companion object: StringChecking() {
-        override val regex = Regex("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
-
+    companion object {
         fun String.email(): Email = Email(this)
     }
 }
+
+expect object EmailChecking: IStringChecking

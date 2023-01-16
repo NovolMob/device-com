@@ -1,7 +1,7 @@
 package ru.novolmob.core.models
 
 import kotlinx.serialization.Serializable
-import ru.novolmob.core.utils.StringChecking
+import ru.novolmob.core.utils.IStringChecking
 import kotlin.jvm.JvmInline
 
 @JvmInline
@@ -13,9 +13,9 @@ value class Firstname(
 
     operator fun plus(any: Any?): Firstname = Firstname(string.plus(any))
 
-    companion object: StringChecking() {
-        override val regex = Regex("[a-zA-Zа-яА-Я]+")
-
+    companion object {
         fun String.firstname(): Firstname = Firstname(this)
     }
 }
+
+expect object FirstnameChecking: IStringChecking
