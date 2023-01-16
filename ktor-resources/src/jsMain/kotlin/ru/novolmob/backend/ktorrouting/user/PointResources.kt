@@ -7,16 +7,16 @@ import ru.novolmob.core.models.ids.PointId
 
 @Serializable
 @Resource("points")
-class Points(
-    override val page: Long? = null,
-    override val pageSize: Long? = null,
-    override val sortByColumn: String? = null,
-    override val sortOrder: String? = null
+actual class Points actual constructor(
+    override val page: Long?,
+    override val pageSize: Long?,
+    override val sortByColumn: String?,
+    override val sortOrder: String?
 ): Pagination {
     @Serializable
     @Resource("by_city")
-    class ByCity(val points: Points)
+    actual class ByCity
     @Serializable
     @Resource("{id}")
-    class Id(val points: Points, val id: PointId)
+    actual class Id actual constructor(actual val id: PointId)
 }

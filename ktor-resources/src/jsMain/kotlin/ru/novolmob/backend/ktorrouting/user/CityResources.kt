@@ -8,14 +8,14 @@ import ru.novolmob.core.models.ids.CityId
 
 @Serializable
 @Resource("/cities")
-class Cities(
-    override val page: Long? = null,
-    override val pageSize: Long? = null,
-    override val sortByColumn: String? = null,
-    override val sortOrder: String? = null,
-    val language: Language
+actual class Cities actual constructor(
+    override val page: Long?,
+    override val pageSize: Long?,
+    override val sortByColumn: String?,
+    override val sortOrder: String?,
+    actual val language: Language
 ): Pagination {
     @Serializable
     @Resource("{id}")
-    class Id(val cities: Cities, val id: CityId)
+    actual class Id actual constructor(actual val id: CityId)
 }

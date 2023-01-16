@@ -6,8 +6,11 @@ import ru.novolmob.core.models.ids.DeviceId
 
 @Serializable
 @Resource("basket")
-class Basket {
+actual class Basket {
     @Serializable
     @Resource("devices/{id}")
-    class Device(val basket: Basket, val id: DeviceId)
+    actual class Device actual constructor(
+        actual val basket: Basket,
+        actual val id: DeviceId
+    )
 }

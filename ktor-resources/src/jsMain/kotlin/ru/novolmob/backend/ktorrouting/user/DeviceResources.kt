@@ -8,21 +8,20 @@ import ru.novolmob.core.models.ids.DeviceTypeId
 
 @Serializable
 @Resource("/devices")
-class Devices {
+actual class Devices {
     @Serializable
     @Resource("{id}")
-    class Id(val devices: Devices, val id: DeviceId)
+    actual class Id actual constructor(actual val id: DeviceId)
     @Serializable
     @Resource("types")
-    class Types(
-        override val page: Long? = null,
-        override val pageSize: Long? = null,
-        override val sortByColumn: String? = null,
-        override val sortOrder: String? = null,
-        val devices: Devices
+    actual class Types actual constructor(
+        override val page: Long?,
+        override val pageSize: Long?,
+        override val sortByColumn: String?,
+        override val sortOrder: String?
     ): Pagination {
         @Serializable
         @Resource("{id}")
-        class Id(val types: Types, val id: DeviceTypeId)
+        actual class Id actual constructor(actual val id: DeviceTypeId)
     }
 }

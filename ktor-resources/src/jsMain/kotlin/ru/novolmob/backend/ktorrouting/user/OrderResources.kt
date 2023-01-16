@@ -7,11 +7,11 @@ import ru.novolmob.core.models.ids.PointId
 
 @Serializable
 @Resource("orders")
-class Orders() {
+actual class Orders {
     @Serializable
     @Resource("confirm")
-    class Confirm(val orders: Orders, val pointId: PointId)
+    actual class Confirm actual constructor(actual val pointId: PointId)
     @Serializable
     @Resource("{id}")
-    class Id(val orders: Orders, val id: OrderId)
+    actual class Id actual constructor(actual val id: OrderId)
 }

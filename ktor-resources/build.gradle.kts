@@ -20,20 +20,28 @@ repositories {
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+        binaries.executable()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
                 implementation(project(":core"))
                 implementation(project(":backend-api"))
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
-
-                implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-                implementation("io.ktor:ktor-server-resources:$ktor_version")
             }
         }
-        val commonTest by getting {
+        val jvmMain by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation("io.ktor:ktor-client-jvm:$ktor_version")
+                implementation("io.ktor:ktor-client-resources:$ktor_version")
+            }
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:$ktor_version")
+                implementation("io.ktor:ktor-client-resources:$ktor_version")
             }
         }
     }
