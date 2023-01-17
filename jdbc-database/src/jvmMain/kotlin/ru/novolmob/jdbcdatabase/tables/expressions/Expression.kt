@@ -11,6 +11,13 @@ sealed class Expression {
 
     infix fun and(second: Expression): TwoExpressions.And = TwoExpressions.And(this, second)
     infix fun or(second: Expression): TwoExpressions.Or = TwoExpressions.Or(this, second)
+    class In<T: Any>(private val column: IParameter<T>, private val list: List<ParameterValue<T>>): Expression() {
+        override val sqlString: String
+            get() = DatabaseVocabulary.inList(column.fullName(), list.size)
+        override val valueOrder: List<ParameterValue<*>>
+            get() = list
+
+    }
 
     class Between<T: Any>(private val column: IParameter<T>, private val start: ParameterValue<T>): Expression() {
         private lateinit var end: ParameterValue<T>
@@ -56,6 +63,7 @@ sealed class Expression {
         infix fun <T: Any> IParameter<T>.more(value: T): OneParameter.More<T> = OneParameter.More(this, this valueOf value)
         infix fun <T: Any> IParameter<T>.moreEq(value: T): OneParameter.MoreEqual<T> =
             OneParameter.MoreEqual(this, this valueOf value)
+        infix fun <T: Any> IParameter<T>.inList(list: List<T>): In<T> = In(this, list.map { valueOf(it) })
 
     }
 

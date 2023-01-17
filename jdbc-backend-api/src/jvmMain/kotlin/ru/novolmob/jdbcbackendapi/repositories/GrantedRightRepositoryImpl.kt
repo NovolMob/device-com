@@ -22,8 +22,8 @@ class GrantedRightRepositoryImpl(
     override suspend fun getAllRightsFor(workerId: WorkerId): Either<AbstractBackendException, List<GrantedRightModel>> =
         GrantedRights.getAllRightsFor(workerId) { list(mapper) }
 
-    override suspend fun contains(workerId: WorkerId, code: Code): Either<AbstractBackendException, Boolean> =
-        GrantedRights.contains(workerId, code).right()
+    override suspend fun containsAny(workerId: WorkerId, codes: List<Code>): Either<AbstractBackendException, Boolean> =
+        GrantedRights.contains(workerId, codes).right()
 
     override suspend fun removeFor(workerId: WorkerId, code: Code): Either<AbstractBackendException, Boolean> =
         (GrantedRights.remove(workerId, code) > 0).right()

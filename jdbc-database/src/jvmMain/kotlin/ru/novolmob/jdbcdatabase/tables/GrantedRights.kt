@@ -7,6 +7,7 @@ import ru.novolmob.jdbcdatabase.extensions.TableExtension.code
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.creationTime
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.idColumn
 import ru.novolmob.jdbcdatabase.tables.expressions.Expression.Companion.eq
+import ru.novolmob.jdbcdatabase.tables.expressions.Expression.Companion.inList
 import ru.novolmob.jdbcdatabase.tables.parameters.values.ParameterValue
 import java.sql.ResultSet
 
@@ -53,8 +54,8 @@ object GrantedRights: IdTable<GrantedRightId>() {
 
     suspend fun contains(
         workerId: WorkerId,
-        code: Code
-    ): Boolean = isExists((this.workerId eq workerId) and (this.code eq code))
+        codes: List<Code>
+    ): Boolean = isExists((this.workerId eq workerId) and (this.code inList codes))
 
     suspend fun remove(
         workerId: WorkerId,

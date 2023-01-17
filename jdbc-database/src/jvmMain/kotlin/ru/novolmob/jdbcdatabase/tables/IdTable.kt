@@ -26,7 +26,10 @@ abstract class IdTable<ID: Comparable<ID>>(name: String? = null): Table(name) {
         val sql = DatabaseVocabulary.selectSql(
             columns = listOf(
                 DatabaseVocabulary.exists(
-                    DatabaseVocabulary.selectSql(where = expression.sqlString)
+                    DatabaseVocabulary.selectSql(
+                        from = name,
+                        where = expression.sqlString
+                    )
                 )
             )
         ).also { println("Select from $name:  $it") }

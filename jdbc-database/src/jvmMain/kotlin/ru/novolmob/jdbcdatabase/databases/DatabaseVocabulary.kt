@@ -48,12 +48,13 @@ object DatabaseVocabulary {
     fun char(n: Int) = "$CHAR($n)"
     fun String.isChar() = startsWith(CHAR)
     fun default(sql: String) = "DEFAULT $sql"
-    fun exists(sql: String) = "exists($sql)"
+    fun exists(sql: String) = "exists(${sql.removeSuffix(";")})"
     fun asNewName(parameter: String, newName: String) = "$parameter AS $newName"
     fun foreignKey(constraintName: String, parameterName: String, references: String, properties: List<String> = emptyList()): String =
         "CONSTRAINT $constraintName FOREIGN KEY ($parameterName) REFERENCES $references" +
                 (properties.takeIf { it.isNotEmpty() }?.joinToString(" ", prefix = " ") ?: "")
-    fun between(parameter: String, ): String = "$parameter BETWEEN $PARAMETER_SYMBOL AND $PARAMETER_SYMBOL"
+    fun between(parameter: String): String = "$parameter BETWEEN $PARAMETER_SYMBOL AND $PARAMETER_SYMBOL"
+    fun inList(parameter: String, count: Int): String = "$parameter IN (${List(count){ PARAMETER_SYMBOL }.joinToString()})"
     fun join(table: String, firstTableAndParam: String, secondTableAndParam: String) =
         "JOIN $table ON $firstTableAndParam $EQUAL_SYMBOL $secondTableAndParam"
     fun rightJoin(table: String, firstTableAndParam: String, secondTableAndParam: String) =

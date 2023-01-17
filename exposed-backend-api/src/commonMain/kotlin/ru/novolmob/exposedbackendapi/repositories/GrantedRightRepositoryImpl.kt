@@ -35,9 +35,9 @@ class GrantedRightRepositoryImpl(
                 .parTraverseEither { mapper(it) }
         }
 
-    override suspend fun contains(workerId: WorkerId, code: Code): Either<AbstractBackendException, Boolean> =
+    override suspend fun containsAny(workerId: WorkerId, codes: List<Code>): Either<AbstractBackendException, Boolean> =
         newSuspendedTransaction(Dispatchers.IO) {
-            (find(workerId, code) != null).right()
+            (!GrantedRight.find { GrantedRights.code inList codes }.empty()).right()
         }
 
     override suspend fun removeFor(workerId: WorkerId, code: Code): Either<AbstractBackendException, Boolean> =

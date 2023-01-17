@@ -21,12 +21,14 @@ import ru.novolmob.backendapi.models.UserModel
 import ru.novolmob.backendapi.models.WorkerModel
 import ru.novolmob.backendapi.repositories.IGrantedRightRepository
 import ru.novolmob.backendapi.repositories.IUserRepository
+import ru.novolmob.backendapi.repositories.IWorkerRepository
+import ru.novolmob.backendapi.rights.Rights
 import ru.novolmob.core.models.AccessToken
-import ru.novolmob.core.models.Code
 
 object AuthUtil: KoinComponent {
     private val grantedRightRepository: IGrantedRightRepository by inject()
     private val userRepository: IUserRepository by inject()
+    private val workerRepository: IWorkerRepository by inject()
 
     private object AuthorizationRouteSelector: RouteSelector() {
         override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation =
@@ -50,27 +52,28 @@ object AuthUtil: KoinComponent {
         name = "WorkerAuthorizationPlugin",
         createConfiguration = ::WorkerAuthorizationPluginConfiguration
     ) {
-        val requiredRight = pluginConfig.code
+        val requiredRight = pluginConfig.right
         val repository = pluginConfig.grantedRightRepository
         on(AuthenticationChecked) { call ->
             val principal = call.principal<WorkerPrincipal>()
             if (principal == null) {
                 call.respondException(notAuthorizedException())
                 return@on
-            } else if (requiredRight != null && !repository.contains(principal.worker.id, requiredRight).getOrElse { false }) {
+            } else if (requiredRight != null && !repository.containsAny(principal.worker.id, requiredRight.tree).getOrElse { false }) {
                 call.respondException(dontHaveRightsException())
                 return@on
             }
         }
     }
 
-    fun Route.workerPermission(code: Code? = null, block: Route.() -> Unit): Route =
+    fun Route.workerPermission(right: Rights? = null, block: Route.() -> Unit): Route =
         createChild(AuthorizationRouteSelector).apply {
             install(WorkerAuthorizationPlugin) {
-                this.code = code
+                this.right = right
             }
             block()
         }
+
     fun Route.userPermission(block: Route.() -> Unit): Route =
         createChild(AuthorizationRouteSelector).apply {
             install(UserAuthorizationPlugin)
@@ -97,9 +100,9 @@ object AuthUtil: KoinComponent {
     fun JWTCreator.Builder.user(user: UserModel) =
         withClaim("userId", Json.encodeToString(user.id))
     suspend fun JWTCredential.worker(): WorkerModel? =
-        getClaim("workerId", String::class)?.let { Json.decodeFromString<WorkerModel>(it) }
+        getClaim("workerId", String::class)?.let { workerRepository.get(Json.decodeFromString(it)).orNull() }
     fun JWTCreator.Builder.worker(worker: WorkerModel) =
-        withClaim("workerId", Json.encodeToString(worker))
+        withClaim("workerId", Json.encodeToString(worker.id))
 
     fun Application.authentication() {
         authentication {
@@ -139,7 +142,7 @@ object AuthUtil: KoinComponent {
         .let(::AccessToken)
 
     class WorkerAuthorizationPluginConfiguration: KoinComponent {
-        var code: Code? = null
+        var right: Rights? = null
         val grantedRightRepository = AuthUtil.grantedRightRepository
     }
 }
