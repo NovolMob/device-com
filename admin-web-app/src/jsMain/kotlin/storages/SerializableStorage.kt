@@ -8,18 +8,15 @@ import kotlinx.serialization.json.Json
 
 open class SerializableStorage<T>(
     name: String? = null,
-    val serializer: KSerializer<T>,
-    val json: Json = Json
+    open val serializer: KSerializer<T>,
+    open val json: Json = Json
 ): IStorage<T> {
     override val key: String = name ?: serializer.descriptor.serialName
-    private val _value = MutableStateFlow<T?>(null)
+    private val _value by lazy { MutableStateFlow(getFromLocalStorage()) }
     override val value: StateFlow<T?> = _value.asStateFlow()
 
     init {
         storageScope.launch {
-            launch {
-                set(getFromLocalStorage())
-            }
             launch {
                 value.collectLatest { value ->
                     setInLocalStorage(value)

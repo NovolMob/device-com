@@ -22,7 +22,6 @@ fun main() {
     renderComposable(
         rootElementId = "root",
     ) {
-        kotlinext.js.require("three-dots/dist/three-dots.css")
         Style(Styles)
 
         val current by Navigation.current.collectAsState()

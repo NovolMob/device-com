@@ -5,7 +5,10 @@ import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.events.SyntheticKeyboardEvent
+import ru.novolmob.core.models.Email.Companion.email
 import ru.novolmob.core.models.EmailChecking
+import ru.novolmob.core.models.Password.Companion.password
+import ru.novolmob.core.models.PhoneNumber.Companion.phoneNumber
 import ru.novolmob.core.models.PhoneNumberChecking
 import services.IProfileService
 import styles.Colors
@@ -49,8 +52,14 @@ fun loginScreen(
         } else {
             divider()
             form(
-                byEmail = { _, _ -> },
-                byPhoneNumber = { _, _ -> }
+                byEmail = { email, password ->
+                    profileService.loginByEmail(email.email(), password.password())
+                },
+                byPhoneNumber = { phoneNumber, password ->
+                    phoneNumber.phoneNumber()?.let {
+                        profileService.loginByPhoneNumber(it, password.password())
+                    }
+                }
             )
         }
     }
@@ -199,7 +208,6 @@ private fun phoneNumberForm(
         Br()
         submitInput(
             activeButton = activeButton,
-            onClick = { onSubmit(phoneNumber, password) }
         )
     }
 }
@@ -256,19 +264,13 @@ private fun emailForm(
         Br()
         submitInput(
             activeButton = activeButton,
-            onClick = {
-                if (activeButton) {
-                    onSubmit(email, password)
-                }
-            }
         )
     }
 }
 
 @Composable
 private fun submitInput(
-    activeButton: Boolean,
-    onClick: () -> Unit
+    activeButton: Boolean
 ) {
     val buttonColor by remember(activeButton) {
         derivedStateOf {
@@ -288,7 +290,6 @@ private fun submitInput(
         }
     ) {
         SubmitInput {
-            onClick { onClick() }
             style {
                 margin(10.px)
                 padding(5.px, 15.px, 5.px, 15.px)

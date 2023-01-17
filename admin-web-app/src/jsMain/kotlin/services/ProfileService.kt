@@ -22,11 +22,9 @@ import utils.EitherUtil.loginChecking
 interface IProfileService: IService {
     val profile: StateFlow<WorkerModel?>
 
-    suspend fun loginByEmail(email: Email, password: Password): Either<AbstractBackendException, WorkerModel>
-    suspend fun loginByPhoneNumber(phoneNumber: PhoneNumber, password: Password): Either<AbstractBackendException, WorkerModel>
-
-    suspend fun logout(): Either<AbstractBackendException, Unit>
-
+    fun loginByEmail(email: Email, password: Password)
+    fun loginByPhoneNumber(phoneNumber: PhoneNumber, password: Password)
+    fun logout()
     fun get(): WorkerModel?
 }
 
@@ -67,31 +65,40 @@ class ProfileServiceImpl(
         logoutAction()
     }
 
-    override suspend fun loginByEmail(
+    override fun loginByEmail(
         email: Email,
         password: Password
-    ): Either<AbstractBackendException, WorkerModel> =
-        workerRepository.login(email = email, password = password)
-            .flatMap {
-                loginAction(it)
-                update()
-            }
+    ) {
+        serviceScope.launch {
+            workerRepository.login(email = email, password = password)
+                .flatMap {
+                    loginAction(it)
+                    update()
+                }
+        }
+    }
 
-    override suspend fun loginByPhoneNumber(
+    override fun loginByPhoneNumber(
         phoneNumber: PhoneNumber,
         password: Password
-    ): Either<AbstractBackendException, WorkerModel> =
-        workerRepository.login(phoneNumber = phoneNumber, password = password)
-            .flatMap {
-                loginAction(it)
-                update()
-            }
-
-    override suspend fun logout(): Either<AbstractBackendException, Unit> =
-        workerRepository.logout().flatMap {
-            logoutAction()
-            Unit.right()
+    ) {
+        serviceScope.launch {
+            workerRepository.login(phoneNumber = phoneNumber, password = password)
+                .flatMap {
+                    loginAction(it)
+                    update()
+                }
         }
+    }
+
+    override fun logout() {
+        serviceScope.launch {
+            workerRepository.logout().flatMap {
+                logoutAction()
+                Unit.right()
+            }
+        }
+    }
 
     override fun get(): WorkerModel? = _profile.value
 
