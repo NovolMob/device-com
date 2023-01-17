@@ -1,5 +1,6 @@
 package ru.novolmob.jdbcdatabase.views
 
+import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.UUIDable
 import ru.novolmob.core.models.ids.UserId
 import ru.novolmob.core.models.ids.WorkerId
@@ -43,6 +44,12 @@ sealed class CredentialView<ID: UUIDable>(
         val lastname = registerParameter(reference = Workers.lastname)
         val patronymic = registerParameter(reference = Workers.patronymic)
         val language = registerParameter(reference = Workers.language)
+
+        suspend fun <T> select(
+            pointId: PointId,
+            block: suspend ResultSet.() -> T
+        ): T = select(expression = this.pointId eq pointId, block = block)
+
     }
 
 }

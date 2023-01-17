@@ -2,13 +2,18 @@ package ru.novolmob.jdbcdatabase.functions
 
 import ru.novolmob.core.models.Email
 import ru.novolmob.core.models.Password
+import ru.novolmob.core.models.ids.UUIDable
+import ru.novolmob.core.models.ids.UserId
+import ru.novolmob.core.models.ids.WorkerId
 import ru.novolmob.jdbcdatabase.databases.DatabaseVocabulary
 import ru.novolmob.jdbcdatabase.views.CredentialView
 import java.sql.ResultSet
 
-object LoginByEmailFunction: RefcursorFunction(
+sealed class LoginByEmailFunction<ID>(
+    val credentialView: CredentialView<ID>
+): RefcursorFunction(
     functionLanguage = DatabaseVocabulary.Language.PLPGSQL
-) {
+) where ID : UUIDable, ID: Comparable<ID> {
 
     val email = email("f_email")
     val password = password("f_password")
@@ -17,9 +22,9 @@ object LoginByEmailFunction: RefcursorFunction(
         "DECLARE\n" +
                 "    ref refcursor DEFAULT 'cursor_$name';" +
                 "BEGIN\n" +
-                "    OPEN ref FOR SELECT * FROM ${CredentialView.UserCredentialView} " +
-                "WHERE ${CredentialView.UserCredentialView.email} = $email " +
-                "AND ${CredentialView.UserCredentialView.password} = $password LIMIT 1;\n" +
+                "    OPEN ref FOR SELECT * FROM $credentialView " +
+                "WHERE ${credentialView.email} = $email " +
+                "AND ${credentialView.password} = $password LIMIT 1;\n" +
                 "    RETURN ref;\n" +
                 "END;"
 
@@ -33,5 +38,8 @@ object LoginByEmailFunction: RefcursorFunction(
             this.password valueOf password,
             block = block
         )
+
+    object UserLoginByEmailFunction: LoginByEmailFunction<UserId>(CredentialView.UserCredentialView)
+    object WorkerLoginByEmailFunction: LoginByEmailFunction<WorkerId>(CredentialView.WorkerCredentialView)
 
 }

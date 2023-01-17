@@ -34,7 +34,8 @@ object DatabaseUtil: KoinComponent {
 
     val functions = listOf(
         CreationOrUpdateUserFunction,CreationOrUpdateWorkerFunction,
-        LoginByEmailFunction, LoginByPhoneNumberFunction, GettingBasketFunction,
+        LoginByEmailFunction.UserLoginByEmailFunction, LoginByEmailFunction.WorkerLoginByEmailFunction, LoginByPhoneNumberFunction.UserLoginByPhoneNumberFunction,
+        LoginByPhoneNumberFunction.WorkerLoginByPhoneNumberFunction, GettingBasketFunction,
         GettingCatalogFunction, CreationOrUpdateTableFunction.CreationOrUpdateGranterRightFunction,
         GettingLastStatusFunction, GettingOrderDevicesFunction, ConfirmOrderFunction,
         UpdateTimeFunction(
@@ -44,8 +45,7 @@ object DatabaseUtil: KoinComponent {
                 Points, PointDetails,
                 Users, Credentials.UserCredentials,
                 Workers, Credentials.WorkerCredentials,
-                Baskets, GrantedRights,
-                OrderStatuses, OrderStatusDetails
+                Baskets, OrderStatuses, OrderStatusDetails
             )
         )
     )

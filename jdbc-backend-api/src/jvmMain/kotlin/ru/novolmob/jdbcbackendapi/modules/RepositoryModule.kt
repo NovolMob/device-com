@@ -76,4 +76,10 @@ val repositoryModule = module {
             orderToDeviceRepository = get()
         )
     }
+    single<IWorkerRepository> {
+        WorkerRepositoryImpl(
+            mapper = get<WorkerMapper>(),
+            passwordTransformation = PasswordTransformation()
+        )
+    }
 }

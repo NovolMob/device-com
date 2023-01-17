@@ -26,4 +26,5 @@ val mapperModule = module {
     singleOf(::OrderItemMapper)
     singleOf(::BlankOrderShortModelMapper)
     singleOf(::BlankOrderFullModelMapper)
+    singleOf(::WorkerMapper)
 }
