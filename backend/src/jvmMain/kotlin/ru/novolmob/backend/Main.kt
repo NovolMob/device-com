@@ -1,11 +1,13 @@
 package ru.novolmob.backend
 
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
@@ -55,6 +57,15 @@ fun Application.backend() {
             cause.printStackTrace()
         }
     }
+    install(CORS) {
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Delete)
+        allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.ContentType)
+        anyHost()
+    }
     authentication()
 
     install(Resources)
@@ -67,7 +78,8 @@ fun Application.backend() {
             DevicesRouting,
             OrderRouting,
             PointRouting,
-            UserRouting
+            UserRouting,
+            WorkerRouting
         )
     }
 }
