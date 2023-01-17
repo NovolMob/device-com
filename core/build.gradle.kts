@@ -18,7 +18,9 @@ repositories {
 }
 
 kotlin {
-    jvm()
+    jvm {
+        withJava()
+    }
     js(IR) {
         useCommonJs()
         nodejs()

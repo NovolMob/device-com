@@ -20,7 +20,9 @@ repositories {
 }
 
 kotlin {
-    jvm()
+    jvm {
+        withJava()
+    }
     sourceSets {
         val jvmMain by getting {
             dependencies {
