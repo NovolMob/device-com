@@ -7,6 +7,7 @@ import ru.novolmob.core.models.ids.CredentialId
 import ru.novolmob.core.models.ids.UUIDable
 import ru.novolmob.core.models.ids.UserId
 import ru.novolmob.core.models.ids.WorkerId
+import ru.novolmob.jdbcdatabase.extensions.PreparedStatementExtension.get
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.email
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.idColumn
 import ru.novolmob.jdbcdatabase.extensions.TableExtension.password
@@ -79,16 +80,24 @@ sealed class Credentials<ID: UUIDable>(name: String? = null): IdTable<Credential
         ownerId: ID
     ) = delete(expression = this.ownerId eq ownerId)
 
-    suspend fun isExists(
-        email: Email? = null, phoneNumber: PhoneNumber? = null
+    suspend fun check(
+        ownerId: ID? = null, email: Email? = null, phoneNumber: PhoneNumber? = null
     ): Boolean {
-        val expressionEmail = email?.let { this.email eq it }
-        val expressionPhoneNumber = phoneNumber?.let { this.phoneNumber eq it }
-        val expression =
-            if (expressionEmail == null) expressionPhoneNumber!!
-            else if (expressionPhoneNumber == null) expressionEmail
-            else expressionEmail and expressionPhoneNumber
-        return isExists(expression)
+        val emailValid = email?.let {
+            select(expression = this.email eq it) {
+                if (next()) {
+                    get(this@Credentials.ownerId) == ownerId
+                } else true
+            }
+        } ?: true
+        val phoneNumberValid = phoneNumber?.let {
+            select(expression = this.phoneNumber eq it) {
+                if (next()) {
+                    get(this@Credentials.ownerId) == ownerId
+                } else true
+            }
+        } ?: true
+        return emailValid && phoneNumberValid
     }
 
     object UserCredentials: Credentials<UserId>() {

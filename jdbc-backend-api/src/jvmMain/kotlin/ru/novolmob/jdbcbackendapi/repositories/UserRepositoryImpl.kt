@@ -32,10 +32,10 @@ class UserRepositoryImpl(
         phoneNumber: PhoneNumber,
         password: Password
     ): Either<AbstractBackendException, UserModel> =
-        LoginByPhoneNumberFunction.call(phoneNumber, passwordTransformation(password)) { fold(ifEmpty = { badCredentialsException() }, mapper::invoke) }
+        LoginByPhoneNumberFunction.UserLoginByPhoneNumberFunction.call(phoneNumber, passwordTransformation(password)) { fold(ifEmpty = { badCredentialsException() }, mapper::invoke) }
 
     override suspend fun login(email: Email, password: Password): Either<AbstractBackendException, UserModel> =
-        LoginByEmailFunction.call(email, passwordTransformation(password)) { fold(ifEmpty = { badCredentialsException() }, mapper::invoke) }
+        LoginByEmailFunction.UserLoginByEmailFunction.call(email, passwordTransformation(password)) { fold(ifEmpty = { badCredentialsException() }, mapper::invoke) }
 
     override suspend fun get(id: UserId): Either<AbstractBackendException, UserModel> =
         CredentialView.UserCredentialView.select(id) { fold(ifEmpty = { userByIdNotFound(id) }, mapper::invoke) }
@@ -44,7 +44,7 @@ class UserRepositoryImpl(
         RepositoryUtil.getAll(CredentialView.UserCredentialView, pagination, mapper)
 
     override suspend fun post(createModel: UserCreateModel): Either<AbstractBackendException, UserModel> {
-        if (Credentials.UserCredentials.isExists(createModel.email, createModel.phoneNumber))
+        if (!Credentials.UserCredentials.check(email = createModel.email, phoneNumber = createModel.phoneNumber))
             return emailOrPhoneNumberNotUnique().left()
         return CreationOrUpdateUserFunction.call(
             firstname = createModel.firstname,
@@ -60,7 +60,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun post(id: UserId, createModel: UserCreateModel): Either<AbstractBackendException, UserModel> {
-        if (Credentials.UserCredentials.isExists(createModel.email, createModel.phoneNumber))
+        if (!Credentials.UserCredentials.check(id, createModel.email, createModel.phoneNumber))
             return emailOrPhoneNumberNotUnique().left()
         return CreationOrUpdateUserFunction.call(
             userId = id,
@@ -78,6 +78,13 @@ class UserRepositoryImpl(
 
     override suspend fun put(id: UserId, updateModel: UserUpdateModel): Either<AbstractBackendException, UserModel> {
         return Either.backend {
+            if (listOf(updateModel.email, updateModel.phoneNumber, updateModel.password).any { it != null }) {
+                if (!Credentials.UserCredentials.check(id, updateModel.email, updateModel.phoneNumber))
+                    return emailOrPhoneNumberNotUnique().left()
+                Credentials.UserCredentials.update(
+                    ownerId = id, email = updateModel.email, phoneNumber = updateModel.phoneNumber, password = updateModel.password?.let(passwordTransformation::invoke)
+                )
+            }
             if (listOf(
                     updateModel.firstname, updateModel.lastname, updateModel.patronymic,
                     updateModel.birthday, updateModel.cityId, updateModel.language
@@ -88,17 +95,7 @@ class UserRepositoryImpl(
                     cityId = updateModel.cityId, language = updateModel.language
                 )
             }
-            if (listOf(updateModel.email, updateModel.phoneNumber, updateModel.password).any { it != null }) {
-                if ( (updateModel.email != null || updateModel.phoneNumber != null) &&
-                    Credentials.UserCredentials.isExists(updateModel.email, updateModel.phoneNumber))
-                    return emailOrPhoneNumberNotUnique().left()
-                Credentials.UserCredentials.update(
-                    ownerId = id, email = updateModel.email, phoneNumber = updateModel.phoneNumber, password = updateModel.password?.let(passwordTransformation::invoke)
-                )
-            }
-        }.flatMap {
-            get(id)
-        }
+        }.flatMap { get(id) }
     }
 
     override suspend fun delete(id: UserId): Either<AbstractBackendException, Boolean> =

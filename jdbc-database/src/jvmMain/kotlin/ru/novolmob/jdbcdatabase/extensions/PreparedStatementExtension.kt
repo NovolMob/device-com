@@ -74,10 +74,10 @@ object PreparedStatementExtension {
             }
         }
 
-    inline infix fun <reified T: Any> ResultSet.get(parameter: IParameter<T>): T =
+    infix fun <T: Any> ResultSet.get(parameter: IParameter<T>): T =
         getOrNull(parameter) ?: throw Exception("${parameter.name} not found")
 
-    inline infix fun <reified T: Any> ResultSet.getOrNull(parameter: IParameter<T>): T? =
+    infix fun <T: Any> ResultSet.getOrNull(parameter: IParameter<T>): T? =
         parameter.type.databaseType.let { type ->
             when {
                 type == DatabaseVocabulary.TEXT -> getString(parameter.name)
