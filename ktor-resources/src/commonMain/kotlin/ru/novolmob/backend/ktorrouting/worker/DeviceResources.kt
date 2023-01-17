@@ -1,45 +1,52 @@
 package ru.novolmob.backend.ktorrouting.worker
 
+import io.ktor.resources.*
+import kotlinx.serialization.Serializable
 import ru.novolmob.backendapi.models.Pagination
 import ru.novolmob.core.models.ids.DeviceDetailId
 import ru.novolmob.core.models.ids.DeviceId
 import ru.novolmob.core.models.ids.DeviceTypeDetailId
 import ru.novolmob.core.models.ids.DeviceTypeId
 
-
-expect class Devices(
-    page: Long? = null,
-    pageSize: Long? = null,
-    sortByColumn: String? = null,
-    sortOrder: String? = null
+@Serializable
+@Resource("devices")
+class Devices(
+    override val page: Long? = null,
+    override val pageSize: Long? = null,
+    override val sortByColumn: String? = null,
+    override val sortOrder: String? = null
 ): Pagination {
-    class Detail(id: DeviceDetailId) {
-        val id: DeviceDetailId
+    @Serializable
+    @Resource("details/{id}")
+    class Detail(val id: DeviceDetailId, val devices: Devices = Devices())
+    @Serializable
+    @Resource("{id}")
+    class Id(val id: DeviceId, val devices: Devices = Devices()) {
+        @Serializable
+        @Resource("details")
+        class Details(val id: Id)
+        @Serializable
+        @Resource("points")
+        class Points(val id: Id)
     }
-    class Id(id: DeviceId) {
-        val id: DeviceId
-        class Details(id: DeviceId) {
-            val id: DeviceId
-        }
-        class Points(id: DeviceId) {
-            val id: DeviceId
-        }
-    }
-
+    @Serializable
+    @Resource("types")
     class Types(
-        page: Long? = null,
-        pageSize: Long? = null,
-        sortByColumn: String? = null,
-        sortOrder: String? = null
+        override val page: Long? = null,
+        override val pageSize: Long? = null,
+        override val sortByColumn: String? = null,
+        override val sortOrder: String? = null,
+        val devices: Devices = Devices()
     ): Pagination {
-        class Detail(id: DeviceTypeDetailId) {
-            val id: DeviceTypeDetailId
-        }
-        class Id(id: DeviceTypeId) {
-            val id: DeviceTypeId
-            class Details(id: DeviceTypeId) {
-                val id: DeviceTypeId
-            }
+        @Serializable
+        @Resource("details/{id}")
+        class Detail(val id: DeviceTypeDetailId, val types: Types = Types())
+        @Serializable
+        @Resource("{id}")
+        class Id(val id: DeviceTypeId, val types: Types = Types()) {
+            @Serializable
+            @Resource("details")
+            class Details(val id: Id)
         }
     }
 }

@@ -1,21 +1,32 @@
 package ru.novolmob.backend.ktorrouting.worker
 
+import io.ktor.resources.*
+import kotlinx.serialization.Serializable
 import ru.novolmob.backendapi.models.Pagination
 import ru.novolmob.core.models.ids.WorkerId
 
-expect class Workers(
-    page: Long? = null,
-    pageSize: Long? = null,
-    sortByColumn: String? = null,
-    sortOrder: String? = null
+@Serializable
+@Resource("workers")
+class Workers(
+    override val page: Long? = null,
+    override val pageSize: Long? = null,
+    override val sortByColumn: String? = null,
+    override val sortOrder: String? = null
 ): Pagination {
-    class Worker
-    class Logout
-    class Id(id: WorkerId) {
-        val id: WorkerId
-        class Rights(id: WorkerId) {
-            val id: WorkerId
-        }
+    @Serializable
+    @Resource("{id}")
+    class Id(val id: WorkerId, val workers: Workers = Workers()) {
+        @Serializable
+        @Resource("rights")
+        class Rights(val id: Id)
     }
-    class Login
+    @Serializable
+    @Resource("login")
+    class Login(val workers: Workers = Workers())
+    @Serializable
+    @Resource("current")
+    class Worker(val workers: Workers = Workers())
+    @Serializable
+    @Resource("logout")
+    class Logout(val workers: Workers = Workers())
 }

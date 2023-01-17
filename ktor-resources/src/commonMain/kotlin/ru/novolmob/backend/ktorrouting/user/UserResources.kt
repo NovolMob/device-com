@@ -1,15 +1,20 @@
 package ru.novolmob.backend.ktorrouting.user
 
+import io.ktor.resources.*
 import kotlinx.serialization.Serializable
 
 @Serializable
-expect class User
+@Resource("user")
+class User
 
 @Serializable
-expect class Login
+@Resource("login")
+class Login
 
 @Serializable
-expect class Logout
+@Resource("logout")
+class Logout
 
 @Serializable
-expect class Registration
+@Resource("registration")
+class Registration

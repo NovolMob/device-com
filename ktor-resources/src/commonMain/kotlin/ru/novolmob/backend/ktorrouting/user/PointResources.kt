@@ -1,16 +1,22 @@
 package ru.novolmob.backend.ktorrouting.user
 
+import io.ktor.resources.*
+import kotlinx.serialization.Serializable
 import ru.novolmob.backendapi.models.Pagination
 import ru.novolmob.core.models.ids.PointId
 
-expect class Points(
-    page: Long? = null,
-    pageSize: Long? = null,
-    sortByColumn: String? = null,
-    sortOrder: String? = null
+@Serializable
+@Resource("points")
+class Points(
+    override val page: Long? = null,
+    override val pageSize: Long? = null,
+    override val sortByColumn: String? = null,
+    override val sortOrder: String? = null
 ): Pagination {
-    class ByCity
-    class Id(id: PointId) {
-        val id: PointId
-    }
+    @Serializable
+    @Resource("by_city")
+    class ByCity(val points: Points = Points())
+    @Serializable
+    @Resource("{id}")
+    class Id(val id: PointId, val points: Points = Points())
 }

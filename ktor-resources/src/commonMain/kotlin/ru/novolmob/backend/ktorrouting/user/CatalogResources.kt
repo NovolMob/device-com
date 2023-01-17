@@ -1,12 +1,15 @@
 package ru.novolmob.backend.ktorrouting.user
 
+import io.ktor.resources.*
+import kotlinx.serialization.Serializable
 import ru.novolmob.backendapi.models.CatalogSearchSample
 import ru.novolmob.core.models.ids.DeviceTypeId
 
-
-expect class Catalog(
-    page: Int? = null,
-    pageSize: Int? = null,
-    searchString: String? = null,
-    deviceTypeId: DeviceTypeId? = null,
+@Resource("catalog")
+@Serializable
+class Catalog(
+    override val page: Int? = null,
+    override val pageSize: Int? = null,
+    override val searchString: String? = null,
+    override val deviceTypeId: DeviceTypeId? = null,
 ): CatalogSearchSample

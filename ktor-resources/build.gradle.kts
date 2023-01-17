@@ -30,17 +30,6 @@ kotlin {
                 implementation(project(":core"))
                 implementation(project(":backend-api"))
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
-            }
-        }
-        val jvmMain by getting {
-            dependencies {
-                implementation("io.ktor:ktor-client-jvm:$ktor_version")
-                implementation("io.ktor:ktor-client-resources:$ktor_version")
-            }
-        }
-        val jsMain by getting {
-            dependencies {
-                implementation("io.ktor:ktor-client-js:$ktor_version")
                 implementation("io.ktor:ktor-client-resources:$ktor_version")
             }
         }
