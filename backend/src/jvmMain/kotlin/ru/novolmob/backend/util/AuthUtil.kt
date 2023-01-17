@@ -1,5 +1,6 @@
 package ru.novolmob.backend.util
 
+import arrow.core.flatMap
 import arrow.core.getOrElse
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTCreator
@@ -9,6 +10,9 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -17,18 +21,49 @@ import org.koin.core.component.inject
 import ru.novolmob.backend.util.KtorUtil.respondException
 import ru.novolmob.backendapi.exceptions.dontHaveRightsException
 import ru.novolmob.backendapi.exceptions.notAuthorizedException
+import ru.novolmob.backendapi.models.GrantedRightCreateModel
 import ru.novolmob.backendapi.models.UserModel
+import ru.novolmob.backendapi.models.WorkerCreateModel
 import ru.novolmob.backendapi.models.WorkerModel
 import ru.novolmob.backendapi.repositories.IGrantedRightRepository
 import ru.novolmob.backendapi.repositories.IUserRepository
 import ru.novolmob.backendapi.repositories.IWorkerRepository
 import ru.novolmob.backendapi.rights.Rights
 import ru.novolmob.core.models.AccessToken
+import ru.novolmob.core.models.Email.Companion.email
+import ru.novolmob.core.models.Firstname.Companion.firstname
+import ru.novolmob.core.models.Language.Companion.language
+import ru.novolmob.core.models.Lastname.Companion.lastname
+import ru.novolmob.core.models.Password.Companion.password
+import ru.novolmob.core.models.PhoneNumber
 
 object AuthUtil: KoinComponent {
     private val grantedRightRepository: IGrantedRightRepository by inject()
     private val userRepository: IUserRepository by inject()
     private val workerRepository: IWorkerRepository by inject()
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            workerRepository.post(
+                WorkerCreateModel(
+                    firstname = "Admin".firstname(),
+                    lastname = "Admin".lastname(),
+                    language = "ru".language(),
+                    email = "admin@admin.com".email(),
+                    phoneNumber = PhoneNumber(1uL, 111uL, 1111111uL),
+                    password = "q1".password()
+                )
+            ).flatMap {
+                grantedRightRepository.post(
+                    GrantedRightCreateModel(
+                        workerId = it.id,
+                        code = Rights.code,
+                        adminId = it.id
+                    )
+                )
+            }
+        }
+    }
 
     private object AuthorizationRouteSelector: RouteSelector() {
         override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation =
