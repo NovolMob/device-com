@@ -10,6 +10,7 @@ plugins {
     java
     `java-library`
     kotlin("multiplatform")
+    id("io.ktor.plugin") version "2.2.2"
     kotlin("plugin.serialization")
 }
 
