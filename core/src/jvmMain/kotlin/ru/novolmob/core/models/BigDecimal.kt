@@ -21,6 +21,15 @@ actual class BigDecimal(
     actual fun abs(): BigDecimal = BigDecimal(javaBigDecimal.abs())
 
     actual fun toPlainString(): String = javaBigDecimal.toPlainString()
+    actual override fun equals(other: Any?): Boolean {
+        if (null == other)
+            return false
+        return if (other is BigDecimal) {
+            javaBigDecimal == other.javaBigDecimal
+        } else if (other is java.math.BigDecimal) {
+            javaBigDecimal == other
+        } else false
+    }
 
     actual companion object {
         actual val ZERO: BigDecimal

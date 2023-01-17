@@ -53,6 +53,13 @@ actual class UUID actual constructor(actual val mostSigBits: Long, actual val le
             insert(23, '-')
         }
 
+    actual override fun equals(other: Any?): Boolean {
+        if ((null == other) || (other !is UUID))
+            return false
+        return (mostSigBits == other.mostSigBits &&
+                leastSigBits == other.leastSigBits)
+    }
+
     actual companion object {
         actual fun randomUUID(): UUID = fromString(UuidJsUtil.v4())
 

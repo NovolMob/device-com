@@ -6,6 +6,7 @@ expect class UUID(mostSigBits: Long, leastSigBits: Long): Comparable<UUID> {
     val leastSigBits: Long
 
     override fun toString(): String
+    override fun equals(other: Any?): Boolean
     companion object {
         fun randomUUID(): UUID
         fun fromString(string: String): UUID

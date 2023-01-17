@@ -37,6 +37,11 @@ actual class BigDecimal(private val jsBigDecimal: BigDecimalJs): Number() {
     actual fun toPlainString(): String = jsBigDecimal.value
     override fun toString(): String = toPlainString()
 
+    actual override fun equals(other: Any?): Boolean {
+        if (other == null || other !is BigDecimal) return false
+        return toString() == other.toString()
+    }
+
     actual companion object {
         actual val ZERO: BigDecimal = "0.0".toBigDecimal()
 

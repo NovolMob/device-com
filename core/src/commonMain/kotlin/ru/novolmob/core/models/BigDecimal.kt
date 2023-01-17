@@ -16,6 +16,7 @@ expect class BigDecimal: Number {
     operator fun unaryMinus(): BigDecimal
     fun abs(): BigDecimal
     fun toPlainString(): String
+    override fun equals(other: Any?): Boolean
 
     companion object {
         val ZERO: BigDecimal

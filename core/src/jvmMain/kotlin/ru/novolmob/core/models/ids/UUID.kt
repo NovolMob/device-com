@@ -11,6 +11,15 @@ actual class UUID (val javaUUID: java.util.UUID) : Comparable<UUID> {
     override fun compareTo(other: UUID): Int = javaUUID.compareTo(other.javaUUID)
 
     actual override fun toString(): String = javaUUID.toString()
+    actual override fun equals(other: Any?): Boolean {
+        if ((null == other))
+            return false
+        return if (other is UUID) {
+            javaUUID == other.javaUUID
+        } else if (other is java.util.UUID) {
+            javaUUID == other
+        } else false
+    }
 
     actual companion object {
         actual fun randomUUID(): UUID = UUID(java.util.UUID.randomUUID())
