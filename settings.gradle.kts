@@ -7,7 +7,7 @@ pluginManagement {
 
 rootProject.name = "bd-practice"
 
-include("admin-web-app")
+//include("admin-web-app")
 include("backend")
 include("backend-api")
 include("core")
