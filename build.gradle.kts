@@ -1,38 +1,13 @@
-val githubMavenPackages = "https://maven.pkg.github.com"
-
 plugins {
-    `java`
-    id("maven-publish")
+    kotlin("multiplatform") version "1.8.0" apply false
+    id("org.jetbrains.compose") version "1.2.2" apply false
+    kotlin("plugin.serialization") version "1.8.0" apply false
 }
 
-allprojects {
-    if (rootProject == this) return@allprojects
-    afterEvaluate {
-        plugins.apply("maven-publish")
-        publishing {
-            repositories {
-                mavenGithubRepository("NovolMob/bd-practice")
-            }
-        }
+subprojects {
+    repositories {
+        mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://us-central1-maven.pkg.dev/varabyte-repos/public")
     }
 }
-
-fun runCommand(vararg command: String): String? = ProcessBuilder()
-    .command(*command)
-    .start()
-    .inputStream
-    .use { String(it.readAllBytes()).dropLast(1) }
-    .ifEmpty { null }
-
-fun getGitUsername(): String? = runCommand("git", "config", "--get", "user.name")
-fun getGitPassword(): String? = runCommand("git", "config", "--get", "user.token")
-
-fun RepositoryHandler.mavenGitRepository(path: Any) = maven {
-    url = uri(path)
-    credentials {
-        username = getGitUsername()
-        password = getGitPassword()
-    }
-}
-
-fun RepositoryHandler.mavenGithubRepository(name: String) = mavenGitRepository("$githubMavenPackages/$name")

@@ -4,37 +4,36 @@ val logback_version: String by project
 val ktor_version: String by project
 
 plugins {
-    application
     java
     `java-library`
     id("maven-publish")
-    kotlin("jvm") version "1.7.22"
-    id("io.ktor.plugin") version "2.1.3"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
+    kotlin("multiplatform")
+    kotlin("plugin.serialization")
 }
 
 group = "ru.novolmob.bd-practice"
 version = "0.0.5"
-application {
-    mainClass.set("MainKt")
-
-    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
-}
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation(project(":core"))
-    implementation(project(":backend-api"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
-
-    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-resources:$ktor_version")
-
-    testImplementation(kotlin("test"))
+kotlin {
+    jvm()
+    js(IR) {
+        browser()
+        binaries.executable()
+    }
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(project(":core"))
+                implementation(project(":backend-api"))
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
+                implementation("io.ktor:ktor-client-resources:$ktor_version")
+            }
+        }
+    }
 }
 
 publishing {
