@@ -23,13 +23,13 @@ abstract class AbstractDetailRepository<ID : Comparable<ID>, ParentID: Comparabl
     table, mapper, notFoundException
 ) {
     override suspend fun getDetailFor(parentId: ParentID, language: Language): Either<AbstractBackendException, Model> =
-        table.select(parentId, language) { fold(ifEmpty = { notFoundByParentIdException(parentId, language) }, mapper::invoke) }
+        table.selectByParentIdAndLanguage(parentId, language) { fold(ifEmpty = { notFoundByParentIdException(parentId, language) }, mapper::invoke) }
 
     override suspend fun removeDetailsFor(parentId: ParentID): Either<AbstractBackendException, Unit> {
-        table.delete(parentId)
+        table.deleteByParentId(parentId)
         return Unit.right()
     }
 
     override suspend fun getDetailsFor(parentId: ParentID): Either<AbstractBackendException, List<Model>> =
-        table.select(parentId) { list(mapper) }
+        table.selectByParentId(parentId) { list(mapper) }
 }

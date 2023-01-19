@@ -11,24 +11,24 @@ abstract class DetailTable<ID: Comparable<ID>, ParentID: Comparable<ParentID>>(n
     abstract val parentId: Constraint<ParentID>
     abstract val language: Column<Language>
 
-    suspend fun <T> select(
+    suspend fun <T> selectByParentIdAndLanguage(
         parentID: ParentID,
         language: Language,
         block: suspend ResultSet.() -> T
-    ): T = select(
+    ) = select(
         expression = (this.parentId eq parentID) and (this.language eq language),
         block = block
     )
 
-    suspend fun <T> select(
+    suspend fun <T> selectByParentId(
         parentID: ParentID,
         block: suspend ResultSet.() -> T
-    ): T = select(
+    ) = select(
         expression = (this.parentId eq parentID),
         block = block
     )
 
-    suspend fun delete(
+    suspend fun deleteByParentId(
         parentID: ParentID
     ) = delete(expression = (this.parentId eq parentID))
 
@@ -37,7 +37,7 @@ abstract class DetailTable<ID: Comparable<ID>, ParentID: Comparable<ParentID>>(n
         parentID: ParentID,
         language: Language
     ): Boolean {
-        return select(parentID, language) {
+        return selectByParentIdAndLanguage(parentID, language) {
             if (next())
                 get(this@DetailTable.id) == id && !next()
             else true
