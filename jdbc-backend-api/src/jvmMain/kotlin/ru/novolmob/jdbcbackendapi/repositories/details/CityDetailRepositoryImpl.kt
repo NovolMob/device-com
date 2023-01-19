@@ -48,7 +48,7 @@ class CityDetailRepositoryImpl(
             title = createModel.title,
             language = createModel.language
         ) {
-            fold(ifEmpty = { failedToCreateCityDetail() }, mapper::invoke)
+            fold(ifEmpty = { cityDetailByIdNotFound(id) }, mapper::invoke)
         }
     }
 

@@ -27,4 +27,9 @@ val mapperModule = module {
     singleOf(::BlankOrderShortModelMapper)
     singleOf(::BlankOrderFullModelMapper)
     singleOf(::WorkerMapper)
+    singleOf(::CityDetailMapper)
+    singleOf(::DeviceDetailMapper)
+    singleOf(::DeviceTypeDetailMapper)
+    singleOf(::OrderStatusDetailMapper)
+    singleOf(::PointDetailMapper)
 }

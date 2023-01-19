@@ -56,3 +56,9 @@ fun notEnoughDevices(list: List<DeviceId>) =
         code = BackendExceptionCode.NOT_ENOUGH_DEVICES,
         message = "Not enough devices [${list.joinToString()}]!"
     ).payload(list)
+
+fun failedToCreateOrderStatusDetail() =
+    AbstractBackendException.BackendException(
+        code = BackendExceptionCode.UNKNOWN,
+        message = "Failed to create order status detail!"
+    )

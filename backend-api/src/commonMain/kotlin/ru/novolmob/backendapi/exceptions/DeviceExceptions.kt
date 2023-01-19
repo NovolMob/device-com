@@ -36,10 +36,22 @@ fun deviceDetailByIdNotFound(deviceDetailId: DeviceDetailId) =
         message = "DeviceDetail with id $deviceDetailId not found!"
     )
 
+fun failedToCreateDeviceDetail() =
+    AbstractBackendException.BackendException(
+        code = BackendExceptionCode.UNKNOWN,
+        message = "Failed to create device detail!"
+    )
+
 fun deviceTypeDetailByIdNotFound(deviceTypeDetailId: DeviceTypeDetailId) =
     AbstractBackendException.BackendException(
         code = BackendExceptionCode.NOT_FOUND,
         message = "DeviceTypeDetail with id $deviceTypeDetailId not found!"
+    )
+
+fun failedToCreateDeviceTypeDetail() =
+    AbstractBackendException.BackendException(
+        code = BackendExceptionCode.UNKNOWN,
+        message = "Failed to create device type detail!"
     )
 
 fun deviceDetailByDeviceIdAndLanguageNotFound(deviceId: DeviceId, language: Language) =

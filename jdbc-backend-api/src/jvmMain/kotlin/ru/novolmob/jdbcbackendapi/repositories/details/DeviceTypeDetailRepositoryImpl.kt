@@ -29,7 +29,7 @@ class DeviceTypeDetailRepositoryImpl(
                     description = createModel.description,
                     language = createModel.language
                 ) {
-                    fold(ifEmpty = { failedToCreateCityDetail() }, mapper::invoke)
+                    fold(ifEmpty = { failedToCreateDeviceTypeDetail() }, mapper::invoke)
                 }
             },
             ifRight = {
@@ -50,7 +50,7 @@ class DeviceTypeDetailRepositoryImpl(
             description = createModel.description,
             language = createModel.language
         ) {
-            fold(ifEmpty = { failedToCreateCityDetail() }, mapper::invoke)
+            fold(ifEmpty = { deviceTypeDetailByIdNotFound(id) }, mapper::invoke)
         }
     }
 

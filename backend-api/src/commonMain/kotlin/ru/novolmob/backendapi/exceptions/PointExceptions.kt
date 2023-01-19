@@ -27,3 +27,9 @@ fun pointDetailByPointIdAndLanguageNotFound(pointId: PointId, language: Language
         code = BackendExceptionCode.NOT_FOUND,
         message = "PointDetail with language $language for point $pointId not found!"
     )
+
+fun failedToCreatePointDetail() =
+    AbstractBackendException.BackendException(
+        code = BackendExceptionCode.UNKNOWN,
+        message = "Failed to create point !"
+    )

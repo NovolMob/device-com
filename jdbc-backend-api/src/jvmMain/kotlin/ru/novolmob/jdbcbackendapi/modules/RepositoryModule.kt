@@ -5,6 +5,7 @@ import ru.novolmob.backendapi.repositories.*
 import ru.novolmob.backendapi.transformations.PasswordTransformation
 import ru.novolmob.jdbcbackendapi.mappers.*
 import ru.novolmob.jdbcbackendapi.repositories.*
+import ru.novolmob.jdbcbackendapi.repositories.details.*
 
 val repositoryModule = module {
     single<IUserRepository> {
@@ -80,6 +81,31 @@ val repositoryModule = module {
         WorkerRepositoryImpl(
             mapper = get<WorkerMapper>(),
             passwordTransformation = PasswordTransformation()
+        )
+    }
+    single<ICityDetailRepository> {
+        CityDetailRepositoryImpl(
+            mapper = get<CityDetailMapper>(),
+        )
+    }
+    single<IDeviceDetailRepository> {
+        DeviceDetailRepositoryImpl(
+            mapper = get<DeviceDetailMapper>(),
+        )
+    }
+    single<IDeviceTypeDetailRepository> {
+        DeviceTypeDetailRepositoryImpl(
+            mapper = get<DeviceTypeDetailMapper>(),
+        )
+    }
+    single<IOrderStatusDetailRepository> {
+        OrderStatusDetailDetailRepositoryImpl(
+            mapper = get<OrderStatusDetailMapper>(),
+        )
+    }
+    single<IPointDetailRepository> {
+        PointDetailRepositoryImpl(
+            mapper = get<PointDetailMapper>(),
         )
     }
 }

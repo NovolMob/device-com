@@ -17,6 +17,7 @@ sealed class Rights(string: String, open val parent: Rights? = Companion) {
         object Deleting: Devices("device-deleting")
         sealed class Details(string: String, override val parent: Devices = Details): Devices(string) {
             companion object: Devices("device-details-all")
+            object Reading: Devices("device-details-reading")
             object Inserting: Details("device-details-inserting")
             object Updating: Details("device-detail-updating")
             object Deleting: Details("device-detail-deleting")
@@ -30,6 +31,7 @@ sealed class Rights(string: String, open val parent: Rights? = Companion) {
         object Deleting: DeviceTypes("device-type-deleting")
         sealed class Details(string: String, override val parent: DeviceTypes = Details): DeviceTypes(string) {
             companion object: DeviceTypes("device-type-details-all")
+            object Reading: Devices("device-type-details-reading")
             object Inserting: Details("device-type-details-inserting")
             object Updating: Details("device-type-detail-updating")
             object Deleting: Details("device-type-detail-deleting")
@@ -43,6 +45,7 @@ sealed class Rights(string: String, open val parent: Rights? = Companion) {
         object Deleting: Points("point-deleting")
         sealed class Details(string: String, override val parent: Points = Details): Points(string) {
             companion object: Points("point-details-all")
+            object Reading: Devices("point-details-reading")
             object Inserting: Details("point-details-inserting")
             object Updating: Details("point-detail-updating")
             object Deleting: Details("point-detail-deleting")
@@ -56,6 +59,7 @@ sealed class Rights(string: String, open val parent: Rights? = Companion) {
         object Deleting: Cities("city-deleting")
         sealed class Details(string: String, override val parent: Cities = Details): Cities(string) {
             companion object: Cities("city-details-all")
+            object Reading: Devices("city-details-reading")
             object Inserting: Details("city-details-inserting")
             object Updating: Details("city-detail-updating")
             object Deleting: Details("city-detail-deleting")
@@ -69,6 +73,7 @@ sealed class Rights(string: String, open val parent: Rights? = Companion) {
         object Deleting: OrderStatuses("order-status-deleting")
         sealed class Details(string: String, override val parent: OrderStatuses = Details): OrderStatuses(string) {
             companion object: OrderStatuses("order-status-details-all")
+            object Reading: Devices("order-status-details-reading")
             object Inserting: Details("order-status-details-inserting")
             object Updating: Details("order-status-detail-updating")
             object Deleting: Details("order-status-detail-deleting")
