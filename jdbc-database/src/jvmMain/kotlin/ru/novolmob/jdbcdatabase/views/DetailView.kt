@@ -30,7 +30,7 @@ sealed class DetailView<T: Any>(
 
     object CityDetailView: DetailView<CityId>(
         first = Cities.id,
-        second = CityDetails.cityId
+        second = CityDetails.parentId
     ) {
         val id = registerParameter(reference = Cities.id)
         val title = registerParameter(reference = CityDetails.title)
@@ -40,10 +40,10 @@ sealed class DetailView<T: Any>(
 
     object PointDetailView: DetailView<PointId>(
         first = Points.id,
-        second = PointDetails.pointId
+        second = PointDetails.parentId
     ) {
         val cityJoin = registerJoin(Points.cityId, Cities.id)
-        val cityDetailJoin = registerJoin(Cities.id, CityDetails.cityId)
+        val cityDetailJoin = registerJoin(Cities.id, CityDetails.parentId)
 
         val id = registerParameter(reference = Points.id)
         val detailId = registerParameter(name = "detail_id", PointDetails.id)
@@ -66,7 +66,7 @@ sealed class DetailView<T: Any>(
 
     object DeviceTypeDetailView: DetailView<DeviceTypeId>(
         first = DeviceTypes.id,
-        second = DeviceTypeDetails.deviceTypeId
+        second = DeviceTypeDetails.parentId
     ) {
         val id = registerParameter(reference = DeviceTypes.id)
         val detailId = registerParameter(name = "detail_id", DeviceTypeDetails.id)
@@ -78,10 +78,10 @@ sealed class DetailView<T: Any>(
 
     object DeviceDetailView: DetailView<DeviceId>(
         first = Devices.id,
-        second = DeviceDetails.deviceId
+        second = DeviceDetails.parentId
     ) {
         val typeJoin = registerJoin(Devices.typeId, DeviceTypes.id)
-        val typeDetailJoin = registerJoin(DeviceTypes.id, DeviceTypeDetails.deviceTypeId)
+        val typeDetailJoin = registerJoin(DeviceTypes.id, DeviceTypeDetails.parentId)
 
         val id = registerParameter(reference = Devices.id)
         val detailId = registerParameter(name = "detail_id", DeviceDetails.id)
@@ -103,7 +103,7 @@ sealed class DetailView<T: Any>(
     }
 
     object OrderStatusDetailView: DetailView<OrderStatusId>(
-        first = OrderStatuses.id, second = OrderStatusDetails.orderStatusId
+        first = OrderStatuses.id, second = OrderStatusDetails.parentId
     )  {
         val id = registerParameter(reference = OrderStatuses.id)
         val active = registerParameter(reference = OrderStatuses.active)

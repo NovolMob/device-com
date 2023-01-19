@@ -27,3 +27,9 @@ fun cityDetailByCityIdAndLanguageNotFound(cityId: CityId, language: Language) =
         code = BackendExceptionCode.NOT_FOUND,
         message = "CityDetail with language $language for city $cityId not found!"
     )
+
+fun failedToCreateCityDetail() =
+    AbstractBackendException.BackendException(
+        code = BackendExceptionCode.UNKNOWN,
+        message = "Failed to create city detail!"
+    )

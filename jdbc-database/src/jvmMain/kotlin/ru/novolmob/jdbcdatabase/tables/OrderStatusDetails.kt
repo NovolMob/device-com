@@ -15,13 +15,13 @@ import ru.novolmob.jdbcdatabase.tables.expressions.Expression.Companion.eq
 import ru.novolmob.jdbcdatabase.tables.parameters.Column
 import ru.novolmob.jdbcdatabase.tables.parameters.values.ParameterValue
 
-object OrderStatusDetails: IdTable<OrderStatusDetailId>() {
+object OrderStatusDetails: DetailTable<OrderStatusDetailId, OrderStatusId>() {
 
     override val id: Column<OrderStatusDetailId> = idColumn(constructor = ::OrderStatusDetailId).primaryKey()
-    val orderStatusId = reference("order_status_id", OrderStatuses.id).onDeleteCascade()
+    override val parentId = reference("order_status_id", OrderStatuses.id).onDeleteCascade()
     val title = title()
     val description = description()
-    val language = language()
+    override val language = language()
     val updateTime = updateTime()
     val creationTime = creationTime()
 
@@ -33,7 +33,7 @@ object OrderStatusDetails: IdTable<OrderStatusDetailId>() {
         language: Language,
     ) {
         val list = mutableListOf<ParameterValue<*>>(
-            this.orderStatusId valueOf orderStatusId,
+            this.parentId valueOf orderStatusId,
             this.title valueOf title,
             this.description valueOf description,
             this.language valueOf language
@@ -50,7 +50,7 @@ object OrderStatusDetails: IdTable<OrderStatusDetailId>() {
         language: Language? = null,
     ) {
         val list = mutableListOf<ParameterValue<*>>()
-        orderStatusId?.let { list.add(this.orderStatusId valueOf it) }
+        orderStatusId?.let { list.add(this.parentId valueOf it) }
         title?.let { list.add(this.title valueOf it) }
         description?.let { list.add(this.description valueOf it) }
         language?.let { list.add(this.language valueOf it) }

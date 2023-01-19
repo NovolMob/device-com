@@ -83,21 +83,42 @@ sealed class Credentials<ID: UUIDable>(name: String? = null): IdTable<Credential
     suspend fun check(
         ownerId: ID? = null, email: Email? = null, phoneNumber: PhoneNumber? = null
     ): Boolean {
-        val emailValid = email?.let {
-            select(expression = this.email eq it) {
+        return email?.let { email ->
+            phoneNumber?.let { phoneNumber ->
+                select(expression = (this.email eq email) and (this.phoneNumber eq phoneNumber)) {
+                    if (next()) {
+                        get(this@Credentials.ownerId) == ownerId && !next()
+                    } else true
+                }
+            } ?: select(expression = this.email eq email) {
                 if (next()) {
-                    get(this@Credentials.ownerId) == ownerId
+                    get(this@Credentials.ownerId) == ownerId && !next()
+                } else true
+            }
+        } ?: phoneNumber?.let { phoneNumber ->
+            select(expression = this.phoneNumber eq phoneNumber) {
+                if (next()) {
+                    get(this@Credentials.ownerId) == ownerId && !next()
                 } else true
             }
         } ?: true
-        val phoneNumberValid = phoneNumber?.let {
-            select(expression = this.phoneNumber eq it) {
-                if (next()) {
-                    get(this@Credentials.ownerId) == ownerId
-                } else true
-            }
-        } ?: true
-        return emailValid && phoneNumberValid
+
+
+//        val emailValid = email?.let {
+//            select(expression = this.email eq it) {
+//                if (next()) {
+//                    get(this@Credentials.ownerId) == ownerId
+//                } else true
+//            }
+//        } ?: true
+//        val phoneNumberValid = phoneNumber?.let {
+//            select(expression = this.phoneNumber eq it) {
+//                if (next()) {
+//                    get(this@Credentials.ownerId) == ownerId
+//                } else true
+//            }
+//        } ?: true
+//        return emailValid && phoneNumberValid
     }
 
     object UserCredentials: Credentials<UserId>() {

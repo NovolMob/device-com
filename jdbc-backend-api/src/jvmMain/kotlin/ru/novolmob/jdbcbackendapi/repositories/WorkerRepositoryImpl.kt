@@ -6,7 +6,9 @@ import arrow.core.left
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.*
 import ru.novolmob.backendapi.mappers.Mapper
-import ru.novolmob.backendapi.models.*
+import ru.novolmob.backendapi.models.WorkerCreateModel
+import ru.novolmob.backendapi.models.WorkerModel
+import ru.novolmob.backendapi.models.WorkerUpdateModel
 import ru.novolmob.backendapi.repositories.IWorkerRepository
 import ru.novolmob.backendapi.transformations.Transformation
 import ru.novolmob.backendapi.utils.EitherUtil.backend
@@ -15,7 +17,6 @@ import ru.novolmob.core.models.Password
 import ru.novolmob.core.models.PhoneNumber
 import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.WorkerId
-import ru.novolmob.jdbcbackendapi.utils.RepositoryUtil
 import ru.novolmob.jdbcbackendapi.utils.ResultSetUtil.fold
 import ru.novolmob.jdbcbackendapi.utils.ResultSetUtil.list
 import ru.novolmob.jdbcdatabase.functions.CreationOrUpdateWorkerFunction
@@ -27,9 +28,11 @@ import ru.novolmob.jdbcdatabase.views.CredentialView
 import java.sql.ResultSet
 
 class WorkerRepositoryImpl(
-    val mapper: Mapper<ResultSet, WorkerModel>,
+    mapper: Mapper<ResultSet, WorkerModel>,
     val passwordTransformation: Transformation<Password>
-): IWorkerRepository {
+): IWorkerRepository, AbstractCrudCredentialViewRepository<WorkerId, WorkerModel, WorkerCreateModel, WorkerUpdateModel>(
+    CredentialView.WorkerCredentialView, mapper, ::workerByIdNotFound
+) {
     override suspend fun getAllByPointId(pointId: PointId): Either<AbstractBackendException, List<WorkerModel>> =
         CredentialView.WorkerCredentialView.select(pointId) { list(mapper) }
 
@@ -41,12 +44,6 @@ class WorkerRepositoryImpl(
 
     override suspend fun login(email: Email, password: Password): Either<AbstractBackendException, WorkerModel> =
         LoginByEmailFunction.WorkerLoginByEmailFunction.call(email, passwordTransformation(password)) { fold(ifEmpty = { badCredentialsException() }, mapper::invoke) }
-
-    override suspend fun get(id: WorkerId): Either<AbstractBackendException, WorkerModel> =
-        CredentialView.WorkerCredentialView.select(id) { fold(ifEmpty = { workerByIdNotFound(id) }, mapper::invoke) }
-
-    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<WorkerModel>> =
-        RepositoryUtil.getAll(CredentialView.WorkerCredentialView, pagination, mapper)
 
     override suspend fun post(createModel: WorkerCreateModel): Either<AbstractBackendException, WorkerModel> {
         if (!Credentials.WorkerCredentials.check(email = createModel.email, phoneNumber = createModel.phoneNumber))
@@ -109,5 +106,5 @@ class WorkerRepositoryImpl(
     }
 
     override suspend fun delete(id: WorkerId): Either<AbstractBackendException, Boolean> =
-        (Credentials.WorkerCredentials.delete(id) > 0).right()
+        (Workers.delete(id) > 0).right()
 }

@@ -2,7 +2,6 @@ package ru.novolmob.jdbcbackendapi.repositories
 
 import arrow.core.Either
 import arrow.core.flatMap
-import arrow.core.right
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.exceptions.cityByIdNotFound
 import ru.novolmob.backendapi.exceptions.failedToCreateCity
@@ -20,10 +19,12 @@ import ru.novolmob.jdbcdatabase.views.DetailView
 import java.sql.ResultSet
 
 class CityRepositoryImpl(
-    val mapper: Mapper<ResultSet, CityModel>,
+    mapper: Mapper<ResultSet, CityModel>,
     val shortModelMapper: Mapper<ResultSet, CityShortModel>,
     val fullModelMapper: Mapper<ResultSet, CityFullModel>,
-): ICityRepository {
+): ICityRepository, AbstractCrudTableRepository<CityId, CityModel, CityCreateModel, CityUpdateModel>(
+    Cities, mapper, ::cityByIdNotFound
+) {
     override suspend fun getFull(cityId: CityId, language: Language): Either<AbstractBackendException, CityFullModel> =
         DetailView.CityDetailView.select(cityId, language) { fold(ifEmpty = { cityByIdNotFound(cityId) }, fullModelMapper::invoke) }
 
@@ -38,12 +39,6 @@ class CityRepositoryImpl(
         language: Language
     ): Either<AbstractBackendException, Page<CityShortModel>> =
         RepositoryUtil.getAll(DetailView.CityDetailView, pagination, language, shortModelMapper)
-
-    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<CityModel>> =
-        RepositoryUtil.getAll(Cities, pagination, mapper)
-
-    override suspend fun get(id: CityId): Either<AbstractBackendException, CityModel> =
-        Cities.select(id) { fold(ifEmpty = { cityByIdNotFound(id) }, mapper::invoke) }
 
     override suspend fun post(createModel: CityCreateModel): Either<AbstractBackendException, CityModel> {
         val cityId = CityId(UUID.randomUUID())
@@ -62,7 +57,4 @@ class CityRepositoryImpl(
         }.flatMap {
             get(id)
         }
-
-    override suspend fun delete(id: CityId): Either<AbstractBackendException, Boolean> =
-        (Cities.delete(id) > 0).right()
 }

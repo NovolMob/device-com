@@ -2,7 +2,6 @@ package ru.novolmob.jdbcbackendapi.repositories
 
 import arrow.core.Either
 import arrow.core.flatMap
-import arrow.core.right
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.exceptions.failedToCreatePoint
 import ru.novolmob.backendapi.exceptions.pointByIdNotFound
@@ -22,10 +21,12 @@ import ru.novolmob.jdbcdatabase.views.DetailView
 import java.sql.ResultSet
 
 class PointRepositoryImpl(
-    val mapper: Mapper<ResultSet, PointModel>,
+    mapper: Mapper<ResultSet, PointModel>,
     val shortModelMapper: Mapper<ResultSet, PointShortModel>,
     val fullModelMapper: Mapper<ResultSet, PointFullModel>
-): IPointRepository {
+): IPointRepository, AbstractCrudTableRepository<PointId, PointModel, PointCreateModel, PointUpdateModel>(
+    Points, mapper, ::pointByIdNotFound
+) {
     override suspend fun getFull(
         id: PointId,
         language: Language
@@ -50,12 +51,6 @@ class PointRepositoryImpl(
     ): Either<AbstractBackendException, Page<PointShortModel>> =
         RepositoryUtil.getAll(DetailView.PointDetailView, pagination, language, shortModelMapper)
 
-    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<PointModel>> =
-        RepositoryUtil.getAll(Points, pagination, mapper)
-
-    override suspend fun get(id: PointId): Either<AbstractBackendException, PointModel> =
-        Points.select(id) { fold(ifEmpty = { pointByIdNotFound(id) }, mapper::invoke) }
-
     override suspend fun post(createModel: PointCreateModel): Either<AbstractBackendException, PointModel> =
         CreationOrUpdateTableFunction.CreationOrUpdatePointFunction.call(
             cityId = createModel.cityId
@@ -75,7 +70,4 @@ class PointRepositoryImpl(
                 Points.update(id = id, updateModel.cityId)
             }
         }.flatMap { get(id) }
-
-    override suspend fun delete(id: PointId): Either<AbstractBackendException, Boolean> =
-        (Points.delete(id) > 0).right()
 }

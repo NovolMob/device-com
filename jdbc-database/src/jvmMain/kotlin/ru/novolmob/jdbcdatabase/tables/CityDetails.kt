@@ -12,12 +12,12 @@ import ru.novolmob.jdbcdatabase.extensions.TableExtension.updateTime
 import ru.novolmob.jdbcdatabase.tables.parameters.values.ParameterValue
 import ru.novolmob.jdbcdatabase.tables.expressions.Expression.Companion.eq
 
-object CityDetails: IdTable<CityDetailId>() {
+object CityDetails: DetailTable<CityDetailId, CityId>() {
 
     override val id = idColumn(constructor = ::CityDetailId).primaryKey()
-    val cityId = reference("city_id", Cities.id).onDeleteCascade()
+    override val parentId = reference("city_id", Cities.id).onDeleteCascade()
     val title = title()
-    val language = language()
+    override val language = language()
     val updateTime = updateTime()
     val creationTime = creationTime()
 
@@ -28,7 +28,7 @@ object CityDetails: IdTable<CityDetailId>() {
         language: Language
     ) {
         val list = mutableListOf(
-            this.cityId valueOf cityId,
+            this.parentId valueOf cityId,
             this.title valueOf title,
             this.language valueOf language
         )
@@ -44,7 +44,7 @@ object CityDetails: IdTable<CityDetailId>() {
         language: Language? = null
     ) {
         val list = mutableListOf<ParameterValue<*>>()
-        cityId?.let { list.add(this.cityId valueOf it) }
+        cityId?.let { list.add(this.parentId valueOf it) }
         title?.let { list.add(this.title valueOf it) }
         language?.let { list.add(this.language valueOf it) }
 

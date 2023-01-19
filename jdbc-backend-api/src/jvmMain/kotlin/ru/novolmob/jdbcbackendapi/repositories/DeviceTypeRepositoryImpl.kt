@@ -2,7 +2,6 @@ package ru.novolmob.jdbcbackendapi.repositories
 
 import arrow.core.Either
 import arrow.core.flatMap
-import arrow.core.right
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.exceptions.deviceTypeByIdNotFound
 import ru.novolmob.backendapi.exceptions.failedToCreateDeviceType
@@ -20,10 +19,12 @@ import ru.novolmob.jdbcdatabase.views.DetailView
 import java.sql.ResultSet
 
 class DeviceTypeRepositoryImpl(
-    val mapper: Mapper<ResultSet, DeviceTypeModel>,
+    mapper: Mapper<ResultSet, DeviceTypeModel>,
     val shortModelMapper: Mapper<ResultSet, DeviceTypeShortModel>,
     val fullModelMapper: Mapper<ResultSet, DeviceTypeFullModel>
-): IDeviceTypeRepository {
+): IDeviceTypeRepository, AbstractCrudTableRepository<DeviceTypeId, DeviceTypeModel, DeviceTypeCreateModel, DeviceTypeUpdateModel>(
+    DeviceTypes, mapper, ::deviceTypeByIdNotFound
+) {
     override suspend fun getFull(
         id: DeviceTypeId,
         language: Language
@@ -35,12 +36,6 @@ class DeviceTypeRepositoryImpl(
         language: Language
     ): Either<AbstractBackendException, Page<DeviceTypeShortModel>> =
         RepositoryUtil.getAll(DetailView.DeviceTypeDetailView, pagination, language, shortModelMapper)
-
-    override suspend fun getAll(pagination: Pagination): Either<AbstractBackendException, Page<DeviceTypeModel>> =
-        RepositoryUtil.getAll(DeviceTypes, pagination, mapper)
-
-    override suspend fun get(id: DeviceTypeId): Either<AbstractBackendException, DeviceTypeModel> =
-        DeviceTypes.select(id) { fold(ifEmpty = { deviceTypeByIdNotFound(id) }, mapper::invoke) }
 
     override suspend fun post(createModel: DeviceTypeCreateModel): Either<AbstractBackendException, DeviceTypeModel> {
         val deviceTypeId = DeviceTypeId(UUID.randomUUID())
@@ -65,7 +60,4 @@ class DeviceTypeRepositoryImpl(
         }.flatMap {
             get(id)
         }
-
-    override suspend fun delete(id: DeviceTypeId): Either<AbstractBackendException, Boolean> =
-        (DeviceTypes.delete(id) > 0).right()
 }

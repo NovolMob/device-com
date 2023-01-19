@@ -5,9 +5,11 @@ import arrow.core.getOrElse
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTCreator
 import com.auth0.jwt.algorithms.Algorithm
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.resources.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 import kotlinx.coroutines.CoroutineScope
@@ -99,6 +101,66 @@ object AuthUtil: KoinComponent {
                 return@on
             }
         }
+    }
+
+    inline fun <reified Resource: Any> Route.get(
+        right: Rights? = null,
+        noinline body: suspend PipelineContext<Unit, ApplicationCall>.(Resource) -> Unit
+    ): Route {
+        lateinit var builtRoute: Route
+        resource<Resource> {
+            builtRoute = method(HttpMethod.Get) {
+                workerPermission(right) {
+                    handle(body)
+                }
+            }
+        }
+        return builtRoute
+    }
+
+    inline fun <reified Resource: Any> Route.post(
+        right: Rights? = null,
+        noinline body: suspend PipelineContext<Unit, ApplicationCall>.(Resource) -> Unit
+    ): Route {
+        lateinit var builtRoute: Route
+        resource<Resource> {
+            builtRoute = method(HttpMethod.Post) {
+                workerPermission(right) {
+                    handle(body)
+                }
+            }
+        }
+        return builtRoute
+    }
+
+    inline fun <reified Resource: Any> Route.put(
+        right: Rights? = null,
+        noinline body: suspend PipelineContext<Unit, ApplicationCall>.(Resource) -> Unit
+    ): Route {
+        lateinit var builtRoute: Route
+        resource<Resource> {
+            builtRoute = method(HttpMethod.Put) {
+                workerPermission(right) {
+                    handle(body)
+                }
+            }
+        }
+        return builtRoute
+    }
+
+    inline fun <reified Resource: Any> Route.delete(
+        right: Rights? = null,
+        noinline body: suspend PipelineContext<Unit, ApplicationCall>.(Resource) -> Unit
+    ): Route {
+        lateinit var builtRoute: Route
+        resource<Resource> {
+            builtRoute = method(HttpMethod.Delete) {
+                workerPermission(right) {
+                    handle(body)
+                }
+            }
+        }
+        return builtRoute
     }
 
     fun Route.workerPermission(right: Rights? = null, block: Route.() -> Unit): Route =

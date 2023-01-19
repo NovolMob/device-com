@@ -3,7 +3,7 @@ package ru.novolmob.jdbcbackendapi.repositories
 import arrow.core.Either
 import arrow.core.right
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
-import ru.novolmob.backendapi.exceptions.failedToCreateWorker
+import ru.novolmob.backendapi.exceptions.failedToCreateGrantedRight
 import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.backendapi.models.GrantedRightCreateModel
 import ru.novolmob.backendapi.models.GrantedRightModel
@@ -33,6 +33,6 @@ class GrantedRightRepositoryImpl(
             workerId = createModel.workerId,
             code = createModel.code,
             adminId = createModel.adminId
-        ) { fold(ifEmpty = { failedToCreateWorker() }, mapper::invoke) }
+        ) { fold(ifEmpty = { failedToCreateGrantedRight() }, mapper::invoke) }
 
 }

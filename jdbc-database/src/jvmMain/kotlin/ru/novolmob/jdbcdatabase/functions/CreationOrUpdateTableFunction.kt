@@ -154,4 +154,142 @@ sealed class CreationOrUpdateTableFunction<ID: Comparable<ID>>(
 
     }
 
+    object CreateOrUpdateCityDetailFunction: CreationOrUpdateTableFunction<CityDetailId>(
+        "f_id", CityDetails
+    ) {
+        val cityId = registerReference("f_city_id", CityDetails.parentId)
+        val title = registerReference("f_title", CityDetails.title)
+        val language = registerReference("f_language", CityDetails.language)
+
+        suspend fun <T> call(
+            id: CityDetailId? = null,
+            cityId: CityId,
+            title: Title,
+            language: Language,
+            block: suspend ResultSet.() -> T
+        ): T =
+            callWithResultSet(
+                this.id valueOf id,
+                this.cityId valueOf cityId,
+                this.title valueOf title,
+                this.language valueOf language,
+                block = block
+            )
+
+    }
+
+    object CreateOrUpdateDeviceDetailFunction: CreationOrUpdateTableFunction<DeviceDetailId>(
+        "f_id", DeviceDetails
+    ) {
+        val deviceId = registerReference("f_device_id", DeviceDetails.parentId)
+        val title = registerReference("f_title", DeviceDetails.title)
+        val description = registerReference("f_description", DeviceDetails.description)
+        val features = registerReference("f_features", DeviceDetails.features)
+        val language = registerReference("f_language", DeviceDetails.language)
+
+        suspend fun <T> call(
+            id: DeviceDetailId? = null,
+            deviceId: DeviceId,
+            title: Title,
+            description: Description,
+            features: Features,
+            language: Language,
+            block: suspend ResultSet.() -> T
+        ): T =
+            callWithResultSet(
+                this.id valueOf id,
+                this.deviceId valueOf deviceId,
+                this.title valueOf title,
+                this.description valueOf description,
+                this.features valueOf features,
+                this.language valueOf language,
+                block = block
+            )
+
+    }
+
+    object CreateOrUpdateDeviceTypeDetailFunction: CreationOrUpdateTableFunction<DeviceTypeDetailId>(
+        "f_id", DeviceTypeDetails
+    ) {
+        val deviceTypeId = registerReference("f_device_type_id", DeviceTypeDetails.parentId)
+        val title = registerReference("f_title", DeviceTypeDetails.title)
+        val description = registerReference("f_description", DeviceTypeDetails.description)
+        val language = registerReference("f_language", DeviceTypeDetails.language)
+
+        suspend fun <T> call(
+            id: DeviceTypeDetailId? = null,
+            deviceTypeId: DeviceTypeId,
+            title: Title,
+            description: Description,
+            language: Language,
+            block: suspend ResultSet.() -> T
+        ): T =
+            callWithResultSet(
+                this.id valueOf id,
+                this.deviceTypeId valueOf deviceTypeId,
+                this.title valueOf title,
+                this.description valueOf description,
+                this.language valueOf language,
+                block = block
+            )
+
+    }
+
+    object CreateOrUpdateOrderStatusDetailFunction: CreationOrUpdateTableFunction<OrderStatusDetailId>(
+        "f_id", OrderStatusDetails
+    ) {
+        val orderStatusId = registerReference("f_order_status_id", OrderStatusDetails.parentId)
+        val title = registerReference("f_title", OrderStatusDetails.title)
+        val description = registerReference("f_description", OrderStatusDetails.description)
+        val language = registerReference("f_language", OrderStatusDetails.language)
+
+        suspend fun <T> call(
+            id: OrderStatusDetailId? = null,
+            orderStatusId: OrderStatusId,
+            title: Title,
+            description: Description,
+            language: Language,
+            block: suspend ResultSet.() -> T
+        ): T =
+            callWithResultSet(
+                this.id valueOf id,
+                this.orderStatusId valueOf orderStatusId,
+                this.title valueOf title,
+                this.description valueOf description,
+                this.language valueOf language,
+                block = block
+            )
+
+    }
+
+    object CreateOrUpdatePointDetailFunction: CreationOrUpdateTableFunction<PointDetailId>(
+        "f_id", PointDetails
+    ) {
+        val pointId = registerReference("f_point_id", PointDetails.parentId)
+        val address = registerReference("f_address", PointDetails.address)
+        val schedule = registerReference("f_schedule", PointDetails.schedule)
+        val description = registerReference("f_description", PointDetails.description)
+        val language = registerReference("f_language", PointDetails.language)
+
+        suspend fun <T> call(
+            id: PointDetailId? = null,
+            pointId: PointId,
+            address: Address,
+            schedule: Schedule,
+            description: Description,
+            language: Language,
+            block: suspend ResultSet.() -> T
+        ): T =
+            callWithResultSet(
+                this.id valueOf id,
+                this.pointId valueOf pointId,
+                this.address valueOf address,
+                this.schedule valueOf schedule,
+                this.description valueOf description,
+                this.language valueOf language,
+                block = block
+            )
+
+    }
+
 }

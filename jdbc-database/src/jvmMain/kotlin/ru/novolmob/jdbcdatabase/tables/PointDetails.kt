@@ -16,14 +16,14 @@ import ru.novolmob.jdbcdatabase.extensions.TableExtension.updateTime
 import ru.novolmob.jdbcdatabase.tables.expressions.Expression.Companion.eq
 import ru.novolmob.jdbcdatabase.tables.parameters.values.ParameterValue
 
-object PointDetails: IdTable<PointDetailId>() {
+object PointDetails: DetailTable<PointDetailId, PointId>() {
 
     override val id = idColumn(constructor = ::PointDetailId).primaryKey()
-    val pointId = reference("point_id", Points.id).onDeleteCascade()
+    override val parentId = reference("point_id", Points.id).onDeleteCascade()
     val address = address()
     val schedule = schedule()
     val description = description()
-    val language = language()
+    override val language = language()
     val updateTime = updateTime()
     val creationTime = creationTime()
 
@@ -36,7 +36,7 @@ object PointDetails: IdTable<PointDetailId>() {
         language: Language
     ) {
         val list = mutableListOf<ParameterValue<*>>(
-            this.pointId valueOf pointId,
+            this.parentId valueOf pointId,
             this.address valueOf address,
             this.schedule valueOf schedule,
             this.description valueOf description,
@@ -57,7 +57,7 @@ object PointDetails: IdTable<PointDetailId>() {
     ) {
         val list = mutableListOf<ParameterValue<*>>()
 
-        pointId?.let { list.add(this.pointId valueOf it) }
+        pointId?.let { list.add(this.parentId valueOf it) }
         address?.let { list.add(this.address valueOf it) }
         schedule?.let { list.add(this.schedule valueOf it) }
         description?.let { list.add(this.description valueOf it) }

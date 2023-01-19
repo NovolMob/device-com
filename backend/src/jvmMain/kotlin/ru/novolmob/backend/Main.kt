@@ -21,7 +21,7 @@ import ru.novolmob.backend.util.KtorUtil.respondException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
 import ru.novolmob.jdbcbackendapi.modules.jdbcBackendApiModule
 
-val HOST = System.getenv("HOST") ?: "0.0.0.0"
+val HOST = System.getenv("HOST") ?: "192.168.31.227"
 val PORT = System.getenv("PORT")?.toInt() ?: 8080
 
 suspend fun main() {
@@ -31,7 +31,7 @@ suspend fun main() {
 //            exposedBackendApiModule
         )
     }
-    DatabaseService.connectWithJdbc()
+    DatabaseService.connectWithJdbcTest()
         .onSuccess {
             embeddedServer(Netty, host = HOST, port = PORT, module = Application::backend).start(true)
         }
