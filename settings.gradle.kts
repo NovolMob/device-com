@@ -5,7 +5,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "bd-practice"
+rootProject.name = "device-com"
 
 //include("admin-web-app")
 include("backend")

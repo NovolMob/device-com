@@ -10,7 +10,7 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-group = "ru.novolmob.bd-practice"
+group = "ru.novolmob.device-com"
 version = "0.0.8"
 
 repositories {

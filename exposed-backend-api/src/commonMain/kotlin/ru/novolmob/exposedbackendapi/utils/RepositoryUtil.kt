@@ -1,4 +1,4 @@
-package ru.novolmob.exposedbackendapi.util
+package ru.novolmob.exposedbackendapi.utils
 
 import arrow.core.Either
 import arrow.core.flatMap

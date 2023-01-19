@@ -16,7 +16,7 @@ import ru.novolmob.backendapi.repositories.IUserRepository
 import ru.novolmob.core.models.*
 import ru.novolmob.core.models.ids.UserId
 import ru.novolmob.backendapi.mappers.Mapper
-import ru.novolmob.exposedbackendapi.util.RepositoryUtil
+import ru.novolmob.exposedbackendapi.utils.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.City
 import ru.novolmob.exposeddatabase.entities.User
 import ru.novolmob.exposeddatabase.entities.credentials.UserCredential

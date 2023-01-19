@@ -16,7 +16,7 @@ import ru.novolmob.backendapi.repositories.ICityDetailRepository
 import ru.novolmob.backendapi.repositories.ICityRepository
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.CityId
-import ru.novolmob.exposedbackendapi.util.RepositoryUtil
+import ru.novolmob.exposedbackendapi.utils.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.City
 import ru.novolmob.exposeddatabase.tables.Cities
 

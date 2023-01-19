@@ -17,7 +17,7 @@ import ru.novolmob.backendapi.repositories.IDeviceTypeRepository
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.UpdateTime
 import ru.novolmob.core.models.ids.DeviceTypeId
-import ru.novolmob.exposedbackendapi.util.RepositoryUtil
+import ru.novolmob.exposedbackendapi.utils.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.DeviceType
 import ru.novolmob.exposeddatabase.tables.DeviceTypes
 

@@ -19,7 +19,7 @@ import ru.novolmob.core.models.ids.CityId
 import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.core.models.UpdateTime
-import ru.novolmob.exposedbackendapi.util.RepositoryUtil
+import ru.novolmob.exposedbackendapi.utils.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.Point
 import ru.novolmob.exposeddatabase.tables.Points
 

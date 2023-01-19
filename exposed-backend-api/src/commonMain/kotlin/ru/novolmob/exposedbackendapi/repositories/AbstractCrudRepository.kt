@@ -14,7 +14,7 @@ import ru.novolmob.backendapi.mappers.Mapper
 import ru.novolmob.backendapi.models.Page
 import ru.novolmob.backendapi.models.Pagination
 import ru.novolmob.backendapi.repositories.ICrudRepository
-import ru.novolmob.exposedbackendapi.util.RepositoryUtil
+import ru.novolmob.exposedbackendapi.utils.RepositoryUtil
 
 abstract class AbstractCrudRepository<
         ID: Comparable<ID>,

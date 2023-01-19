@@ -20,7 +20,7 @@ import ru.novolmob.core.models.*
 import ru.novolmob.core.models.ids.PointId
 import ru.novolmob.core.models.ids.WorkerId
 import ru.novolmob.backendapi.mappers.Mapper
-import ru.novolmob.exposedbackendapi.util.RepositoryUtil
+import ru.novolmob.exposedbackendapi.utils.RepositoryUtil
 import ru.novolmob.exposeddatabase.entities.Point
 import ru.novolmob.exposeddatabase.entities.Worker
 import ru.novolmob.exposeddatabase.entities.credentials.WorkerCredential
