@@ -12,7 +12,6 @@ import org.koin.core.component.inject
 import ru.novolmob.backend.ktorrouting.user.Login
 import ru.novolmob.backend.ktorrouting.user.Logout
 import ru.novolmob.backend.ktorrouting.user.Registration
-import ru.novolmob.backend.ktorrouting.worker.Workers
 import ru.novolmob.backend.util.AuthUtil.accessToken
 import ru.novolmob.backend.util.KtorUtil.respond
 import ru.novolmob.backendapi.exceptions.badLoginModelException
@@ -53,7 +52,7 @@ object AuthorizationRouting: KoinComponent, IRouting {
             call.respond(Unit.right())
         }
 
-        post<Workers.Login> {
+        post<ru.novolmob.backend.ktorrouting.worker.Login> {
             val login: LoginModel = call.receive()
             val either = if (login.email != null) {
                 workerRepository.login(email = login.email!!, password = login.password)
@@ -71,7 +70,7 @@ object AuthorizationRouting: KoinComponent, IRouting {
             call.respond(either)
         }
 
-        post<Workers.Logout> {
+        post<ru.novolmob.backend.ktorrouting.worker.Logout> {
             call.respond(Unit.right())
         }
     }

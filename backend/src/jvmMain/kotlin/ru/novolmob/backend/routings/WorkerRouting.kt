@@ -6,6 +6,7 @@ import io.ktor.server.routing.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ru.novolmob.backend.ktorrouting.worker.Points
+import ru.novolmob.backend.ktorrouting.worker.Worker
 import ru.novolmob.backend.ktorrouting.worker.Workers
 import ru.novolmob.backend.util.AuthUtil.delete
 import ru.novolmob.backend.util.AuthUtil.get
@@ -22,7 +23,7 @@ object WorkerRouting: IRouting, KoinComponent {
     val workerRepository: IWorkerRepository by inject()
 
     override fun Route.routingForWorker() {
-        get<Workers.Worker> {
+        get<Worker> {
             val worker = worker()
             val either = workerRepository.get(worker.id)
             call.respond(either)
