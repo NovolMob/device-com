@@ -7,7 +7,7 @@ import ru.novolmob.core.models.ids.CityDetailId
 import ru.novolmob.core.models.ids.CityId
 
 @Serializable
-@Resource("cities")
+@Resource("admin/cities")
 class Cities(
     override val page: Long? = null,
     override val pageSize: Long? = null,

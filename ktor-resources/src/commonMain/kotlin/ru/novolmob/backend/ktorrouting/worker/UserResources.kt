@@ -6,7 +6,7 @@ import ru.novolmob.backendapi.models.Pagination
 import ru.novolmob.core.models.ids.UserId
 
 @Serializable
-@Resource("users")
+@Resource("admin/users")
 class Users(
     override val page: Long? = null,
     override val pageSize: Long? = null,

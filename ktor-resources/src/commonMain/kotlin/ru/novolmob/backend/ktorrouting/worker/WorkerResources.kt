@@ -6,7 +6,7 @@ import ru.novolmob.backendapi.models.Pagination
 import ru.novolmob.core.models.ids.WorkerId
 
 @Serializable
-@Resource("workers")
+@Resource("admin/workers")
 class Workers(
     override val page: Long? = null,
     override val pageSize: Long? = null,
@@ -20,13 +20,13 @@ class Workers(
         @Resource("rights")
         class Rights(val id: Id)
     }
-    @Serializable
-    @Resource("login")
-    class Login(val workers: Workers = Workers())
-    @Serializable
-    @Resource("current")
-    class Worker(val workers: Workers = Workers())
-    @Serializable
-    @Resource("logout")
-    class Logout(val workers: Workers = Workers())
 }
+@Serializable
+@Resource("admin/login")
+class Login
+@Serializable
+@Resource("admin/worker")
+class Worker
+@Serializable
+@Resource("admin/logout")
+class Logout

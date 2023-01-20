@@ -7,7 +7,7 @@ import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.*
 
 @Serializable
-@Resource("orders")
+@Resource("admin/orders")
 class Orders(
     override val page: Long? = null,
     override val pageSize: Long? = null,

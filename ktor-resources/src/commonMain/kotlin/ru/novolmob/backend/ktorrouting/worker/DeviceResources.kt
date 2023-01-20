@@ -9,7 +9,7 @@ import ru.novolmob.core.models.ids.DeviceTypeDetailId
 import ru.novolmob.core.models.ids.DeviceTypeId
 
 @Serializable
-@Resource("devices")
+@Resource("admin/devices")
 class Devices(
     override val page: Long? = null,
     override val pageSize: Long? = null,

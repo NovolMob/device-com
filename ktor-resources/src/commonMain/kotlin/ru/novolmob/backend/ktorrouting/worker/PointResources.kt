@@ -7,7 +7,7 @@ import ru.novolmob.core.models.ids.PointDetailId
 import ru.novolmob.core.models.ids.PointId
 
 @Serializable
-@Resource("points")
+@Resource("admin/points")
 class Points(
     override val page: Long? = null,
     override val pageSize: Long? = null,
