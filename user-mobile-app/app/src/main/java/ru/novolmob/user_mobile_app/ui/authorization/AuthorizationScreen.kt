@@ -162,14 +162,29 @@ fun AuthorizationScreen(
 private fun Header(
     modifier: Modifier = Modifier
 ) {
-    Text(
-        modifier = modifier,
-        text = stringResource(id = R.string.authorization),
-        fontSize = 24.sp,
-        textAlign = TextAlign.Center,
-        fontWeight = FontWeight.Bold,
-        color = Color.Black
-    )
+    Box(
+        modifier = modifier
+    ) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.Center),
+            text = stringResource(id = R.string.authorization),
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+        Text(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(start = 88.dp, top = 35.dp),
+            text = "by NovolMob",
+            fontSize = 10.sp,
+            color = Color.Black,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1
+        )
+    }
 }
 
 @Composable
