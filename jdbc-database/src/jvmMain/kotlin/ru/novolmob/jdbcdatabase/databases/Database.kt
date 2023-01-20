@@ -18,8 +18,12 @@ open class Database {
             this.username = user
             this.password = password
             this.dataSourceProperties["cachePrepStmts"] = "true"
-            this.dataSourceProperties["prepStmtCacheSize"] = "250"
+            this.dataSourceProperties["prepStmtCacheSize"] = "500"
             this.dataSourceProperties["prepStmtCacheSqlLimit"] = "2048"
+            this.dataSourceProperties["autoReconnect"] = "false"
+            this.dataSourceProperties["useServerPrepStmts"] = "true"
+            this.idleTimeout = 10000
+            this.maximumPoolSize = 20
         }
         ds = HikariDataSource(config)
     }
