@@ -11,8 +11,8 @@ import ru.novolmob.backendapi.models.UserModel
 import ru.novolmob.core.models.*
 import ru.novolmob.user_mobile_app.mutablevalue.*
 import ru.novolmob.user_mobile_app.services.ICityService
-import ru.novolmob.user_mobile_app.utils.ScreenNotification
 import ru.novolmob.user_mobile_app.services.IProfileService
+import ru.novolmob.user_mobile_app.utils.ScreenNotification
 import java.util.*
 
 val RUSSIANS = Locale("ru", "Русский")

@@ -28,7 +28,7 @@ abstract class NullableAbstractCharacterMutableValue<T>(
 
     class PatronymicMutableValue(initial: String = ""): NullableAbstractCharacterMutableValue<Patronymic>(
         initial = initial,
-        initialValid = regex.matches(initial),
+        initialValid = initial.isEmpty() || regex.matches(initial),
         constructor = { Patronymic(it.replaceFirstChar { it.uppercase() }) },
         notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,
@@ -54,7 +54,7 @@ abstract class NullableAbstractCharacterMutableValue<T>(
     }
     class EmailMutableValue(initial: String = ""): NullableAbstractCharacterMutableValue<Email>(
         initial = initial,
-        initialValid = regex.matches(initial),
+        initialValid = initial.isEmpty() || regex.matches(initial),
         constructor = ::Email,
         notValidException = AbstractBackendException.BackendException(
             code = BackendExceptionCode.BAD_REQUEST,

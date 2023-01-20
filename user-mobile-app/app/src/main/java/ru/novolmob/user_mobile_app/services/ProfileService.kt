@@ -117,12 +117,12 @@ class ProfileServiceImpl(
                 update()
             }
 
-    override suspend fun logout(): Either<AbstractBackendException, Unit> =
-        userRepository.logout().flatMap {
-            logoutAction()
-            ServiceUtil.clearAllServices()
-            Unit.right()
-        }
+    override suspend fun logout(): Either<AbstractBackendException, Unit> {
+        userRepository.logout()
+        logoutAction()
+        ServiceUtil.clearAllServices()
+        return Unit.right()
+    }
 
     override fun get(): UserModel? = _profile.value
 

@@ -14,7 +14,7 @@ import ru.novolmob.user_mobile_app.datastore.ITokenDataStore
 
 val clientModule = module {
     factory {
-        val url = "https://database-course-work.onrender.com"
+        val url = "http://ts205.antares-software.ru:8097/"
         val tokenDataStore: ITokenDataStore by inject()
         HttpClient(Android) {
             install(Resources)
