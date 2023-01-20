@@ -46,8 +46,9 @@ class WorkerRepositoryImpl(
         LoginByEmailFunction.WorkerLoginByEmailFunction.call(email, passwordTransformation(password)) { fold(ifEmpty = { badCredentialsException() }, mapper::invoke) }
 
     override suspend fun post(createModel: WorkerCreateModel): Either<AbstractBackendException, WorkerModel> {
-        if (!Credentials.WorkerCredentials.check(email = createModel.email, phoneNumber = createModel.phoneNumber))
+        if (!Credentials.WorkerCredentials.check(email = createModel.email, phoneNumber = createModel.phoneNumber)) {
             return emailOrPhoneNumberNotUnique().left()
+        }
         return CreationOrUpdateWorkerFunction.call(
             pointId = createModel.pointId,
             firstname = createModel.firstname,

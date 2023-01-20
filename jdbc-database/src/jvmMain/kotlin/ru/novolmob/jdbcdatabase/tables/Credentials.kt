@@ -85,7 +85,7 @@ sealed class Credentials<ID: UUIDable>(name: String? = null): IdTable<Credential
     ): Boolean {
         return email?.let { email ->
             phoneNumber?.let { phoneNumber ->
-                select(expression = (this.email eq email) and (this.phoneNumber eq phoneNumber)) {
+                select(expression = (this.email eq email) or (this.phoneNumber eq phoneNumber)) {
                     if (next()) {
                         get(this@Credentials.ownerId) == ownerId && !next()
                     } else true
