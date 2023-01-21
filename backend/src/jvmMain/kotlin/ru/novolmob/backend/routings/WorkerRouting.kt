@@ -8,10 +8,10 @@ import org.koin.core.component.inject
 import ru.novolmob.backend.ktorrouting.worker.Points
 import ru.novolmob.backend.ktorrouting.worker.Worker
 import ru.novolmob.backend.ktorrouting.worker.Workers
-import ru.novolmob.backend.util.AuthUtil.delete
-import ru.novolmob.backend.util.AuthUtil.get
-import ru.novolmob.backend.util.AuthUtil.post
-import ru.novolmob.backend.util.AuthUtil.put
+import ru.novolmob.backend.util.AuthUtil.deleteIfHave
+import ru.novolmob.backend.util.AuthUtil.getIfHave
+import ru.novolmob.backend.util.AuthUtil.postIfHave
+import ru.novolmob.backend.util.AuthUtil.putIfHave
 import ru.novolmob.backend.util.AuthUtil.worker
 import ru.novolmob.backend.util.KtorUtil.respond
 import ru.novolmob.backendapi.models.WorkerCreateModel
@@ -23,35 +23,35 @@ object WorkerRouting: IRouting, KoinComponent {
     val workerRepository: IWorkerRepository by inject()
 
     override fun Route.routingForWorker() {
-        get<Worker> {
+        getIfHave<Worker> {
             val worker = worker()
             val either = workerRepository.get(worker.id)
             call.respond(either)
         }
-        get<Workers>(Rights.Workers.Reading.List) {
+        getIfHave<Workers>(Rights.Workers.Reading.List) {
             val either = workerRepository.getAll(it)
             call.respond(either)
         }
-        get<Points.Id.Workers>(Rights.Workers.Reading.ByPointId) {
+        getIfHave<Points.Id.Workers>(Rights.Workers.Reading.ByPointId) {
             val either = workerRepository.getAllByPointId(it.id.id)
             call.respond(either)
         }
-        post<Workers>(Rights.Workers.Inserting) {
+        postIfHave<Workers>(Rights.Workers.Inserting) {
             val model: WorkerCreateModel = call.receive()
             val either = workerRepository.post(model)
             call.respond(either)
         }
-        post<Workers.Id>(Rights.Workers.Updating) {
+        postIfHave<Workers.Id>(Rights.Workers.Updating) {
             val model: WorkerCreateModel = call.receive()
             val either = workerRepository.post(it.id, model)
             call.respond(either)
         }
-        put<Workers.Id>(Rights.Workers.Updating) {
+        putIfHave<Workers.Id>(Rights.Workers.Updating) {
             val model: WorkerUpdateModel = call.receive()
             val either = workerRepository.put(it.id, model)
             call.respond(either)
         }
-        delete<Workers.Id>(Rights.Workers.Deleting) {
+        deleteIfHave<Workers.Id>(Rights.Workers.Deleting) {
             val either = workerRepository.delete(it.id)
             call.respond(either)
         }

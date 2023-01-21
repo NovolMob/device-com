@@ -103,7 +103,7 @@ object AuthUtil: KoinComponent {
         }
     }
 
-    inline fun <reified Resource: Any> Route.get(
+    inline fun <reified Resource: Any> Route.getIfHave(
         right: Rights? = null,
         noinline body: suspend PipelineContext<Unit, ApplicationCall>.(Resource) -> Unit
     ): Route {
@@ -118,7 +118,7 @@ object AuthUtil: KoinComponent {
         return builtRoute
     }
 
-    inline fun <reified Resource: Any> Route.post(
+    inline fun <reified Resource: Any> Route.postIfHave(
         right: Rights? = null,
         noinline body: suspend PipelineContext<Unit, ApplicationCall>.(Resource) -> Unit
     ): Route {
@@ -133,7 +133,7 @@ object AuthUtil: KoinComponent {
         return builtRoute
     }
 
-    inline fun <reified Resource: Any> Route.put(
+    inline fun <reified Resource: Any> Route.putIfHave(
         right: Rights? = null,
         noinline body: suspend PipelineContext<Unit, ApplicationCall>.(Resource) -> Unit
     ): Route {
@@ -148,7 +148,7 @@ object AuthUtil: KoinComponent {
         return builtRoute
     }
 
-    inline fun <reified Resource: Any> Route.delete(
+    inline fun <reified Resource: Any> Route.deleteIfHave(
         right: Rights? = null,
         noinline body: suspend PipelineContext<Unit, ApplicationCall>.(Resource) -> Unit
     ): Route {
