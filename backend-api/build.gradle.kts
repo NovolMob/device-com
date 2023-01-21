@@ -3,10 +3,8 @@ val kotlin_version: String by project
 val logback_version: String by project
 
 plugins {
-    java
-    `java-library`
     kotlin("multiplatform")
-    id("maven-publish")
+    id("com.android.library")
     kotlin("plugin.serialization")
 }
 
@@ -14,13 +12,28 @@ group = "ru.novolmob.device-com"
 version = "0.0.8"
 
 repositories {
+    google()
     mavenCentral()
 }
 
-kotlin {
-    jvm {
-        withJava()
+android {
+    namespace = "ru.novolmob.backendapi"
+    compileSdk = 33
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    defaultConfig {
+        minSdk = 26
+        targetSdk = 32
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+kotlin {
+    android()
+    jvm()
     js(IR) {
         browser()
         binaries.executable()
@@ -51,17 +64,3 @@ kotlin {
         }
     }
 }
-
-publishing {
-    publications {
-        registerPublication(group.toString(), name, version.toString())
-    }
-}
-
-fun PublicationContainer.registerPublication(groupId: String, artifactId: String, version: String) =
-    register<MavenPublication>(artifactId) {
-        this.groupId = groupId
-        this.artifactId = artifactId
-        this.version = version
-        artifact(tasks["jar"])
-    }
