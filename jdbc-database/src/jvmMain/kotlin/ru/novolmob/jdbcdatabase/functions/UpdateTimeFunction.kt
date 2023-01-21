@@ -15,7 +15,7 @@ class UpdateTimeFunction(
         super.create()
         tables.forEach {
             database.statement(
-                "CREATE OR REPLACE TRIGGER ${name}_trigger BEFORE UPDATE ON ${it.name} FOR EACH ROW EXECUTE PROCEDURE ${titleString()};"
+                "CREATE OR REPLACE TRIGGER ${name}_trigger BEFORE UPDATE ON ${it.name} FOR EACH ROW EXECUTE PROCEDURE ${titleString()};".also { println(it) }
             )
         }
     }
