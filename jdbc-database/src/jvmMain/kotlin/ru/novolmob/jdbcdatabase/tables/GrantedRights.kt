@@ -14,9 +14,9 @@ import java.sql.ResultSet
 object GrantedRights: IdTable<GrantedRightId>() {
 
     override val id = idColumn(constructor = ::GrantedRightId)
-    val workerId = reference("worker_id", Workers.id).primaryKey()
+    val workerId = reference("worker_id", Workers.id).primaryKey().onDeleteCascade()
     val code = code().primaryKey()
-    val adminId = reference("admin_id", Workers.id)
+    val adminId = reference("admin_id", Workers.id).onDeleteCascade()
     val creationTime = creationTime()
 
     suspend fun insert(

@@ -14,10 +14,10 @@ object OrderToDeviceView: View() {
     val deviceId = registerParameter(reference = OrderToDeviceTable.deviceId)
     val amount = registerParameter(reference = OrderToDeviceTable.amount)
     val priceForOne = registerParameter(reference = OrderToDeviceTable.priceForOne)
-    val deviceDetailId = registerParameter(name = "order_status_detail_id", reference = DetailView.DeviceDetailView.detailId)
-    val deviceTitle = registerParameter(name = "order_status_title", reference = DetailView.DeviceDetailView.title)
-    val deviceDescription = registerParameter(name = "order_status_description", reference = DetailView.DeviceDetailView.description)
-    val deviceLanguage = registerParameter(name = "order_status_language", reference = DetailView.DeviceDetailView.language)
+    val deviceDetailId = registerParameter(name = "device_detail_id", reference = DetailView.DeviceDetailView.detailId)
+    val deviceTitle = registerParameter(name = "device_title", reference = DetailView.DeviceDetailView.title)
+    val deviceDescription = registerParameter(name = "device_description", reference = DetailView.DeviceDetailView.description)
+    val deviceLanguage = registerParameter(name = "device_language", reference = DetailView.DeviceDetailView.language)
 
     suspend fun <T> select(
         orderId: OrderId,
