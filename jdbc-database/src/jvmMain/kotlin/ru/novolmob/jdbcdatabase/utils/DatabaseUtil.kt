@@ -34,13 +34,13 @@ object DatabaseUtil: KoinComponent {
 
     val functions = listOf(
         CreationOrUpdateUserFunction,CreationOrUpdateWorkerFunction,
-        CreationOrUpdateTableFunction.CreateOrUpdateOrderStatusDetailFunction,
-        CreationOrUpdateTableFunction.CreateOrUpdatePointDetailFunction,
+        CreationOrUpdateTableFunction.CreationOrUpdateOrderStatusDetailFunction,
+        CreationOrUpdateTableFunction.CreationOrUpdatePointDetailFunction,
         CreationOrUpdateTableFunction.CreationOrUpdateDeviceFunction,
         CreationOrUpdateTableFunction.CreationOrUpdatePointFunction,
-        CreationOrUpdateTableFunction.CreateOrUpdateDeviceTypeDetailFunction,
-        CreationOrUpdateTableFunction.CreateOrUpdateCityDetailFunction,
-        CreationOrUpdateTableFunction.CreateOrUpdateDeviceDetailFunction,
+        CreationOrUpdateTableFunction.CreationOrUpdateDeviceTypeDetailFunction,
+        CreationOrUpdateTableFunction.CreationOrUpdateCityDetailFunction,
+        CreationOrUpdateTableFunction.CreationOrUpdateDeviceDetailFunction,
         LoginByEmailFunction.UserLoginByEmailFunction, LoginByEmailFunction.WorkerLoginByEmailFunction,
         LoginByPhoneNumberFunction.UserLoginByPhoneNumberFunction,
         LoginByPhoneNumberFunction.WorkerLoginByPhoneNumberFunction, GettingBasketFunction,

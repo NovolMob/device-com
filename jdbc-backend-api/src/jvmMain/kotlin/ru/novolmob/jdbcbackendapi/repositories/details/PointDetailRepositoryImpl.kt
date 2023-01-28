@@ -23,7 +23,7 @@ class PointDetailRepositoryImpl(
     override suspend fun post(createModel: PointDetailCreateModel): Either<AbstractBackendException, PointDetailModel> =
         getDetailFor(createModel.parentId, createModel.language).fold(
             ifLeft = {
-                CreationOrUpdateTableFunction.CreateOrUpdatePointDetailFunction.call(
+                CreationOrUpdateTableFunction.CreationOrUpdatePointDetailFunction.call(
                     pointId = createModel.parentId,
                     address = createModel.address,
                     schedule = createModel.schedule,
@@ -44,7 +44,7 @@ class PointDetailRepositoryImpl(
     ): Either<AbstractBackendException, PointDetailModel> {
         if (!PointDetails.check(id, createModel.parentId, createModel.language))
             return detailWithParentIDAndLanguageIsExists(createModel.parentId, createModel.language).left()
-        return CreationOrUpdateTableFunction.CreateOrUpdatePointDetailFunction.call(
+        return CreationOrUpdateTableFunction.CreationOrUpdatePointDetailFunction.call(
             id = id,
             pointId = createModel.parentId,
             address = createModel.address,

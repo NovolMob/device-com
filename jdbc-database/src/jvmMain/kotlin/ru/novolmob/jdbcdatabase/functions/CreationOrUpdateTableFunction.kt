@@ -136,7 +136,7 @@ sealed class CreationOrUpdateTableFunction<ID: Comparable<ID>>(
             )
     }
 
-    object CreateOrUpdateOrderStatusFunction: CreationOrUpdateTableFunction<OrderStatusId>(
+    object CreationOrUpdateOrderStatusFunction: CreationOrUpdateTableFunction<OrderStatusId>(
         "f_id", OrderStatuses
     ) {
         val active = registerReference(name = "f_active", OrderStatuses.active)
@@ -154,7 +154,7 @@ sealed class CreationOrUpdateTableFunction<ID: Comparable<ID>>(
 
     }
 
-    object CreateOrUpdateCityDetailFunction: CreationOrUpdateTableFunction<CityDetailId>(
+    object CreationOrUpdateCityDetailFunction: CreationOrUpdateTableFunction<CityDetailId>(
         "f_id", CityDetails
     ) {
         val cityId = registerReference("f_city_id", CityDetails.parentId)
@@ -178,7 +178,7 @@ sealed class CreationOrUpdateTableFunction<ID: Comparable<ID>>(
 
     }
 
-    object CreateOrUpdateDeviceDetailFunction: CreationOrUpdateTableFunction<DeviceDetailId>(
+    object CreationOrUpdateDeviceDetailFunction: CreationOrUpdateTableFunction<DeviceDetailId>(
         "f_id", DeviceDetails
     ) {
         val deviceId = registerReference("f_device_id", DeviceDetails.parentId)
@@ -208,7 +208,7 @@ sealed class CreationOrUpdateTableFunction<ID: Comparable<ID>>(
 
     }
 
-    object CreateOrUpdateDeviceTypeDetailFunction: CreationOrUpdateTableFunction<DeviceTypeDetailId>(
+    object CreationOrUpdateDeviceTypeDetailFunction: CreationOrUpdateTableFunction<DeviceTypeDetailId>(
         "f_id", DeviceTypeDetails
     ) {
         val deviceTypeId = registerReference("f_device_type_id", DeviceTypeDetails.parentId)
@@ -235,7 +235,7 @@ sealed class CreationOrUpdateTableFunction<ID: Comparable<ID>>(
 
     }
 
-    object CreateOrUpdateOrderStatusDetailFunction: CreationOrUpdateTableFunction<OrderStatusDetailId>(
+    object CreationOrUpdateOrderStatusDetailFunction: CreationOrUpdateTableFunction<OrderStatusDetailId>(
         "f_id", OrderStatusDetails
     ) {
         val orderStatusId = registerReference("f_order_status_id", OrderStatusDetails.parentId)
@@ -262,7 +262,7 @@ sealed class CreationOrUpdateTableFunction<ID: Comparable<ID>>(
 
     }
 
-    object CreateOrUpdatePointDetailFunction: CreationOrUpdateTableFunction<PointDetailId>(
+    object CreationOrUpdatePointDetailFunction: CreationOrUpdateTableFunction<PointDetailId>(
         "f_id", PointDetails
     ) {
         val pointId = registerReference("f_point_id", PointDetails.parentId)

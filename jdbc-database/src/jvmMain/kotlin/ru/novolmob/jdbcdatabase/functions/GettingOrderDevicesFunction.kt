@@ -3,9 +3,7 @@ package ru.novolmob.jdbcdatabase.functions
 import ru.novolmob.core.models.Language
 import ru.novolmob.core.models.ids.OrderId
 import ru.novolmob.jdbcdatabase.databases.DatabaseVocabulary
-import ru.novolmob.jdbcdatabase.tables.OrderToDeviceTable
-import ru.novolmob.jdbcdatabase.views.DetailView
-import ru.novolmob.jdbcdatabase.views.OrderToStatusView
+import ru.novolmob.jdbcdatabase.views.OrderToDeviceView
 import java.sql.ResultSet
 
 object GettingOrderDevicesFunction: RefcursorFunction(
@@ -17,11 +15,10 @@ object GettingOrderDevicesFunction: RefcursorFunction(
 
     override fun body(): String =
         "DECLARE\n" +
-                "        ref refcursor DEFAULT 'refcursor_$OrderToStatusView';\n" +
+                "        ref refcursor DEFAULT 'refcursor_$name';\n" +
                 "    BEGIN\n" +
-                "        OPEN ref FOR SELECT * FROM ${DetailView.DeviceDetailView} " +
-                "JOIN $OrderToDeviceTable ON ${DetailView.DeviceDetailView.id} = ${OrderToDeviceTable.deviceId} " +
-                "WHERE ${OrderToDeviceTable.orderId} = $orderId AND ${DetailView.DeviceDetailView.language} = $language;\n" +
+                "        OPEN ref FOR SELECT * FROM $OrderToDeviceView " +
+                "WHERE ${OrderToDeviceView.orderId} = $orderId AND ${OrderToDeviceView.deviceLanguage} = $language;\n" +
                 "        RETURN ref;\n" +
                 "    END;"
 

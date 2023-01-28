@@ -23,7 +23,7 @@ class CityDetailRepositoryImpl(
     override suspend fun post(createModel: CityDetailCreateModel): Either<AbstractBackendException, CityDetailModel> =
         getDetailFor(createModel.parentId, createModel.language).fold(
             ifLeft = {
-                CreationOrUpdateTableFunction.CreateOrUpdateCityDetailFunction.call(
+                CreationOrUpdateTableFunction.CreationOrUpdateCityDetailFunction.call(
                     cityId = createModel.parentId,
                     title = createModel.title,
                     language = createModel.language
@@ -42,7 +42,7 @@ class CityDetailRepositoryImpl(
     ): Either<AbstractBackendException, CityDetailModel> {
         if (!CityDetails.check(id, createModel.parentId, createModel.language))
             return detailWithParentIDAndLanguageIsExists(createModel.parentId, createModel.language).left()
-        return CreationOrUpdateTableFunction.CreateOrUpdateCityDetailFunction.call(
+        return CreationOrUpdateTableFunction.CreationOrUpdateCityDetailFunction.call(
             id = id,
             cityId = createModel.parentId,
             title = createModel.title,

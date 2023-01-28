@@ -23,7 +23,7 @@ class OrderStatusDetailDetailRepositoryImpl(
     override suspend fun post(createModel: OrderStatusDetailCreateModel): Either<AbstractBackendException, OrderStatusDetailModel> =
         getDetailFor(createModel.parentId, createModel.language).fold(
             ifLeft = {
-                CreationOrUpdateTableFunction.CreateOrUpdateOrderStatusDetailFunction.call(
+                CreationOrUpdateTableFunction.CreationOrUpdateOrderStatusDetailFunction.call(
                     orderStatusId = createModel.parentId,
                     title = createModel.title,
                     description = createModel.description,
@@ -43,7 +43,7 @@ class OrderStatusDetailDetailRepositoryImpl(
     ): Either<AbstractBackendException, OrderStatusDetailModel> {
         if (!OrderStatusDetails.check(id, createModel.parentId, createModel.language))
             return detailWithParentIDAndLanguageIsExists(createModel.parentId, createModel.language).left()
-        return CreationOrUpdateTableFunction.CreateOrUpdateOrderStatusDetailFunction.call(
+        return CreationOrUpdateTableFunction.CreationOrUpdateOrderStatusDetailFunction.call(
             id = id,
             orderStatusId = createModel.parentId,
             title = createModel.title,

@@ -23,7 +23,7 @@ class DeviceDetailRepositoryImpl(
     override suspend fun post(createModel: DeviceDetailCreateModel): Either<AbstractBackendException, DeviceDetailModel> =
         getDetailFor(createModel.parentId, createModel.language).fold(
             ifLeft = {
-                CreationOrUpdateTableFunction.CreateOrUpdateDeviceDetailFunction.call(
+                CreationOrUpdateTableFunction.CreationOrUpdateDeviceDetailFunction.call(
                     deviceId = createModel.parentId,
                     title = createModel.title,
                     description = createModel.description,
@@ -44,7 +44,7 @@ class DeviceDetailRepositoryImpl(
     ): Either<AbstractBackendException, DeviceDetailModel> {
         if (!DeviceDetails.check(id, createModel.parentId, createModel.language))
             return detailWithParentIDAndLanguageIsExists(createModel.parentId, createModel.language).left()
-        return CreationOrUpdateTableFunction.CreateOrUpdateDeviceDetailFunction.call(
+        return CreationOrUpdateTableFunction.CreationOrUpdateDeviceDetailFunction.call(
             id = id,
             deviceId = createModel.parentId,
             title = createModel.title,
