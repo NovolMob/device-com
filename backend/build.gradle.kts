@@ -37,9 +37,6 @@ kotlin {
                 implementation(project(":core"))
                 implementation(project(":backend-api"))
                 implementation(project(":ktor-resources"))
-                implementation(project(":exposed-backend-api"))
-                implementation(project(":exposed-database"))
-                implementation(project(":exposed-database"))
                 implementation(project(":jdbc-database"))
                 implementation(project(":jdbc-backend-api"))
 

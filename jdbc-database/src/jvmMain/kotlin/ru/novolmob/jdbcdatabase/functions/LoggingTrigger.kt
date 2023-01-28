@@ -12,7 +12,7 @@ object LoggingTrigger: Function(
     override suspend fun create() {
         super.create()
         kotlin.runCatching {
-            database.statement("CREATE EVENT TRIGGER $name ON ddl_command_start EXECUTE PROCEDURE ${titleString()};")
+            database.statement("CREATE EVENT TRIGGER $name ON ddl_command_start EXECUTE PROCEDURE ${titleString()};".also { println(it) })
         }
     }
 
