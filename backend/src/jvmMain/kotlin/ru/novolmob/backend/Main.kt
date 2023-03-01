@@ -14,9 +14,9 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 import ru.novolmob.backend.routings.*
-import ru.novolmob.backend.util.AuthUtil.authentication
-import ru.novolmob.backend.util.AuthUtil.userPermission
-import ru.novolmob.backend.util.KtorUtil.respondException
+import ru.novolmob.backend.utils.AuthUtil.authentication
+import ru.novolmob.backend.utils.AuthUtil.userPermission
+import ru.novolmob.backend.utils.KtorUtil.respondException
 import ru.novolmob.backendapi.exceptions.BackendExceptionCode
 import ru.novolmob.jdbcbackendapi.modules.jdbcBackendApiModule
 import ru.novolmob.jdbcbackendapi.services.DatabaseService

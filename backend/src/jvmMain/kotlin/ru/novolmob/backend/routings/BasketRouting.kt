@@ -8,8 +8,8 @@ import io.ktor.server.routing.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ru.novolmob.backend.ktorrouting.user.Basket
-import ru.novolmob.backend.util.AuthUtil.user
-import ru.novolmob.backend.util.KtorUtil.respond
+import ru.novolmob.backend.utils.AuthUtil.user
+import ru.novolmob.backend.utils.KtorUtil.respond
 import ru.novolmob.backendapi.repositories.IBasketRepository
 
 object BasketRouting: KoinComponent, IRouting {

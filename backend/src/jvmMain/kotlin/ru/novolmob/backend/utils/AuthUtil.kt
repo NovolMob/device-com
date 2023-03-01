@@ -1,4 +1,4 @@
-package ru.novolmob.backend.util
+package ru.novolmob.backend.utils
 
 import arrow.core.flatMap
 import arrow.core.getOrElse
@@ -20,7 +20,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ru.novolmob.backend.util.KtorUtil.respondException
+import ru.novolmob.backend.utils.KtorUtil.respondException
 import ru.novolmob.backendapi.exceptions.dontHaveRightsException
 import ru.novolmob.backendapi.exceptions.notAuthorizedException
 import ru.novolmob.backendapi.models.GrantedRightCreateModel

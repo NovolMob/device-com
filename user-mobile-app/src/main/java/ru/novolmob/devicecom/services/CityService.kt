@@ -1,6 +1,5 @@
 package ru.novolmob.devicecom.services
 
-import androidx.compose.ui.text.intl.Locale
 import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.right
@@ -11,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.CityShortModel
-import ru.novolmob.core.models.Language
+import ru.novolmob.core.models.Language.Companion.language
 import ru.novolmob.core.models.ids.CityId
 import ru.novolmob.devicecom.repositories.ICityRepository
 import ru.novolmob.devicecom.utils.ScreenNotification.Companion.notice
@@ -36,8 +35,7 @@ class CityServiceImpl(
 
     override suspend fun update(): Either<AbstractBackendException, List<CityShortModel>> =
         cityRepository.getAll(
-            profileService.profile.value?.language ?:
-            Locale.current.language.let(::Language)
+            profileService.profile.value?.language ?: "ru".language()
         ).flatMap {
             it.list.also { list -> _cities.update { list } }.right()
         }

@@ -21,7 +21,7 @@ object PhoneNumberOffsetMapping: OffsetMapping {
             }
         }
         transformed.removeAt(2)
-        return transformed.also { println(it) }
+        return transformed
     }
 
     private fun origin(): List<Int> {
@@ -31,7 +31,7 @@ object PhoneNumberOffsetMapping: OffsetMapping {
                 origin.add(i)
             }
         }
-        return origin.also { println(it) }
+        return origin
     }
 
     fun phoneNumber(phoneNumberString: String): String =

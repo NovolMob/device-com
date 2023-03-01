@@ -1,4 +1,4 @@
-package ru.novolmob.backend.util
+package ru.novolmob.backend.utils
 
 import arrow.core.Either
 import io.ktor.http.*

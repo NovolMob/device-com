@@ -50,7 +50,8 @@ val viewModelModule = module {
     }
     viewModel {
         OrdersViewModel(
-            orderService = get()
+            orderService = get(),
+            profileService = get()
         )
     }
 }

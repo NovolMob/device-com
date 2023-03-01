@@ -12,8 +12,8 @@ import org.koin.core.component.inject
 import ru.novolmob.backend.ktorrouting.user.Login
 import ru.novolmob.backend.ktorrouting.user.Logout
 import ru.novolmob.backend.ktorrouting.user.Registration
-import ru.novolmob.backend.util.AuthUtil.accessToken
-import ru.novolmob.backend.util.KtorUtil.respond
+import ru.novolmob.backend.utils.AuthUtil.accessToken
+import ru.novolmob.backend.utils.KtorUtil.respond
 import ru.novolmob.backendapi.exceptions.badLoginModelException
 import ru.novolmob.backendapi.models.LoginModel
 import ru.novolmob.backendapi.models.TokenModel

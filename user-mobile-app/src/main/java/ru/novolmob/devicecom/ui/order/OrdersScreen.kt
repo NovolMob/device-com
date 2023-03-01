@@ -38,6 +38,7 @@ import ru.novolmob.core.models.Title
 import ru.novolmob.core.models.ids.OrderId
 import ru.novolmob.devicecom.R
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Composable
 fun OrdersScreen(
@@ -86,6 +87,7 @@ fun OrdersScreen(
                     Order(
                         modifier = Modifier
                             .fillMaxWidth(),
+                        language = state.language,
                         order = it,
                         cancelOrder = { selectedOrderForCancellation = it }
                     )
@@ -180,6 +182,7 @@ private fun CancelAlertDialog(
 @Composable
 private fun Order(
     modifier: Modifier = Modifier,
+    language: Locale,
     order: OrderShortModel,
     cancelOrder: () -> Unit = {}
 ) {
@@ -192,6 +195,7 @@ private fun Order(
         OrderHeader(
             modifier = Modifier
                 .fillMaxWidth(),
+            language = language,
             status = order.status,
             active = order.active,
             orderId = order.id,
@@ -215,6 +219,7 @@ private fun Order(
 @Composable
 private fun OrderHeader(
     modifier: Modifier = Modifier,
+    language: Locale,
     orderId: OrderId,
     status: Title?,
     active: Boolean,
@@ -228,13 +233,21 @@ private fun OrderHeader(
             modifier = Modifier
                 .padding(5.dp)
         ) {
+            val date by remember(creationTime, language) {
+                derivedStateOf {
+                    creationTime.dateTime.date
+                        .toJavaLocalDate()
+                        .format(
+                            DateTimeFormatter.ofPattern(
+                                "dd MMMM yyyy", language
+                            )
+                        )
+                }
+            }
             Text(
                 modifier = Modifier,
                 text = stringResource(id = R.string.order_by_date)
-                    .format(creationTime.dateTime.date
-                        .toJavaLocalDate()
-                        .format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-                    ),
+                    .format(date),
                 color = Color.Gray,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,

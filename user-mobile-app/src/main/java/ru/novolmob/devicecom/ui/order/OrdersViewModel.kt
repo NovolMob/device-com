@@ -10,14 +10,18 @@ import kotlinx.coroutines.launch
 import ru.novolmob.backendapi.models.OrderShortModel
 import ru.novolmob.core.models.ids.OrderId
 import ru.novolmob.devicecom.services.IOrderService
+import ru.novolmob.devicecom.services.IProfileService
 import ru.novolmob.devicecom.utils.ScreenNotification.Companion.notice
+import java.util.*
 
 data class OrdersState(
+    val language: Locale = Locale.getDefault(),
     val orders: List<OrderShortModel> = emptyList(),
     val loading: Boolean = false
 )
 
 class OrdersViewModel(
+    private val profileService: IProfileService,
     private val orderService: IOrderService
 ): ViewModel() {
     private val _state = MutableStateFlow(OrdersState())
@@ -25,6 +29,15 @@ class OrdersViewModel(
 
     init {
         viewModelScope.launch {
+            launch {
+                profileService.profile.collectLatest { user ->
+                    _state.update {
+                        it.copy(
+                            language = user?.language?.string?.let(::Locale) ?: Locale.getDefault()
+                        )
+                    }
+                }
+            }
             launch {
                 orderService.orders.collectLatest { orders ->
                     _state.update {

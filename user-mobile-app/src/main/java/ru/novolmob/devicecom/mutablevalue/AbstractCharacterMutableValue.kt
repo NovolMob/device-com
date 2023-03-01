@@ -11,7 +11,6 @@ import ru.novolmob.core.models.Language.Companion.language
 import ru.novolmob.core.models.Lastname.Companion.lastname
 import ru.novolmob.core.models.PhoneNumber.Companion.phoneNumber
 import ru.novolmob.devicecom.ui.registration.RUSSIANS
-import java.util.*
 
 abstract class AbstractCharacterMutableValue<T>(
     initial: String,

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import naavigations.Navigation
+import navigations.Navigation
 import repositories.IWorkerRepository
 import ru.novolmob.backendapi.exceptions.AbstractBackendException
 import ru.novolmob.backendapi.models.*
@@ -17,6 +17,7 @@ import ru.novolmob.core.models.Password
 import ru.novolmob.core.models.PhoneNumber
 import storages.TokenStorage
 import utils.EitherUtil.loginChecking
+import utils.ServiceUtil
 
 
 interface IProfileService: IService {
@@ -37,11 +38,9 @@ class ProfileServiceImpl(
 
     init {
         serviceScope.launch {
-            startLoading()
             update().loginChecking {
                 loginAction()
             }
-            stopLoading()
         }
     }
 
@@ -50,16 +49,21 @@ class ProfileServiceImpl(
         Navigation.toMain()
     }
     private fun logoutAction() {
+        _profile.update { null }
         tokenStorage.set(null)
         Navigation.toLogin()
     }
     private fun profile(profileModel: WorkerModel?) = _profile.update { profileModel }
 
-    override suspend fun update(): Either<AbstractBackendException, WorkerModel> =
-        workerRepository.get().flatMap { userModel ->
+    override suspend fun update(): Either<AbstractBackendException, WorkerModel> {
+        startLoading()
+        return workerRepository.get().flatMap { userModel ->
             profile(userModel)
             userModel.right()
+        }.also {
+            stopLoading()
         }
+    }
 
     override suspend fun clear() {
         logoutAction()
@@ -73,7 +77,7 @@ class ProfileServiceImpl(
             workerRepository.login(email = email, password = password)
                 .flatMap {
                     loginAction(it)
-                    update()
+                    ServiceUtil.updateAll().right()
                 }
         }
     }
@@ -86,7 +90,7 @@ class ProfileServiceImpl(
             workerRepository.login(phoneNumber = phoneNumber, password = password)
                 .flatMap {
                     loginAction(it)
-                    update()
+                    ServiceUtil.updateAll().right()
                 }
         }
     }
@@ -95,6 +99,7 @@ class ProfileServiceImpl(
         serviceScope.launch {
             workerRepository.logout().flatMap {
                 logoutAction()
+                ServiceUtil.clearAll()
                 Unit.right()
             }
         }

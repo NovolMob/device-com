@@ -18,16 +18,16 @@ kotlin {
     js(IR) {
         browser {
             runTask {
-                devServer?.port = 3000
+                devServer?.port = System.getenv("PORT")?.toInt() ?: 3000
             }
             commonWebpackConfig {
                 cssSupport {
-                    enabled = true
-                    mode = "import"
+                    enabled.set(true)
+                    mode.set("import")
                 }
                 scssSupport {
-                    enabled = true
-                    mode = "import"
+                    enabled.set(true)
+                    mode.set("import")
                 }
             }
         }

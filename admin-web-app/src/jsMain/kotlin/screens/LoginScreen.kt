@@ -34,7 +34,8 @@ fun loginScreen(
                 display(DisplayStyle.Flex)
                 alignItems(AlignItems.Center)
                 justifyContent(JustifyContent.Center)
-                backgroundColor(Color.black)
+                backgroundColor(Colors.generalBackground)
+                color(Colors.generalColor)
             }
         }
     ) {
@@ -187,13 +188,16 @@ private fun phoneNumberForm(
 
     Form( attrs =  {
         onSubmit {
-            onSubmit(phoneNumber, password)
+            if (activeButton) {
+                onSubmit(phoneNumber, password)
+            } else it.preventDefault()
         }
         style {
             margin(10.px)
             fontSize(20.px)
             textAlign("center")
         }
+        method(FormMethod.Dialog)
     } ) {
         phoneNumberInput(
             phoneNumber = phoneNumber,
@@ -203,7 +207,12 @@ private fun phoneNumberForm(
         Br()
         passwordInput(
             password = password,
-            setPassword = { password = it }
+            setPassword = { password = it },
+            onSubmit = {
+                if (activeButton) {
+                    onSubmit(phoneNumber, password)
+                }
+            }
         )
         Br()
         submitInput(
@@ -438,7 +447,7 @@ private fun <K> input(
                 color(borderColor)
             }
         }
-        classes(Styles.inputStyle)
+        classes(Styles.loginInputStyle)
         onInput {
             set(it.value)
         }

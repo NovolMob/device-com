@@ -4,6 +4,6 @@ import ru.novolmob.core.utils.IStringChecking
 import kotlin.js.RegExp
 
 actual object FirstnameChecking : IStringChecking {
-    private val regex = RegExp("[a-zA-Zа-яА-Я]+")
+    val regex = RegExp("[a-zA-Zа-яА-Я]+")
     override fun matches(value: String): Boolean = regex.test(value)
 }

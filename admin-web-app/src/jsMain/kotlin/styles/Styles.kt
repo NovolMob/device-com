@@ -3,7 +3,7 @@ package styles
 import org.jetbrains.compose.web.css.*
 
 object Styles: StyleSheet() {
-    val inputStyle by style {
+    val loginInputStyle by style {
         fontSize(15.px)
         borderRadius(30.px)
         outline("none")
@@ -17,6 +17,7 @@ object Styles: StyleSheet() {
         backgroundColor(Color.transparent)
         outline("none")
         border(0.px)
+        color(Colors.generalColor)
     }
     val activeLoginFormTabStyle by style {
         property("margin-left","auto")
@@ -24,6 +25,7 @@ object Styles: StyleSheet() {
         backgroundColor(Color.transparent)
         outline("none")
         border(0.px)
+        color(Colors.generalColor)
         property("border-bottom", "1px solid ${Colors.activeForm}")
     }
     val errorMessageStyle by style {

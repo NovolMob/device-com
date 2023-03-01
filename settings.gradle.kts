@@ -9,8 +9,8 @@ pluginManagement {
 
 rootProject.name = "device-com"
 
-//include("admin-web-app")
-//include("user-mobile-app")
+include("admin-web-app")
+include("user-mobile-app")
 include("backend")
 include("backend-api")
 include("core")
