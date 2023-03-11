@@ -2,31 +2,63 @@ val serialization_version: String by project
 val kotlin_version: String by project
 
 plugins {
-    application
-    java
-    `java-library`
-    kotlin("jvm") version "1.7.22"
-    id("io.ktor.plugin") version "2.1.3"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
+    kotlin("multiplatform")
+    id("com.android.library")
+    kotlin("plugin.serialization")
 }
 
-group = "ru.novolmob"
-version = "0.0.1"
-application {
-    mainClass.set("MainKt")
+group = "ru.novolmob.device-com"
+version = "0.0.5"
 
-    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+android {
+    namespace = "ru.novolmob.core"
+    compileSdk = 33
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    defaultConfig {
+        minSdk = 26
+        targetSdk = 32
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }
 
 repositories {
+    google()
     mavenCentral()
 }
 
-dependencies {
-    implementation(project(":exposed-database"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-
-    testImplementation(kotlin("test"))
+kotlin {
+    android()
+    jvm()
+    js(IR) {
+        useCommonJs()
+        nodejs()
+    }
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation(npm("uuid", "9.0.0"))
+                implementation(npm("js-big-decimal", "1.3.15"))
+            }
+        }
+        val jsTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+    }
 }
