@@ -1,0 +1,5 @@
+root.profile.firstname=Firstname
+root.profile.lastname=Lastname
+root.profile.patronymic=Patronymic
+root.profile.email=Email
+root.profile.phone_number=Phone number

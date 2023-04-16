@@ -1,0 +1,5 @@
+root.profile.firstname=Имя
+root.profile.lastname=Фамилия
+root.profile.patronymic=Отчество
+root.profile.email=Электронная почта
+root.profile.phone_number=Номер телефона

@@ -15,7 +15,8 @@ import storages.TokenStorage
 
 val clientModule = module {
     factory {
-        val url = "https://device-com.onrender.com/backend/admin/"
+//        val url = "https://device-com.onrender.com/backend/admin/"
+        val url = "http://localhost:8080"
         val tokenStorage: TokenStorage by inject()
         HttpClient(Js) {
             install(Resources)
