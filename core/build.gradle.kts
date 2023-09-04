@@ -37,6 +37,9 @@ kotlin {
         useCommonJs()
         nodejs()
     }
+    wasm {
+        browser()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {

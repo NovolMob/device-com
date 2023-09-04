@@ -17,6 +17,7 @@ object KtorUtil {
     suspend inline fun <reified E> HttpResponse.response(): Either<AbstractBackendException, E> =
         kotlin.runCatching {
             body<ResponseModel<E>>().let { model ->
+                println(model)
                 model.exception?.left() ?: model.data!!.right()
             }
         }.getOrElse {
@@ -28,38 +29,86 @@ object KtorUtil {
         }
 
     suspend inline fun <reified Resource: Any, reified Body, reified Response> HttpClient.post(resource: Resource, body: Body): Either<AbstractBackendException, Response> =
-        post(
-            resource = resource,
-            builder = {
-                contentType(ContentType.Application.Json)
-                setBody(body)
-            }
-        ).response()
+        runCatching<Either<AbstractBackendException, Response>> {
+            post(
+                resource = resource,
+                builder = {
+                    contentType(ContentType.Application.Json)
+                    setBody(body)
+                }
+            ).response()
+        }.getOrElse {
+            it.printStackTrace()
+            AbstractBackendException.BackendException(
+                code = BackendExceptionCode.UNKNOWN,
+                message = it.message ?: "empty message"
+            ).left()
+        }
 
     suspend inline fun <reified Resource: Any, reified Response> HttpClient.post(resource: Resource): Either<AbstractBackendException, Response> =
-        post(
-            resource = resource,
-            builder = { }
-        ).response()
+        runCatching<Either<AbstractBackendException, Response>> {
+            post(
+                resource = resource,
+                builder = { }
+            ).response()
+        }.getOrElse {
+            it.printStackTrace()
+            AbstractBackendException.BackendException(
+                code = BackendExceptionCode.UNKNOWN,
+                message = it.message ?: "empty message"
+            ).left()
+        }
 
     suspend inline fun <reified Resource: Any, reified Body, reified Response> HttpClient.put(resource: Resource, body: Body): Either<AbstractBackendException, Response> =
-        put(
-            resource = resource,
-            builder = {
-                contentType(ContentType.Application.Json)
-                setBody(body)
-            }
-        ).response()
+        runCatching<Either<AbstractBackendException, Response>> {
+            put(
+                resource = resource,
+                builder = {
+                    contentType(ContentType.Application.Json)
+                    setBody(body)
+                }
+            ).response()
+        }.getOrElse {
+            it.printStackTrace()
+            AbstractBackendException.BackendException(
+                code = BackendExceptionCode.UNKNOWN,
+                message = it.message ?: "empty message"
+            ).left()
+        }
 
     suspend inline fun <reified Resource: Any, reified Response> HttpClient.put(resource: Resource): Either<AbstractBackendException, Response> =
-        put(
-            resource = resource,
-            builder = { }
-        ).response()
+        runCatching<Either<AbstractBackendException, Response>> {
+            put(
+                resource = resource,
+                builder = { }
+            ).response()
+        }.getOrElse {
+            it.printStackTrace()
+            AbstractBackendException.BackendException(
+                code = BackendExceptionCode.UNKNOWN,
+                message = it.message ?: "empty message"
+            ).left()
+        }
 
     suspend inline fun <reified Resource: Any, reified Response> HttpClient.get(resource: Resource): Either<AbstractBackendException, Response> =
-        get(resource = resource, builder = {}).response()
+        runCatching<Either<AbstractBackendException, Response>> {
+            get(resource = resource, builder = {}).response()
+        }.getOrElse {
+            it.printStackTrace()
+            AbstractBackendException.BackendException(
+                code = BackendExceptionCode.UNKNOWN,
+                message = it.message ?: "empty message"
+            ).left()
+        }
 
     suspend inline fun <reified Resource: Any, reified Response> HttpClient.delete(resource: Resource): Either<AbstractBackendException, Response> =
-        delete(resource = resource, builder = {}).response()
+        runCatching<Either<AbstractBackendException, Response>> {
+            delete(resource = resource, builder = {}).response()
+        }.getOrElse {
+            it.printStackTrace()
+            AbstractBackendException.BackendException(
+                code = BackendExceptionCode.UNKNOWN,
+                message = it.message ?: "empty message"
+            ).left()
+        }
 }

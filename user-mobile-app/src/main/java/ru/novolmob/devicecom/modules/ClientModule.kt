@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -16,7 +17,7 @@ import ru.novolmob.devicecom.datastore.ITokenDataStore
 
 val clientModule = module {
     factory {
-        val url = "https://device-com.onrender.com/backend/mobile/"
+        val url = "http://test.antares-software.ru:10008/"
         val tokenDataStore: ITokenDataStore by inject()
         runBlocking {
             while (!tokenDataStore.initialized()) delay(200)
@@ -39,6 +40,7 @@ val clientModule = module {
                     }
                 )
             }
+            install(Logging)
             defaultRequest {
                 url(url)
                 tokenDataStore.tokenFlow.value?.accessToken?.let {

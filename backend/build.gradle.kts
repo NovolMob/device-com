@@ -16,6 +16,9 @@ plugins {
 
 group = "ru.novolmob.device-com"
 version = "0.0.1"
+dependencies {
+    implementation("io.ktor:ktor-client-resources:2.2.2")
+}
 application {
     mainClass.set("ru.novolmob.backend.MainKt")
 
@@ -69,6 +72,9 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("io.ktor:ktor-client-cio:$ktor_version")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+                implementation("io.ktor:ktor-client-resources:$ktor_version")
             }
         }
     }

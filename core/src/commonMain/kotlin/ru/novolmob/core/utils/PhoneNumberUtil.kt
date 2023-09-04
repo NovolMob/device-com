@@ -15,14 +15,11 @@ object PhoneNumberUtil {
         "+${countryCode} ($innerCode) ${stringClientNumber(clientNumber)}"
 
     fun deserializePhoneNumber(string: String): PhoneNumber? {
-        val split = string
-            .split(' ', limit = 3)
-            .map { nonNumberRegex.replace(it, "") }
-            .takeIf { it.all(String::isNotEmpty) } ?: return null
+        val split = string.replace(Regex("\\D"), "")
         return PhoneNumber(
-            countryCode = split[0].toULong(),
-            innerCode = split[1].toULong(),
-            clientNumber = split[2].toULong()
+            countryCode = split.substring(0..0).toULong(),
+            innerCode = split.substring(1..3).toULong(),
+            clientNumber = split.substring(startIndex = 4).toULong()
         )
     }
 }
